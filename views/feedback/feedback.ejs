@@ -1,0 +1,63 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skillkart | feedback</title>
+    <link rel="stylesheet" href="../../css/style.css" />
+    <script>
+      const roomId ='<%= roomId %>'
+      const userrole ="<%= user.role %>"
+    </script>
+    <script src="../rating.js" defer></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="roomfeedback">
+      <div class="fee-k-container">
+        <div class="fee-k-container-btn">
+          <button>Back to Home</button>
+        </div>
+        <div class="roomfeedbackusers">
+          <div class="fee-k-container-usr">
+            <span>User</span>
+            <div class="fee-k-snt-u-cnt feedback-usr-name">
+              <!-- <div class="u-avatar">J</div>
+              <div class="u-name">Jagdeep singh</div> -->
+              <div class="u_id"></div>
+            </div>
+          </div>
+          <div class="fee-k-container-mentor">
+            Mentor
+            <div class="fee-k-snt-u-cnt feedback-usr-mentor">
+              <!-- <div class="u-avatar">J</div>
+              <div class="u-name">Jagdeep singh</div> -->
+              <div class="m_id"></div>
+            </div>
+          </div>
+        </div>
+        <div class="rating">
+          <div>Rating</div>
+          <div class="starts">
+            <div class="ratdiv" onclick="rating(event)">1</div>
+            <div class="ratdiv" onclick="rating(event)">2</div>
+            <div class="ratdiv" onclick="rating(event)">3</div>
+            <div class="ratdiv" onclick="rating(event)">4</div>
+            <div class="ratdiv" onclick="rating(event)">5</div>
+          </div>
+          <div class="ratingerrormessage errormessage">
+            <span>Required Rating</span>
+          </div>
+        </div>
+        <div class="feedbackinput">
+          <h3>Feedback</h3>
+          <textarea type="text" placeholder="write a review" class="feedbackinputcontainer"></textarea>
+          <div class="inputerrormessage errormessage">
+            <span>Required Field</span>
+          </div>
+          <button onclick="feedbackdispatch()">Submit</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

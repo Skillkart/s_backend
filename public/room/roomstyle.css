@@ -1,0 +1,433 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300&family=Open+Sans&family=Roboto:wght@300;400&display=swap');
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+  
+canvas{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    
+}
+.room{
+    max-width: 100vw;
+    max-height: 100vh;
+    background-color: black;
+    overflow-x: hidden;
+}
+.roomcontainer{
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.video-grid{
+    display: flex;
+    width: 100%;
+    height: 85%;
+    align-items: center;
+    justify-content: center;
+}
+.roomcontainer video{
+    width: 100%;
+    height: 100%;
+    /* margin: 0px 10px; */
+    border-radius: 10px;
+    object-position: center;
+    object-fit: cover;
+   
+}
+.user1{
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0px !important;
+    border-radius: 50% !important;
+}
+.user2-container{
+    width: 70%;
+    height: 100%;
+    margin: 0px 10px;
+    border-radius: 10px;
+    object-position: center;
+    object-fit: cover;
+    position: relative;
+}
+.user1-container{
+    width: 150px !important;
+    height: 150px !important;
+    position: absolute;
+    top: 12px;
+    right: 30px;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255, 255, 255, 0.514);
+    transition: 0.3s all cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.user2-container{
+    display: none;
+    position: relative;
+}
+.user2-container .mic-icon{
+    background-color: #345ddd;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+.user2{
+    display: none;
+}
+.videocontrols{
+    width: 46%;
+    height: 80px;
+    border-radius: 10px 10px 0px 0px;
+    position: fixed;
+    bottom: 0px;
+    background-color: rgb(15, 15, 15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0px 30px 0px 30px;
+    color: white;
+    font-size: 35px;
+}
+.roomicons{
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+    background-color: rgb(23, 22, 22);
+    border-radius: 50%;
+}
+.roomicons span{
+    font-size: 27px;
+}
+.roomicons:nth-child(4){
+    background-color: red !important;
+    min-width: 80px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    border-radius: 10px !important;
+    color: white !important;
+}
+.roomicons:hover{
+    background-color: white;
+    border-radius: 50%;
+    color: black;
+    transition: 0.3s all cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+.videotimer{
+    min-width: 140px;
+    height: 50px;
+    background-color: rgb(15, 15, 15);
+    /* position: fixed; */
+    right: 0;
+    bottom: 0;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.recordingicon{
+    width: 15px;
+    height: 15px;
+    border: 1px solid red;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.user2-name{
+    position: absolute;
+    background-color: black;
+    bottom: 0;
+    left: 0;
+    color: white;
+}
+.recording{
+    width:60%;
+    height: 60%;
+    background-color: red;
+    border-radius: 50%;
+    animation: record 3s infinite ;
+}
+.timer{
+    font-size: 18px;
+    margin: 0px 10px;
+}
+
+.gotmessage{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color:#345ddd ;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: none;
+}
+
+.chat-room{
+    width: 300px;
+    height: 450px;
+    background-color: rgb(24, 23, 23);
+    position: absolute;
+    right: 30px;
+    top: 20%;
+    border-radius: 5px;
+    transform: translateX(500px);
+    transition: 0.2s all ease-in;
+    
+}
+.send-button{
+    user-select: none;
+    cursor: pointer;
+}
+.chatcontainer{
+    height: 79%;
+    flex-grow: 1;
+    overflow-y: scroll;
+
+}
+.chatmsgs{
+    height: 100%;
+}
+.chatroom-title{
+    padding: 15px 20px;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.62);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.208);
+}
+.chatsend{
+    display: flex;
+    align-items: center;
+}
+.chatsend input{
+    height: 40px;
+    width: 85%;
+    background-color: black;
+    border: 1px solid rgb(26, 25, 25);
+    border-radius: 5px;
+    color: white;
+    padding: 0px 15px;
+}
+.chatsend div{
+    width: 15%;
+    height: 40px;
+    color: rgba(255, 255, 255, 0.504);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.notification{
+   width: 100vw;
+   height: 100vh;
+   display: none;
+   align-items: center;
+   justify-content: center;
+   position: fixed;
+   top: 0;
+   right: 0;
+   bottom: 0;
+   left: 0;
+}
+.not-container{
+    width: 350px;
+    min-height: 200px;
+    background-color: white;
+    border-radius: 5px;
+
+}
+.not-container-title{
+    padding: 20px 15px 10px 15px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: 'Lato' , sans-serif;
+}
+.not-container-para{
+    padding: 10px 20px;
+    text-align: justify;
+    line-height: 20px;
+    font-family: 'Lato' , sans-serif;
+}
+
+.not-container-button{
+    padding: 15px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.not-container-button button{
+    margin-left: 15px ;
+    color: royalblue;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-weight: 600;
+    font-family: 'Roboto' , sans-serif;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.chatmessage_logo{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #345ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;
+}
+.messages{
+    margin: 10px 15px;
+    color: white;
+    min-width: 80px;
+    padding: 10px 15px;
+    border-radius: 10px;
+    background-color: rgb(39, 36, 36);
+
+}
+.chatmessageprofile{
+    display: flex;
+    align-items: center;
+}
+.chatmessageprofile h3{
+    margin: 0px 10px;
+    font-family:'Lato', sans-serif ;
+    font-size: 15px;
+}
+.messages p{
+    padding: 5px 10px 10px 40px;
+    color: rgba(255, 255, 255, 0.777);
+}
+
+.video-grid p{
+    font-size: 30px;
+    font-family: 'Roboto' , sans-serif;
+    color: rgba(255, 255, 255, 0.591);
+}
+
+.roomlogin{
+    width: 100vw;
+    min-height: 100vh;
+    background-color: white;
+}
+@keyframes record {
+    50%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+@media screen and (max-width:810px) {
+    .chat-room{
+        position: fixed;
+    }
+    .roomcontainer{
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+    .videocontrols{
+        width: 600px;
+    }
+    .roomcontainer video{
+        height: 90%;
+    }
+}
+@media screen and (max-width:740px) {
+    .user1{
+        position: relative;
+        border-radius: 10px !important;
+        height: 45% !important;
+        width: 90% !important;
+        right: 0;
+        top: 0;
+        margin: 10px 10px 10px 10px !important;
+    }
+    .videocontrols{
+        max-width: 90vw;
+        padding: 0px 30px;
+    }
+    .video-grid{
+        flex-direction: column;
+
+    }
+    .user2{
+        height: 45% !important;
+        width: 90% !important;
+    }
+}
+@media screen and (max-width:1272px) {
+    .videocontrols{
+        width: 600px;
+        padding: 0px 30px;
+    }
+    .videotimer{
+        display: none;
+    }
+    .user2{
+        height: 400px;
+    }
+}
+@media screen and (max-width:400px) {
+    .videotimer{
+        display: none;
+    }
+    .chat-room{
+        top: 5%;
+    }
+    .videocontrols{
+        max-width: 90vw;
+padding: 0px 30px;
+    }
+    .user1{
+        position: relative;
+        border-radius: 10px !important;
+        height: 45% !important;
+        width: 90% !important;
+        right: 0;
+        top: 0;
+        margin: 0px 0px 10px 0px;
+    }
+    .user2{
+        height: 45% !important;
+        width: 90% !important;
+    }
+    
+    .video-grid{
+        flex-direction: column;
+
+    }
+}
+
+
+
+
+

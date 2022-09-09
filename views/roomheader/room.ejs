@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <link rel="stylesheet" href="roomstyle.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <script defer src="face-api.min.js"></script>
+    <script
+      defer
+      src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="script.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <title>Skillkart | room</title>
+    <script>
+      const user = "<%= user.Name %>";
+      const ROOM_ID = "<%= roomId %>";
+      const user_id = "<%= user._id %>";
+      const userrole = "<%= user.role %>";
+    </script>
+  </head>
+  <body class="room">
+    <% if(user){%>
+    <div class="roomcontainer">
+      <div id="video-grid" class="video-grid">
+        <div class="user1-container">
+          <video class="user1"></video>
+        </div>
+        <p class="m">Waiting for user...</p>
+        <div class="user2-container">
+          <div class="mic-icon">
+            <span class="material-symbols-outlined">
+              graphic_eq
+            </span>
+          </div>
+          <video class="user2"></video>
+        </div>
+      </div>
+      <div class="videocontrols">
+        <div class="roomicons mic" onclick="micoff()">
+          <span class="material-symbols-outlined"> mic </span>
+        </div>
+        <div class="roomicons cam" onclick="camoff()">
+          <span class="material-symbols-outlined"> videocam </span>
+        </div>
+        <div class="roomicons chatbutton" onclick="chatopen()">
+          <span class="material-symbols-outlined"> sms </span>
+          <div class="gotmessage"></div>
+        </div>z
+        <!--         
+            <div class="roomicons" onclick="roomleave()">
+              <span class="material-symbols-outlined"> call_end </span>
+              close room
+            </div> -->
+
+        <!-- <div class="videotimer">
+            <div class="recordingicon">
+              <div class="recording"></div>
+            </div>
+            <div class="timer"></div>
+          </div> -->
+      </div>
+    </div>
+    <div class="chat-room">
+      <div class="chatroom-title">Chat room</div>
+      <div class="chatcontainer">
+        <div class="chatmsgs">
+          
+        </div>
+       </div>
+      <form class="chatsend">
+        <input type="text" placeholder="Enter chat" class="message" />
+        <div onclick="sendmessage()" class="send-button">
+          <span class="material-symbols-outlined"> send </span>
+        </div>
+      </form>
+    </div>
+    <div class="notification">
+      <div class="not-container">
+        <div class="not-container-title">Permission required</div>
+        <div class="not-container-para">
+          Your camera and microphone are blocked. Skillkart.app required camera
+          and mic Permission
+        </div>
+        <div class="not-container-button">
+          <a href="/"><button>Back to Home</button></a>
+        </div>
+      </div>
+    </div>
+    <%}else{%>
+    <div class="roomlogin">
+      <div class="Login">
+   
+        <div class="login-sd-lft">
+          <h3>Login</h3>
+          <!-- <div class="login-required-close" onclick="reloginclose()">
+            <span class="material-symbols-outlined">
+              close
+            </span>
+          </div> -->
+          <div class="google-auth-container">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png"
+              width="30px"
+              alt=""
+            />
+            <p>Signin with Google</p>
+          </div>
+          <div class="or-container">
+            <div></div>
+            <span>or</span>
+            <div></div>
+          </div>
+          <div class="errormessage dplctac">
+            <div class="errorcolor"></div>
+            <p class="emsp">Incoorec , Try <a href="/signup">Signup</a></p>
+        </div>
+          <form class="signupform">
+            <label for="Email">Email</label>
+            <div class="formdiv"> 
+              <span class="material-symbols-outlined emaillogo">
+                mail
+              </span>
+              <input type="text" placeholder="Email" class="email"/>
+            </div>
+            <div class="emailerrormessage errormessage">
+              <span class="material-symbols-outlined"> error </span>
+              <span>Required Valid Email</span>
+            </div>
+            <label for="Password">Password</label>
+            <div class="formdiv"> 
+              <span class="material-symbols-outlined emaillogo">
+                lock
+              </span>
+              <input type="password" placeholder="Password" class="password"/>
+            </div>
+            <div class="passworderrormessage errormessage">
+              <span class="material-symbols-outlined"> error </span>
+              <span>Empty field</span>
+            </div>
+            <div class="forget">
+              <span>Forget password ?</span>
+            </div>
+            <div class="formbtn-container">
+            <button onclick="login()">Login</button>
+          </div>
+          </form>
+          <!-- <div class="or-container">
+            <div></div>
+            <span>or</span>
+            <div></div>
+          </div> -->
+        </div>
+        <a href="/signup"><button class="sp-nvit-btn">Create an account</button></a>
+        </div> 
+      </div>
+    </div>
+    
+    <%}
+    %>
+  </body>
+  <script>
+    if(!user){
+    document.getElementsByClassName("signupform")[0].addEventListener("submit" , (e)=>{
+    e.preventDefault()
+  })
+}
+    let email = document.getElementsByClassName("email")[0]
+    let pass = document.getElementsByClassName("password")[0]
+    async function login(){
+      let emailcfm = validator.isEmail(email.value);
+      let pass = document.getElementsByClassName("password")[0].value
+
+      if(!emailcfm || !pass){
+        if(!emailcfm){
+          document.getElementsByClassName(
+            "emailerrormessage"
+          )[0].style.display = "flex";
+          setTimeout(() => {
+            document.getElementsByClassName(
+              "emailerrormessage"
+            )[0].style.display = "none";
+          }, 2000);
+        }
+        if(!pass){
+          document.getElementsByClassName("passworderrormessage")[0].style.display = "flex";
+          setTimeout(() => {
+            document.getElementsByClassName("passworderrormessage")[0].style.display = "none";
+          }, 2000);
+          return ;
+        }
+
+      }else{
+        document.getElementsByClassName(
+    "formbtn-container"
+  )[0].innerHTML = `<div class="loading"></div>`;
+      const request = await axios.post("/api/v1/login" , {
+        email : email.value,
+        password : pass
+      }).then(()=>{
+        window.location.assign(window.location.href)
+      }).catch((error)=>{
+       document.getElementsByClassName("emsp")[0]
+       .innerHTML = `${error.response.data.messsage} Try <a href="#">Forget password</a>`
+       document.getElementsByClassName("dplctac")[0].style.display="flex"
+      })
+      document.getElementsByClassName(
+    "formbtn-container"
+  )[0].innerHTML = ` <button onclick="login()">Login</button>`;
+      return request
+    }
+    }
+  </script>
+</html>

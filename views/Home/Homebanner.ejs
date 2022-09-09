@@ -1,0 +1,30 @@
+<div class="Home-banner">
+  <img src="image/homebaner.jpeg" alt="home banner" />
+  <% if(user.role!="recuirter"){%>
+  <div class="homebannerform">
+    <div class="homebannerform-title">Book a course</div>
+    <div class="homebannerform-option">
+      <div class="homebannerform-option-title">Choose course</div>
+      <div name="" id="form" class="mainoption" onclick="mainoption()">
+        <span class="p-course">B.Tech</span>
+        <span class="material-symbols-outlined buymenu"> arrow_drop_down </span>
+      </div>
+      <div name="" id="form" class="mainoption-dropdown" style="display: none;">
+        <div class="mop-dropdown-option" onclick="optionhadler(event)">
+          B.Tech
+        </div>
+        <div class="mop-dropdown-option" onclick="optionhadler(event)">MBA</div>
+        <div class="mop-dropdown-option" onclick="optionhadler(event)">
+          Web 3.0
+        </div>
+      </div>
+    </div>
+    <div class="homebanner-form-price">
+      <span class="p-price">RS. 7999</span> <del>11999</del>
+    </div>
+    <div class="homebanner-form-button">
+      <button onclick="seatbooking()">Book now</button>
+    </div>
+  </div>
+  <%} %>
+</div>

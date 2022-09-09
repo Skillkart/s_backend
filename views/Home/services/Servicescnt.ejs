@@ -1,0 +1,25 @@
+<div class="svccontainer">
+  <div class="svccontaineritem-imag">
+    <img src="<%= image %>" alt="" />
+  </div>
+  <div
+    class="svccontainer-text"
+    style="
+      background-image: linear-gradient(
+          rgba(19, 11, 70, 1) 0%,
+          rgba(19, 11, 70, 1) 100%
+        ),
+        url('<%= image %>');
+    "
+  >
+    <div class="svccc">
+      <div class="svcconatiner-title"><%= title %></div>
+      <div class="svccontainer-para">
+       <%=  para %>
+      </div>
+      <div class="svccontainer-btn">
+        <button onclick=<%= scroller %>>Book Now</button>
+      </div>
+    </div>
+  </div>
+</div>

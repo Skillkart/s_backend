@@ -1,0 +1,240 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skillkart | Mentor</title>
+    <script>
+      const user = "<%= user.Name %>";
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="script/header.js" defer></script>
+    <script src="script/mentor.js" defer></script>
+  </head>
+  <body>
+    <%- include('../Home/Header') -%>
+    <div class="mentorlogin">
+      <div class="login-sd-lft">
+        <h3>Mentor sign up for free.</h3>
+      </div>
+      <div class="mentorlogin-lgn">
+        <a href="/login"><button>Sign in with Email and Password</button></a>
+      </div>
+      <div class="or-container">
+        <div></div>
+        <span>or</span>
+        <div></div>
+      </div>
+      <form class="mentorform">
+        <div class="servererrormessage dplctac">
+          <div class="errorcolor"></div>
+          <p class="servermess">
+            Already have an account with this email , Try
+            <a href="/login">Login</a>
+          </p>
+        </div>
+        <label for="Name">What is your name ? <span>*</span></label>
+        <div class="mobileformdiv">
+          <span class="material-symbols-outlined emaillogo"> person </span>
+          <input type="text" placeholder="Name" class="name" />
+        </div>
+        <div class="nameerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required Valid Name</span>
+        </div>
+        <label for="Gender">Gender</label>
+        <div class="formdivgender">
+          <div class="genderoption">
+            <input type="radio" id="Male" name="Gender" value="Male" />
+            <label for="Male">Male</label>
+          </div>
+          <div class="genderoption">
+            <input type="radio" id="Female" name="Gender" value="Female" />  
+            <label for="Female">Female</label>
+          </div>
+          <div class="genderoption">
+            <input type="radio" id="Other" name="Gender" value="other" />  
+            <label for="Other">Other</label>
+          </div>
+        </div>
+        <div class="gendererrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Choose gender</span>
+        </div>
+        <label for="Email">Email, Please?</label>
+        <div class="mobileformdiv">
+          <span class="material-symbols-outlined emaillogo"> mail </span>
+          <input type="Email" placeholder="Email" class="email" />
+        </div>
+        <div class="emailerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required valid email</span>
+        </div>
+        <label for="Password">Create a password</label>
+        <div class="mobileformdiv">
+          <span class="material-symbols-outlined emaillogo"> lock </span>
+          <input type="password" placeholder="password" class="password" />
+        </div>
+        <div class="passworderrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Password must have minimum six characters</span>
+        </div>
+        <label for="Password">Confirm password</label>
+        <div class="mobileformdiv">
+          <span class="material-symbols-outlined emaillogo"> lock </span>
+          <input
+            type="password"
+            placeholder="password"
+            class="passwordconfirm"
+          />
+        </div>
+        <div class="passwordconfirmerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Password must be same</span>
+        </div>
+        <label for="phone">Your phone number</label>
+        <div class="mobileformdiv">
+          <span class="emaillogo phonecode">91 (India)</span>
+          <input type="text" placeholder="phone no." class="phone" />
+        </div>
+        <div class="phoneerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required Valid Phone number</span>
+        </div>
+        <label for="qualification">What's your highest qualification?</label>
+        <div class="mobileformdiv">
+          <input type="text" class="quali" />
+        </div>
+        <div class="qualierrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label for="workat">Where do you work?</label>
+        <div class="mobileformdiv">
+          <input type="text" class="workat" />
+        </div>
+        <div class="workaterrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label for="current-role"
+          >What is the current role you are working on?</label
+        >
+        <div class="mobileformdiv">
+          <input type="text" class="role" />
+        </div>
+        <div class="curtroleerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label>Please share your Linkedin profile</label>
+        <div class="mobileformdiv">
+          <input type="text" class="linkedpro" />
+        </div>
+        <label>How much industry experience do you have?</label>
+        <div class="mobileformdiv">
+          <select name="" id="experience" class="exp">
+            <option value="3-5">3-5 years</option>
+            <option value="5-7">5-7 years</option>
+            <option value="10">10+ years</option>
+          </select>
+        </div>
+        <div class="experrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label>What are your area of Expertise?</label>
+        <div class="mobileformdiv">
+          <input type="text" class="expertise" />
+        </div>
+        <div class="aoeerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label
+          >Do you take interviews in your current organization for new
+          recruitements?</label
+        >
+        <div class="formdivgender g">
+          <div class="genderoption">
+            <input type="radio" id="yes" name="recuirment" value="yes" />
+            <label for="recuirment">Yes</label>
+          </div>
+          <div class="genderoption">
+            <input type="radio" id="no" name="recuirment" value="no" />  
+            <label for="recuirment">no</label>
+          </div>
+        </div>
+        <div class="recuirmenterrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label
+          >Apart from Technical skill what are 3 qualities you look for in an
+          interviewee?</label
+        >
+        <div class="mobileformdiv">
+          <input type="text" class="quality" />
+        </div>
+        <div class="qualityerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        <label
+          >Do you have additional hour to deploy to train new generation in your
+          spare time?</label
+        >
+        <div class="formdivgender g">
+          <div class="genderoption">
+            <input type="radio" id="sparetime" name="sparetime" value="yes" />
+            <label for="sparetime">Yes</label>
+          </div>
+          <div class="genderoption">
+            <input type="radio" id="sparetime" name="sparetime" value="no" />  
+            <label for="sparetime">no</label>
+          </div>
+        </div>
+        <div class="sparetimeerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required field</span>
+        </div>
+        
+        <div class="btn-container">
+          <div onclick="mentorform()" class="mentorformsubmitbtn">Submit</div>
+        </div>
+      </form>
+    </div>
+    <div class="verifycode">
+      <div class="verifybackground">
+        <!-- <span class="material-symbols-outlined tabcloser">
+                close
+            </span> -->
+        <h5>Verification Code</h5>
+        <p>
+          We sent an verify code to
+          <span
+            class="user_email"
+            style="color: rgba(255, 255, 255, 0.856); margin: 0px 0px 0px 4px"
+          ></span
+          >.
+        </p>
+        <input type="text" placeholder="Verification code" id="vrfycode" />
+        <div class="vrfymessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Incorrect verification code</span>
+        </div>
+        <div class="vifcbtn">
+          <a href="/">Remind me later</a>
+          <button onclick="mentorvrfyrequest()">Submit</button>
+        </div>
+      </div>
+    </div>
+    <%- include('../Footer/MainFooter')-%>
+  </body>
+</html>

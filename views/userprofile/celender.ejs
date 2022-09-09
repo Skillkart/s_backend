@@ -1,0 +1,79 @@
+<div class="wrapper">
+  <div class="container-calendar">
+    <h3 id="monthAndYear"></h3>
+
+    <div class="button-container-calendar">
+      <div id="previous" onclick="previous()">&#8249;</div>
+      <div id="next" onclick="next()">&#8250;</div>
+    </div>
+
+    <table class="table-calendar" id="calendar" data-lang="en">
+      <thead id="thead-month"></thead>
+      <tbody id="calendar-body"></tbody>
+    </table>
+    <div class="scheduler" style="display: none">
+      <div class="Bookingfor">
+        Booking for date : <span class="indicator-date"></span>
+      </div>
+
+      <div class="timecollector">
+        <div class="time-hours">1</div>
+        <div class="indicator">
+          <span
+            class="material-symbols-outlined indicator-arrow"
+            onclick="increaseHours()"
+          >
+            expand_less
+          </span>
+          <span
+            class="material-symbols-outlined indicator-arrow"
+            onclick="decreaseHours()"
+          >
+            expand_more
+          </span>
+        </div>
+        <div class="time-minutes">00</div>
+        <!-- <div class="indicator">
+          <span class="material-symbols-outlined indicator-arrow" onclick="increasemin()">
+            expand_less
+          </span>
+          <span class="material-symbols-outlined indicator-arrow" onclick="decreasemin()">
+            expand_more
+          </span>
+        </div> -->
+        <div class="time-format">AM</div>
+        <div class="indicator">
+          <span
+            class="material-symbols-outlined indicator-arrow"
+            onclick="increaseformat()"
+          >
+            expand_less
+          </span>
+          <span
+            class="material-symbols-outlined indicator-arrow"
+            onclick="decreaseformat()"
+          >
+            expand_more
+          </span>
+        </div>
+      </div>
+      <!-- <div class="totalhourwtinvet">
+        Total hours you want to invest ?
+        <input type="number" class="hours"/>
+        Hours
+      </div>-->
+      <div class="hourserrormessag" style="display: none">
+        <span class="material-symbols-outlined"> error </span>
+        required hours
+      </div>
+      <div class="schedule">
+        <button class="cancel" onclick="cancelschedule()">Cancel</button>
+        <button onclick="makeschedule()">Add time</button>
+      </div>
+    </div>
+    <div class="Slots">
+      <div class="slots-title">Your Slots</div>
+      <div class="slotsavi"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,152 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <script>
+      const user = "<%= user?.Name %>";
+      const  userrole ="<%= user?.role %>"
+      const useremail = "<%= user?.Email %>"
+      const user_id = "<%= user?._id %>" 
+    </script>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+   
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="script/home.js" defer></script>
+  </head>
+  <body>
+    <%- include('Header') -%>
+    <%- include('Homebanner') -%>
+    <div class="mitdfa">
+        <div class="mitfa-container">
+          One important key to success is self-confidence. An important key to self-confidence is preparation.
+          <span>~ Arthur Ashe</span>
+        </div>
+    </div>
+    <div class="loginrequired">
+      <%- include('../Auth/Loginrequired') -%>
+    </div>
+    <div class="stpscnt">
+      <div class="steps">
+        <div class="howitworkstitle">
+            How to use skillkart ?
+        </div>
+        <div class="hwtcontainer">
+          <%- include('./Steps/Steps' , {step:1 , image:"signin.png" , title: "Create an account" , para:"Welcome to Skillkart.app, Helps us with your academic to learn about you better to make your journey a wonderful learning experience."}) %>
+          <%- include('./Steps/Steps' , {step:2 , image:"booking.svg" , title:"Screening" , para :"A one to one 45 minutes engaging session with our expert evalutor for right matchmaking with mentors."}) %>
+          <%- include('./Steps/Steps' ,  {step:3 , image:"thought_process.svg" , title: "Matchmaking" , para :" our auto matchmaking engine selects the best mentor based on skill, interest, time and career goals"}) %>
+          <%- include('./Steps/Steps' ,  {step:4 , image:"group.svg" , title: "Result" , para: "We ensure your every session is full of learning and two way communication , you will get detail feedback after every session end."}) %>
+      </div>
+      </div>
+    </div>
+    <div class="whus">
+      <div class="wyolyus">
+        <div class="wyolyustext">Why choose SkillKart</div>
+        <div class="wyolyuscontainer">
+          <%- include('./Whyus/Whyus' , {title:"Rich Experienced Mentors" , icon:"support_agent"}) -%>
+          <%- include('./Whyus/Whyus' , {title: "1:1 Quality Mock Interviews" , icon:"group"}) -%> 
+          <%- include('./Whyus/Whyus' , {title:"Post interview In-depth Feedback with suggestions" , icon:"paid"}) -%> 
+          <%- include('./Whyus/Whyus' , {title:"Value of Network and learning Over Money" , icon:"speed"}) -%>
+          <%- include('./Whyus/Whyus' , {title:"Strong Backend support"  , icon:"videocam"}) -%>
+          <%- include('./Whyus/Whyus' , {title:"Network with mentors for future referal" , icon:"groups"}) -%>
+        </div>
+      </div>
+    </div>
+    <div><%- include('./marqueeslider/slider') -%></div>
+    <div class="services">
+      <div class="home-services-title">Assessment</div>
+      <div class="svccnt">
+        <%- include('./services/Servicescnt' , { title:"Technical skill analysis", image:"https://images.pexels.com/photos/842548/pexels-photo-842548.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" , para: "While preparing for interviews, it's important to have a vision for long-term career goals, To achieve those goals you need to have a strong grip on the fundamentals of Technicals, what are recent trends in corporates, and how industry expectations are modeling towards the future. Our Technical analysis gives you clarity on your preparation and how to level up your preparation to achieve your goals." ,  scroller :"backtotop()"}) -%>
+        <%- include('./services/Servicescnt' , { title: "Behaviour Skill analysis", image:"https://images.pexels.com/photos/6214724/pexels-photo-6214724.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" , para: "For a successful career, it's important to learn how to engage with people, despite being in any field of the Job one has to always deal with people may be colleagues, superiors, or customers. It's important to learn and master the Emotional quotient. Our programs let you know how to present yourself in life events, tricky situations, and most importantly how to face a different type of interviews and interviewer." ,  scroller :"backtotop()"}) -%>
+        <%- include('./services/Servicescnt' , { title: "Resume analysis", image:"https://images.pexels.com/photos/590016/pexels-photo-590016.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" , para:"A resume is a very important part of the placements or Interview process. With a resume, you speak to your prospects of job search before even meeting them. That's why a well-written Resume increases your chances to appear for one to one interview and beat the competition. Our resume analysis gives you an insight into writing an strong and effective  synopsis of your entire journey." , scroller :"backtotop()"}) -%>
+      </div>
+    </div>
+    <div class="home-blog">
+      <div class="home-blog-title">Blogs</div>
+      <div class="home-blog-container">
+        <div class="home-blog-cnt-slider">
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title : "How to prepare for Campus Interview" , image:"https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} ) %>
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title :"Important Tips to prepare campus placement" , image:"https://images.pexels.com/photos/4855376/pexels-photo-4855376.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" } ) %> 
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title : "How To Ace a Campus Interview - 7 Secrets That Will Guarantee You Get the Job?" , image:"https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} ) %>
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title :"7 tips You must know to Ace Your Campus Interview" , image:"https://images.pexels.com/photos/4855376/pexels-photo-4855376.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" } ) %> 
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title : "What to wear and carry in campus interview?" , image:"https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"} ) %>
+          <%- include('./Blog/Blogcontainer/Blogcnt' , { title :"How to impress campus panel in an interview?" , image:"https://images.pexels.com/photos/4855376/pexels-photo-4855376.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" } ) %> 
+         </div>
+      </div>
+      <!-- <div class="home-blog-slider-controls">
+        <div class="controls-navi" onclick="backword()">
+          <span class="material-symbols-outlined" > arrow_back </span>
+        </div>
+        <div class="controls-navi naviforword" onclick="forword()">
+          <span class="material-symbols-outlined" > arrow_forward </span>
+        </div>
+      </div> -->
+    </div>
+    <div class="subscribe">
+      <div class="feedback">
+        <div class="feedbackheading">Subscribe to our newsletter</div>
+        <div class="feedbackmsg">
+          Subscribe to our newsletter and never miss our latest offers <span style="color: black;">🎉</span>
+        </div>
+        <div class="feedbackinputs">
+          <input type="text" placeholder="Email Address" />
+          <button>Subscribe</button>
+        </div>
+      </div>
+    </div>
+    <%- include('../Footer/MainFooter') -%>
+  </body>
+  <script src="script/header.js" defer></script>
+  <script> 
+    document.getElementsByClassName("signupform")[0].addEventListener("submit" , (e)=>{
+      e.preventDefault()
+    })
+      let email = document.getElementsByClassName("email")[0]
+      let pass = document.getElementsByClassName("password")[0]
+      const login = async()=>{
+        let emailcfm = validator.isEmail(email.value);
+        let pass = document.getElementsByClassName("password")[0].value
+  
+        if(!emailcfm || !pass){
+          if(!emailcfm){
+            document.getElementsByClassName(
+              "emailerrormessage"
+            )[0].style.display = "flex";
+            setTimeout(() => {
+              document.getElementsByClassName(
+                "emailerrormessage"
+              )[0].style.display = "none";
+            }, 2000);
+          }
+          if(!pass){
+            document.getElementsByClassName("passworderrormessage")[0].style.display = "flex";
+            setTimeout(() => {
+              document.getElementsByClassName("passworderrormessage")[0].style.display = "none";
+            }, 2000);
+            return ;
+          }
+  
+        }else{
+        const request = await axios.post("/api/v1/login" , {
+          email : email.value,
+          password : pass
+        }).then(()=>{
+          window.location.assign("/")
+        }).catch((error)=>{
+         document.getElementsByClassName("emsp")[0]
+         .innerHTML = `${error.response.data.messsage} Try <a href="#">Forget password</a>`
+         document.getElementsByClassName("dplctac")[0].style.display="flex"
+        })
+        return request
+      }
+      }
+    </script>
+</html>

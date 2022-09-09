@@ -1,0 +1,65 @@
+<div class="Login">
+   
+    <div class="login-sd-lft">
+      <h3>Login</h3>
+      <div class="login-required-close" onclick="reloginclose()">
+        <span class="material-symbols-outlined">
+          close
+        </span>
+      </div>
+      <div class="google-auth-container">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/800px-Google_%22G%22_Logo.svg.png"
+          width="30px"
+          alt=""
+        />
+        <p>Signin with Google</p>
+      </div>
+      <div class="or-container">
+        <div></div>
+        <span>or</span>
+        <div></div>
+      </div>
+      <div class="errormessage dplctac">
+        <div class="errorcolor"></div>
+        <p class="emsp">Incoorec , Try <a href="/signup">Signup</a></p>
+    </div>
+      <form class="signupform">
+        <label for="Email">Email</label>
+        <div class="formdiv"> 
+          <span class="material-symbols-outlined emaillogo">
+            mail
+          </span>
+          <input type="text" placeholder="Email" class="email"/>
+        </div>
+        <div class="emailerrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Required Valid Email</span>
+        </div>
+        <label for="Password">Password</label>
+        <div class="formdiv"> 
+          <span class="material-symbols-outlined emaillogo">
+            lock
+          </span>
+          <input type="password" placeholder="Password" class="password"/>
+        </div>
+        <div class="passworderrormessage errormessage">
+          <span class="material-symbols-outlined"> error </span>
+          <span>Empty field</span>
+        </div>
+        <div class="forget">
+          <span>Forget password ?</span>
+        </div>
+        <div class="formbtn-container">
+        <button onclick="login()">Login</button>
+        </div>
+      </form>
+      <!-- <div class="or-container">
+        <div></div>
+        <span>or</span>
+        <div></div>
+      </div> -->
+    </div>
+    <a href="/signup"><button class="sp-nvit-btn">Create an account</button></a>
+    </div> 
+  </div>

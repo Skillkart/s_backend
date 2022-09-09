@@ -1,0 +1,27 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="demo/democss.css" defer />
+    <script>
+      const ROOM_ID = "<%= roomId %>";
+    </script>
+    <script
+      defer
+      src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"
+    ></script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="demo/demoscript.js" defer></script>
+    <title>Document</title>
+  </head>
+  <body class="rmlcal">
+    <div id="videogrid" class="videogrid">
+    </div>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<script defer>
+  const user_photo = "<%= user.photo %>";
+</script>
+
+<div class="header">
+  <div class="header-left">
+    <div class="headerburger" onclick="burger()">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="mobilementor">
+      <a href="/"><img src="image/logo1.jpeg" height="50" alt="" /></a>
+      <div class="sitename">Skillkart.app</div>
+      <div class="mobile-headerlist">
+        <div class="mobileheaderclose" onclick="burgerclose()">
+          <span class="material-symbols-outlined"> close </span>
+        </div>
+        <div>
+          <a href="/">Home</a>
+        </div>
+        <div>
+          Knowledgecenter
+          <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </div>
+        <div>Assessment</div>
+        <div>Programs</div>
+      </div>
+    </div>
+    <a href="/"><img src="image/logo2.png" height="auto" alt="" width="140px"/></a>
+    <div class="headerlist">
+      <div class="iconcontainer">
+        <div class="icons">
+          Knowledgecenter
+          <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </div>
+        <div class="knwdropdown">
+          <div onclick="blog()">Blog</div>
+          <div>Podcast</div>
+          <div>E-Books</div>
+          <div>Online resource</div>
+        </div>
+      </div>
+      <div class="iconcontainer">
+        <div class="icons">
+          Assessment
+          <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </div>
+        <div class="knwdropdown">
+          <div onclick="technical()">Technical skill analysis</div>
+          <div onclick="behaviour()">Behaviour skill analysis</div>
+          <div onclick="resume()">Resume analysis</div>
+        </div>
+      </div>
+      <div class="iconcontainer">
+        <div class="icons">
+          Programs
+          <span class="material-symbols-outlined"> arrow_drop_down </span>
+        </div>
+        <div class="knwdropdown">
+          <div>B.Tech</div>
+          <div>MBA</div>
+          <div>Web 3.0</div>
+          <div>Other Technical field</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <% if(!user) {%>
+    <a href="/mentor"><div class="mentorship">Become Mentor</div></a>
+    <% } %>
+    <div>
+      <img src="" alt="" />
+    </div>
+    <% if (user) { %>
+    <div class="user-profile" onclick="nav()"><%= user.Name %></div>
+    <%} else { %>
+    <a href="/login"><div class="loginheader">Login/Signup</div></a>
+    <% } %>
+  </div>
+</div>
+<script></script>

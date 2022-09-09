@@ -1,0 +1,62 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer>
+      const user_photo = "<%= user.photo %>";
+      const user = "<%= user.Name %>";
+      const userrole = "<%= user.role %>";
+      const useremail = "<%= user.Email %>";
+      const user_id = "<%= user._id %>";
+    </script>
+    <title>Skillkart | Profile</title>
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+    />
+    <link rel="stylesheet" href="../css/userprofile.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="/profile/userprofile.js" defer></script>
+  </head>
+  <body>
+    <div class="profileheader">
+      <div class="profileheadertitle"></div>
+      <div class="profiler">Logout</div>
+    </div>
+    <div class="profilecontainer">
+      <div class="profilecontainerheader">
+        <a href="/dashboard"
+          ><div class="profilecontainericon">
+            <span class="material-symbols-outlined"> dashboard </span>
+            Dashboard
+          </div>
+        </a>
+        <a href="/profile/profile"
+          ><div class="profilecontainericon active">
+            <span class="material-symbols-outlined"> person</span>
+            Profile
+          </div>
+        </a>
+        <div class="profilecontainericon">
+          <span class="material-symbols-outlined"> receipt_long </span>
+          Transcation
+        </div>
+        <div class="profilecontainericon">
+          <span class="material-symbols-outlined"> receipt_long </span>
+          Your Menties
+        </div>
+        <div class="profilecontainericon" onclick="logout()">
+          <span class="material-symbols-outlined"> logout </span>
+          Logout
+        </div>
+      </div>
+      <div class="profilecontainerdashboard">
+        <form class="profiledashboardform"></form>
+      </div>
+    </div>
+  </body>
+</html>

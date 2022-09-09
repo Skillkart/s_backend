@@ -1,0 +1,81 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <script>
+      const user = "<%= user.Name %>";
+    </script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+    />
+    <script src="../script/header.js" defer></script>
+  </head>
+  <body>
+    <%- include("../Header") %>
+    <div class="main-blog-container">
+      <div class="main-blog-related">
+        <div class="main-blog-related-tile">Related</div>
+        <p>How to prepare for Campus Interview</p>
+        <p>How to prepare for Campus Interview</p>
+      </div>
+      <div class="main-blog">
+        <div class="main-blog-heading">
+          How to prepare for Campus Interview ?
+        </div>
+        <div class="main-blog-image">
+          <img
+            src="https://images.pexels.com/photos/5668858/pexels-photo-5668858.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+            alt=""
+          />
+        </div>
+        <div class="main-blog-paragraph">
+          For any student’s career objective campus placement is a very
+          important event, It is the first step in one’s professional life
+          ahead. Campus placement becomes important because it opens the path of
+          better professional career. campus placement generally has 5 important
+          stages.
+
+          <ul>
+            <li>Skill Assessment test</li>
+            <li>Technical test</li>
+            <li>Group Discussion</li>
+            <li>HR Interview Round</li>
+            <li>Technical Interview Test</li>
+          </ul>
+          <p>
+            Each above discussed stage holds the relevance to assess technical,
+            behavioral, intelligence, leadership and other skill assessment.
+          </p>
+          <p>
+            In campus, a student gives fair amount of time to prepare for the
+            technical of the domain and subjects but may misses out the proper
+            direction and preparation to learn the art of handling the
+            interviews.
+          </p>
+          <p>
+            Skillkart helps students to learn the basics and tricks of cracking
+            the interview from Industry experts only, our mock sessions help
+            students to learn more about the process, what an interviewer looks
+            in a candidate, how to handle tricky questions and many more.
+          </p>
+        </div>
+        <div class="satification">
+          Was this helpful?
+          <div class="mood">
+            <span class="material-symbols-outlined mood-icons">
+              sentiment_dissatisfied
+            </span>
+            <span class="material-symbols-outlined mood-icons">
+              mood
+              </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../../Footer/MainFooter') -%>
+  </body>
+</html>

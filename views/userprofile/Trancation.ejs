@@ -1,0 +1,110 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <script defer>
+      const user = "<%= user.Name %>";
+      const userrole = "<%= user.role %>";
+      const useremail = "<%= user.Email %>";
+      const user_id ="<%= user._id %>"
+    </script>
+    <title>Skillkart | Profile</title>
+    <script src="../script/userprofile.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"
+    />
+    <link rel="stylesheet" href="../css/userprofile.css" />
+    <link rel="stylesheet" href="../css/celender.css" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="../script/celender.js" defer></script>
+  </head>
+  <body>
+    <div class="profileheader">
+      <div class="profileheadertitle">
+        <span class="material-symbols-outlined console"> support </span>
+        Console
+        <!-- <img src="image/logo.jpeg" alt="" width="50px" /> -->
+      </div>
+      <div class="profiler">
+        <div class="profiler-logo">J</div>
+        <div class="profilername">Jagdeep Singh</div>
+        <div class="dropdown">
+          <span class="material-symbols-outlined"> expand_more </span>
+        </div>
+      </div>
+    </div>
+    <div class="profilecontainer">
+      <div class="profilecontainerheader">
+        <div class="profilecontainericon">
+          <span class="material-symbols-outlined"> dashboard </span>
+          Dashboard
+        </div>
+        <div class="profilecontainericon">
+          <span class="material-symbols-outlined"> person</span>
+          Profile
+        </div>
+        <div class="profilecontainericon  active">
+          <span class="material-symbols-outlined"> receipt_long </span>
+          Transcation
+        </div>
+        <div class="profilecontainericon" onclick="logout()">
+          <span class="material-symbols-outlined"> logout </span>
+          Logout
+        </div>
+      </div>
+      <div class="profilecontainerdashboard">
+        <div class="profilecontaineractivity">
+          <div class="profilecontaineractivity-title">Activity</div>
+          <div class="profilecontainer-activity-container">
+            <div class="activity-items">
+              <div class="rating">
+                <span class="material-symbols-outlined"> star </span>
+              </div>
+              <div class="rating-rate">4.2</div>
+              <div class="rating-title">Average rating</div>
+            </div>
+            <div class="activity-items">
+              <div class="rating">
+                <span class="material-symbols-outlined"> star </span>
+              </div>
+              <div class="rating-rate">4.2</div>
+              <div class="rating-title">Average rating</div>
+            </div>
+            <div class="activity-items">
+              <div class="rating">
+                <span class="material-symbols-outlined"> star </span>
+              </div>
+              <div class="rating-rate">4.2</div>
+              <div class="rating-title">Average rating</div>
+            </div>
+          </div>
+        </div>
+        <div class="profilereviews">
+          <div class="profilereviews-tile">Parties</div>
+          <div class="reviewscontainer">
+            <div class="review">
+              <div class="reviewer">
+                <img
+                  src="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg"
+                  alt=""
+                />
+                <div class="profiler">
+                  <div class="profilername">Jagdeep Singh</div>
+                  <div class="profilerating">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <%- include('celender') %>
+      </div>
+    </div>
+  </body>
+</html>
