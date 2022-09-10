@@ -617,7 +617,8 @@ exports.mentorfeedback = async (req, res) => {
     userid,
   } = req.body;
   const user = await Recuirtment.findById(userid);
-  user.pendingfeedback = false;
+  console.log(user)
+  user?.pendingfeedback = false;
   const request = await Feedback.create({
     EDB,
     CS,
