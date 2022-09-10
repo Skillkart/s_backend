@@ -20,6 +20,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 
+
 dotenv.config({ path: "./config.env" });
 
 app.set("view engine", "ejs");

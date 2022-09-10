@@ -42,7 +42,7 @@ router.get("/getmentors", auth.getmentors);
 router.post("/bookaslot", auth.bookaslot);
 router.post("/Mailer", roomcrt.mailer);
 
-
+router.post("/experiment", auth.demo);
 
 
 router.get("/adminmentor", mentor);

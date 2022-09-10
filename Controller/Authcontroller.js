@@ -181,25 +181,25 @@ exports.tknvrfy = async (req, res) => {
   const user = await User.findOne({
     Email: email,
   });
- 
+
   if (user.passwordResetToken) {
     if (user.passwordResetToken === tkn) {
       user.Emailverified = true;
       await user.save();
       res.status(201).json({
         status: "success",
-        message:"done"
+        message: "done",
       });
     } else {
       res.status(401).json({
         status: "failed",
-        message: "Incorrect Code"
+        message: "Incorrect Code",
       });
     }
   } else {
     res.status(400).json({
       status: "fail",
-      message: "Verification code expire"
+      message: "Verification code expire",
     });
   }
 };
@@ -612,6 +612,8 @@ exports.mentorfeedback = async (req, res) => {
     TSI,
     SU,
     OHI,
+    tread,
+    studentid,
     userid,
   } = req.body;
   const user = await Recuirtment.findById(userid);
@@ -635,6 +637,8 @@ exports.mentorfeedback = async (req, res) => {
     TSI,
     SU,
     OHI,
+    tread,
+    studentid,
     userid,
   });
   await user.save();
@@ -656,7 +660,6 @@ exports.updateroomdetail = async (req, res) => {
   });
 
   if (request) {
-   
     request.course_index = request.course_index + 1;
     request.Course_cat = cat[request.course_index + 1];
     request.roomid = "";
@@ -759,14 +762,14 @@ const searching = async (
     } else {
       if (recuiter[index].busydate.length) {
         const filter = recuiter[index].busydate.filter(
-          (state) => state.date == `${dnow} ${mnow+1} ${ynow}`
+          (state) => state.date == `${dnow} ${mnow + 1} ${ynow}`
         );
         if (filter.length) {
           const shift = recuiter[index].busydate[filter[0].index].time.shift();
           await recuiter[index].save();
           return {
             time: shift,
-            date: `${dnow} ${mnow+1} ${ynow}`,
+            date: `${dnow} ${mnow + 1} ${ynow}`,
             recuiter: recuiter[index],
           };
         } else {
@@ -827,7 +830,8 @@ const randomstringge = async () => {
   }
 };
 const rstring = (size = 8) => {
-  const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   let result = "";
   const charactersLength = characters.length;
@@ -878,6 +882,7 @@ const Creatingroom = async (
     date: slot.date,
     course: course,
     price: price,
+    status: status,
   });
   const url = `https://skillkart.app/room/${requesteddata.roomid}`;
   await new RoomEmail(username, email, slot.time, slot.date, url).send();
@@ -897,33 +902,51 @@ const Creatingroom = async (
 exports.bookaslot = async (req, res) => {
   let index = 0;
   const recuiter = await Recuirtment.find();
-  const { user_id, course, price, username, email, date } = req.body;
+  const { user_id, course, price, username, email, date, status } = req.body;
 
   const d = new Date();
   let dnow = d.getDate();
   let mnow = d.getMonth();
   let ynow = d.getFullYear();
 
-  const slot = await searching(
-    d,
-    dnow,
-    mnow,
-    ynow,
-    recuiter,
-    user_id,
-    course,
-    price,
-    username,
-    email,
-    date,
-    index
-  );
-  if (slot) {
-    await Creatingroom(slot, user_id, username, email, course, price, res);
-  } else {
-    res.status(400).json({
-      status: "Failed",
-      message: "No slot available",
+  if (status == "Failed") {
+    const requesteddata = await RoomModel.create({
+      user: user_id,
+      user_name: username,
+      course: course,
+      price: price,
+      status: status,
     });
+    res.status(400).json({
+      status: "Fail",
+    });
+  } else {
+    const slot = await searching(
+      d,
+      dnow,
+      mnow,
+      ynow,
+      recuiter,
+      user_id,
+      course,
+      price,
+      username,
+      email,
+      date,
+      index
+    );
+    if (slot) {
+      await Creatingroom(slot, user_id, username, email, course, price, res);
+    } else {
+      res.status(400).json({
+        status: "Failed",
+        message: "No slot available",
+      });
+    }
   }
+};
+
+exports.demo = async (req, res) => {
+  const cr = await bcrypt.hash("itsadminnotuser", 10);
+  console.log(cr);
 };

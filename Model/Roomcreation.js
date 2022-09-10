@@ -16,6 +16,7 @@ const RoomSchema = new mongoose.Schema({
   course_index: Number,
   Course_cat: String,
   pendingfeedback: { type: Boolean, default: false },
+  status:String, 
   createdAt: {
     type: Date,
     default: Date.now(),

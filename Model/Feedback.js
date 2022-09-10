@@ -21,6 +21,8 @@ const FeedbackModel = new mongoose.Schema({
   OHI: String,
   IOT: String,
   userid:String,
+  studentid:String,
+  tread:String,
   createdAt: {
     type: Date,
     default: Date.now(),
