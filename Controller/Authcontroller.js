@@ -15,6 +15,8 @@ const { deleteMany } = require("../Model/Roommsg");
 const PendingModel = require("../Model/Pendingfeedback");
 const Razorpay = require("razorpay");
 const Waitinglist = require("../Model/Waitinglis");
+const Subscribe = require("../Model/Subscribe");
+const { timingSafeEqual } = require("crypto");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -181,25 +183,25 @@ exports.tknvrfy = async (req, res) => {
   const user = await User.findOne({
     Email: email,
   });
- 
+
   if (user.passwordResetToken) {
     if (user.passwordResetToken === tkn) {
       user.Emailverified = true;
       await user.save();
       res.status(201).json({
         status: "success",
-        message:"done"
+        message: "done",
       });
     } else {
       res.status(401).json({
         status: "failed",
-        message: "Incorrect Code"
+        message: "Incorrect Code",
       });
     }
   } else {
     res.status(400).json({
       status: "fail",
-      message: "Verification code expire"
+      message: "Verification code expire",
     });
   }
 };
@@ -649,14 +651,13 @@ function randomString(size = 8) {
 }
 
 exports.updateroomdetail = async (req, res) => {
-  let cat = ["GD", "Technical", "Technical", "HR", "HR"];
+  let cat = ["HR", "HR", "Technical", "Technical", "Technical"];
   const { roomid } = req.body;
   const request = await RoomModel.findOne({
     roomid: roomid,
   });
 
   if (request) {
-   
     request.course_index = request.course_index + 1;
     request.Course_cat = cat[request.course_index + 1];
     request.roomid = "";
@@ -726,6 +727,38 @@ exports.getmentors = async (req, res) => {
   });
 };
 
+const gtime = (item) => {
+  const d = new Date();
+  const utc = d.getTime() + d.getTimezoneOffset() * 60000;
+  const nd = new Date(utc + 3600000 * 5.5);
+  const hour = nd.getHours();
+  const miu = nd.getMinutes();
+
+  function gettime() {
+    if (hour > 12) {
+      return { time: hour - 12, zone: "PM" };
+    } else {
+      return {
+        time: hour,
+        zone: "AM",
+      };
+    }
+  }
+
+  let time = gettime();
+  const filter = item.filter(
+    (state) =>
+      state.split(" ")[1] == time.zone &&
+      state.split(" ")[0].split(":")[0] >= time.time
+  );
+  if (filter.length) {
+    const index = item.indexOf(filter[0]);
+    item.splice(index, 1);
+    return filter[0];
+  } else {
+    return false;
+  }
+};
 const searching = async (
   d,
   dnow,
@@ -759,16 +792,34 @@ const searching = async (
     } else {
       if (recuiter[index].busydate.length) {
         const filter = recuiter[index].busydate.filter(
-          (state) => state.date == `${dnow} ${mnow+1} ${ynow}`
+          (state) => state.date == `${dnow} ${mnow + 1} ${ynow}`
         );
         if (filter.length) {
-          const shift = recuiter[index].busydate[filter[0].index].time.shift();
-          await recuiter[index].save();
-          return {
-            time: shift,
-            date: `${dnow} ${mnow+1} ${ynow}`,
-            recuiter: recuiter[index],
-          };
+          const time = gtime(recuiter[index].busydate[filter[0].index].time);
+          if (!time) {
+            return searching(
+              d,
+              dnow,
+              mnow,
+              ynow,
+              recuiter,
+              user_id,
+              course,
+              price,
+              username,
+              email,
+              date,
+              index + 1
+            );
+          } else {
+            // const shift = recuiter[index].busydate[filter[0].index].time.shift();
+            await recuiter[index].save();
+            return {
+              time: time,
+              date: `${dnow} ${mnow + 1} ${ynow}`,
+              recuiter: recuiter[index],
+            };
+          }
         } else {
           return searching(
             d,
@@ -827,7 +878,8 @@ const randomstringge = async () => {
   }
 };
 const rstring = (size = 8) => {
-  const characters ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   let result = "";
   const charactersLength = characters.length;
@@ -861,6 +913,7 @@ const Creatingroom = async (
   email,
   course,
   price,
+  status,
   res
 ) => {
   let cat = ["GD", "Technical", "Technical", "HR", "HR"];
@@ -878,6 +931,7 @@ const Creatingroom = async (
     date: slot.date,
     course: course,
     price: price,
+    status: status,
   });
   const url = `https://skillkart.app/room/${requesteddata.roomid}`;
   await new RoomEmail(username, email, slot.time, slot.date, url).send();
@@ -897,7 +951,7 @@ const Creatingroom = async (
 exports.bookaslot = async (req, res) => {
   let index = 0;
   const recuiter = await Recuirtment.find();
-  const { user_id, course, price, username, email, date } = req.body;
+  const { user_id, course, price, username, email, date, status } = req.body;
 
   const d = new Date();
   let dnow = d.getDate();
@@ -919,7 +973,16 @@ exports.bookaslot = async (req, res) => {
     index
   );
   if (slot) {
-    await Creatingroom(slot, user_id, username, email, course, price, res);
+    await Creatingroom(
+      slot,
+      user_id,
+      username,
+      email,
+      course,
+      price,
+      status,
+      res
+    );
   } else {
     res.status(400).json({
       status: "Failed",
@@ -928,8 +991,49 @@ exports.bookaslot = async (req, res) => {
   }
 };
 
+exports.demo = async (req, res) => {
+  const cr = await bcrypt.hash("itsadminnotuser", 10);
+  console.log(cr);
+};
 
-exports.demo =async(req ,res)=>{
-  const cr=await bcrypt.hash("itsadminnotuser" ,10)
-  console.log(cr)
-}
+exports.subscribe = async (req, res) => {
+  const { email } = req.body;
+  const s = await Subscribe.findOne({
+    email: email,
+  });
+  if (s) {
+    res.status(401).json({
+      status: "Failed",
+      message: "Already subscribed",
+    });
+  } else {
+    const sc = await Subscribe.create({
+      email: email,
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Thank for your subscription",
+    });
+  }
+};
+
+exports.refer = async (req, res) => {
+  const { email } = req.body;
+};
+
+exports.transfail = async (req, res) => {
+  const { user_id, course, price, username, email, date, status } = req.body;
+
+  const requesteddata = await RoomModel.create({
+    user: user_id,
+    user_name: username,
+    course: course,
+    price: price,
+    status: status,
+  });
+  res.status(400).json({
+    status:"failed",
+    message : "Transcation failed"
+  })
+};

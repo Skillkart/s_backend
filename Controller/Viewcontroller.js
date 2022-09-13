@@ -6,7 +6,7 @@ exports.sample=(req , res)=>{
 }
 
 exports.welcome =(req , res)=>{
-  res.render("/")
+  res.render("Popup/WelcomUser")
 }
 
 exports.email = (req, res) => {

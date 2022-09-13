@@ -13,7 +13,8 @@ const {
   feedback,
   transcation,
   profiledetail,
-  sample
+  sample,
+  welcome
 } = require("../../Controller/Viewcontroller");
 
 const auth = require("../../Controller/Authcontroller");
@@ -32,6 +33,8 @@ viewrouter.get("/Forgetpassword",  auth.isLoggedIn , forget);
 viewrouter.get("/room/Feedback/:id",  auth.isLoggedIn , feedback);
 viewrouter.get("/profile/transcation",  auth.isLoggedIn , transcation);
 viewrouter.get("/profile/profile",  auth.isLoggedIn , profiledetail);
+viewrouter.get("/welcome",  auth.isLoggedIn , welcome);
+
 viewrouter.get("/blog/Important%20Tips%20to%20prepare%20campus%20placement",  auth.isLoggedIn , blog);
 
 

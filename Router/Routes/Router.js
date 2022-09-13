@@ -41,8 +41,10 @@ router.post("/handlewaitinglist", auth.waitinglist);
 router.get("/getmentors", auth.getmentors);
 router.post("/bookaslot", auth.bookaslot);
 router.post("/Mailer", roomcrt.mailer);
-
+router.post("/subscribe", auth.subscribe);
+router.post("/refer", auth.refer);
 router.post("/experiment", auth.demo);
+router.post("/handletranctionfail", auth.transfail);
 
 
 router.get("/adminmentor", mentor);

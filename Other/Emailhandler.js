@@ -21,7 +21,7 @@ module.exports = class Email {
   async send() {
     console.log(this.verifycode);
     const html = await ejs.renderFile(
-      `${__dirname}/../views/Popup/VerifyEmail.ejs`,
+      `${__dirname}/../views/Popup/WelcomUser.ejs`,
       {
         verifycode: this.verifycode,
         username: this.username,
@@ -31,7 +31,7 @@ module.exports = class Email {
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "[skillkart verification code]",
+      subject: "Welcome To Skillkart Family",
       html,
       text: htmlToText.compile(html),
     };

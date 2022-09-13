@@ -1,3 +1,4 @@
+const PendingModel = require("../Model/Pendingfeedback");
 const Recuirtment = require("../Model/recuirter");
 const RoomModel = require("../Model/Roomcreation");
 const RoomMessModel = require("../Model/Roommsg");
@@ -19,6 +20,7 @@ exports.mentor = async (req, res) => {
   const request = await Recuirtment.find();
   const room = await RoomModel.find();
   const user = await User.find();
+  const pendingfee = await PendingModel.find()
   const transcations = await Transcation.find(
     {},
     {
@@ -33,5 +35,6 @@ exports.mentor = async (req, res) => {
     user: user,
     transcations: transcations,
     room: room,
+    pendingfee : pendingfee
   });
 };
