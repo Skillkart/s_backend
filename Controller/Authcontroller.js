@@ -659,13 +659,25 @@ exports.updateroomdetail = async (req, res) => {
   });
 
   if (request) {
-    request.course_index = request.course_index + 1;
-    request.Course_cat = cat[request.course_index + 1];
-    request.roomid = "";
-    await request.save();
-    res.status(200).json({
-      status: "success",
-    });
+    if (request.course_index == 5) {
+      request.expired = true;
+      request.roomid = "";
+      request.date = "";
+      await request.save();
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      request.course_index = request.course_index + 1;
+      request.Course_cat = cat[request.course_index + 1];
+      request.roomid = "";
+      request.date = "";
+
+      await request.save();
+      res.status(200).json({
+        status: "success",
+      });
+    }
   }
   res.status(400).json({
     status: "Failed",
@@ -725,31 +737,32 @@ const dispatchdates = (f, array) => {
 exports.getmentors = async (req, res) => {
   const { user_id } = req.body;
 
-  // const get = await RoomModel.findOne({
-  //   user: user_id,
-  //   status: "success",
-  // });
+  const get = await RoomModel.findOne({
+    user: user_id,
+    status: "success",
+  });
+console.log(get)
+  console.log(get);
+  if (get.course_index > 1) {
+    const request = await Recuirtment.findOne({
+      _id: get.recuiter,
+    });
+    let d = new Date();
+    let m = d.getMonth();
+    let date = d.getDate();
+    let array = [];
 
-  // if (get.course_index != 1) {
-  //   const request = await Recuirtment.findOne({
-  //     _id: get.recuiter,
-  //   });
-  //   let d = new Date();
-  //   let m = d.getMonth();
-  //   let date = d.getDate();
-  //   let array = [];
+    let f = request.busydate.filter(
+      (state) =>
+        state.date.split(" ")[1] >= m + 1 && state.date.split(" ")[0] >= date
+    );
+    dispatchdates(f, array);
 
-  //   let f = request.busydate.filter(
-  //     (state) =>
-  //       state.date.split(" ")[1] >= m + 1 && state.date.split(" ")[0] >= date
-  //   );
-  //   dispatchdates(f, array);
-
-  //   res.status(200).json({
-  //     status: "success",
-  //     meeting: array,
-  //   });
-  // } else {
+    res.status(200).json({
+      status: "success",
+      meeting: array,
+    });
+  } else {
     const request = await Recuirtment.find();
     let d = new Date();
     let m = d.getMonth();
@@ -768,7 +781,7 @@ exports.getmentors = async (req, res) => {
       meeting: array,
     });
   }
-// };
+};
 
 const gtime = (item) => {
   const d = new Date();
@@ -1158,6 +1171,7 @@ const searchingslot = async (date, time, recuiter, index) => {
     const filter = recuiter[index].busydate.filter(
       (state) => state.date == date
     );
+    console.log(filter);
     if (filter.length) {
       const i = filter[0].time.includes(time);
       if (i) {
@@ -1171,6 +1185,8 @@ const searchingslot = async (date, time, recuiter, index) => {
           date: date,
           recuiter: recuiter[index],
         };
+      } else {
+        return searchingslot(date, time, recuiter, index + 1);
       }
     } else {
       return searchingslot(date, time, recuiter, index + 1);

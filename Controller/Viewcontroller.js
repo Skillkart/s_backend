@@ -10,7 +10,7 @@ exports.welcome =(req , res)=>{
 }
 
 exports.email = (req, res) => {
-  res.render("Popup/VerifyEmail");
+  res.render("Popup/purchase");
 };
 
 exports.room = (req, res) => {
