@@ -62,7 +62,8 @@ exports.signup = async (req, res) => {
 
     createtoken(newUser, 201, res, req);
 
-    await new Email(verifytoken, username, email).send();
+    await new Email(verifytoken, username, email, "VerifyEmail").send();
+    await new Email(verifytoken, username, email, "VerifyEmail").welcomesend();
 
     setTimeout(() => {
       newUser.passwordResetToken = "";
@@ -711,21 +712,63 @@ exports.waitinglist = async (req, res) => {
   });
 };
 
-exports.getmentors = async (req, res) => {
-  const request = await Recuirtment.find();
-  let array = [];
-  for (let i = 0; i < request.length; i++) {
-    let f = request[i].busydate.filter(
-      (state) => state.date.split(" ")[1] == "September"
-    );
-
-    array.push(f[0].date);
+const dispatchdates = (f, array) => {
+  for (let j = 0; j < f.length; j++) {
+    if (f[j].time.length) {
+      array.push(f[j]);
+    } else {
+      continue;
+    }
   }
-  res.status(200).json({
-    status: "success",
-    meeting: array,
-  });
+  return array;
 };
+exports.getmentors = async (req, res) => {
+  const { user_id } = req.body;
+
+  // const get = await RoomModel.findOne({
+  //   user: user_id,
+  //   status: "success",
+  // });
+
+  // if (get.course_index != 1) {
+  //   const request = await Recuirtment.findOne({
+  //     _id: get.recuiter,
+  //   });
+  //   let d = new Date();
+  //   let m = d.getMonth();
+  //   let date = d.getDate();
+  //   let array = [];
+
+  //   let f = request.busydate.filter(
+  //     (state) =>
+  //       state.date.split(" ")[1] >= m + 1 && state.date.split(" ")[0] >= date
+  //   );
+  //   dispatchdates(f, array);
+
+  //   res.status(200).json({
+  //     status: "success",
+  //     meeting: array,
+  //   });
+  // } else {
+    const request = await Recuirtment.find();
+    let d = new Date();
+    let m = d.getMonth();
+    let date = d.getDate();
+    let array = [];
+    for (let i = 0; i < request.length; i++) {
+      let f = request[i].busydate.filter(
+        (state) =>
+          state.date.split(" ")[1] >= m + 1 && state.date.split(" ")[0] >= date
+      );
+
+      dispatchdates(f, array);
+    }
+    res.status(200).json({
+      status: "success",
+      meeting: array,
+    });
+  }
+// };
 
 const gtime = (item) => {
   const d = new Date();
@@ -916,7 +959,7 @@ const Creatingroom = async (
   status,
   res
 ) => {
-  let cat = ["GD", "Technical", "Technical", "HR", "HR"];
+  let cat = ["Technical", "Technical", "Technical", "HR", "HR"];
   const string = await rstringe();
   const requesteddata = await RoomModel.create({
     user: user_id,
@@ -934,62 +977,62 @@ const Creatingroom = async (
     status: status,
   });
   const url = `https://skillkart.app/room/${requesteddata.roomid}`;
-  await new RoomEmail(username, email, slot.time, slot.date, url).send();
-  await new RoomEmail(
-    slot.recuiter.Name,
-    slot.recuiter.Email,
-    slot.time,
-    slot.date,
-    url
-  ).send();
+  // await new RoomEmail(username, email, slot.time, slot.date, url).send();
+  // await new RoomEmail(
+  //   slot.recuiter.Name,
+  //   slot.recuiter.Email,
+  //   slot.time,
+  //   slot.date,
+  //   url
+  // ).send();
   res.status(200).json({
     status: "success",
     data: requesteddata,
   });
 };
 
-exports.bookaslot = async (req, res) => {
-  let index = 0;
-  const recuiter = await Recuirtment.find();
-  const { user_id, course, price, username, email, date, status } = req.body;
+// exports.bookaslot = async (req, res) => {
+//   let index = 0;
+//   const recuiter = await Recuirtment.find();
+//   const { user_id, course, price, username, email, date, status } = req.body;
 
-  const d = new Date();
-  let dnow = d.getDate();
-  let mnow = d.getMonth();
-  let ynow = d.getFullYear();
+//   const d = new Date();
+//   let dnow = d.getDate();
+//   let mnow = d.getMonth();
+//   let ynow = d.getFullYear();
 
-  const slot = await searching(
-    d,
-    dnow,
-    mnow,
-    ynow,
-    recuiter,
-    user_id,
-    course,
-    price,
-    username,
-    email,
-    date,
-    index
-  );
-  if (slot) {
-    await Creatingroom(
-      slot,
-      user_id,
-      username,
-      email,
-      course,
-      price,
-      status,
-      res
-    );
-  } else {
-    res.status(400).json({
-      status: "Failed",
-      message: "No slot available",
-    });
-  }
-};
+//   const slot = await searching(
+//     d,
+//     dnow,
+//     mnow,
+//     ynow,
+//     recuiter,
+//     user_id,
+//     course,
+//     price,
+//     username,
+//     email,
+//     date,
+//     index
+//   );
+//   if (slot) {
+//     await Creatingroom(
+//       slot,
+//       user_id,
+//       username,
+//       email,
+//       course,
+//       price,
+//       status,
+//       res
+//     );
+//   } else {
+//     res.status(400).json({
+//       status: "Failed",
+//       message: "No slot available",
+//     });
+//   }
+// };
 
 exports.demo = async (req, res) => {
   const cr = await bcrypt.hash("itsadminnotuser", 10);
@@ -1033,7 +1076,152 @@ exports.transfail = async (req, res) => {
     status: status,
   });
   res.status(400).json({
-    status:"failed",
-    message : "Transcation failed"
-  })
+    status: "failed",
+    message: "Transcation failed",
+  });
+};
+
+exports.enteruser = async (req, res) => {
+  const data = [
+    {
+      name: "Hs",
+      email: "hs2016886@gmail.com",
+      password: "1moretime",
+      phone: "919580225683",
+    },
+    {
+      name: "Lucknow",
+      email: "2000520510065@ietlucknow.ac.in",
+      password: "1moretime",
+      phone: "919773670198",
+    },
+  ];
+
+  for (let i = 0; i < data.length; i++) {
+    const cr = await bcrypt.hash(data[i].password, 10);
+    const create = await User.create({
+      Name: data[i].name,
+      Email: data[i].email,
+      phone: data[i].phone,
+      password: cr,
+    });
+  }
+  res.status(200).json({
+    status: "done",
+  });
+};
+
+exports.purchase = async (req, res) => {
+  const { user_id, course, price, username, email, date, status } = req.body;
+  let cat = ["Technical", "Technical", "Technical", "HR", "HR"];
+
+  if (status == "Failed") {
+    const requesteddata = await RoomModel.create({
+      user: user_id,
+      user_name: username,
+      course: course,
+      price: price,
+      status: status,
+    });
+    res.status(400).json({
+      status: "failed",
+      message: "Transcation failed",
+    });
+  } else {
+    const requesteddata = await RoomModel.create({
+      user: user_id,
+      user_name: username,
+      course: course,
+      course_index: 1,
+      Course_cat: "Technical",
+      price: price,
+      status: status,
+      roomid: "",
+      time: "",
+      date: "",
+    });
+    res.status(200).json({
+      status: "Success",
+      message: "successful",
+    });
+  }
+};
+
+const getindex = (t, time) => {
+  const i = t.indexOf(time);
+  t.splice(i, 1);
+  return true;
+};
+
+const searchingslot = async (date, time, recuiter, index) => {
+  if (index < recuiter.length) {
+    const filter = recuiter[index].busydate.filter(
+      (state) => state.date == date
+    );
+    if (filter.length) {
+      const i = filter[0].time.includes(time);
+      if (i) {
+        const timef = getindex(
+          recuiter[index].busydate[filter[0].index].time,
+          time
+        );
+        await recuiter[index].save();
+        return {
+          time: time,
+          date: date,
+          recuiter: recuiter[index],
+        };
+      }
+    } else {
+      return searchingslot(date, time, recuiter, index + 1);
+    }
+  } else {
+    return false;
+  }
+};
+exports.bookaslot = async (req, res) => {
+  let index = 0;
+  const { time, user_id, date, email } = req.body;
+
+  const recuiter = await Recuirtment.find();
+  const slot = await searchingslot(date, time, recuiter, index);
+  if (slot) {
+    const string = await rstringe();
+
+    const request = await RoomModel.findOne({
+      user: user_id,
+      status: "success",
+    });
+    request.time = slot.time;
+    request.date = slot.date;
+    request.recuiter = slot.recuiter._id;
+    request.recuiter_name = slot.recuiter.Name;
+    request.roomid = string;
+
+    await request.save();
+    const url = `https://skillkart.app/room/${string}`;
+
+    await new RoomEmail(
+      request.user_name,
+      email,
+      slot.time,
+      slot.date,
+      url
+    ).send();
+    await new RoomEmail(
+      slot.recuiter.Name,
+      slot.recuiter.Email,
+      slot.time,
+      slot.date,
+      url
+    ).send();
+    res.status(200).json({
+      status: "success",
+      data: request,
+    });
+  } else {
+    res.status(400).json({
+      message: "something went wrong",
+    });
+  }
 };

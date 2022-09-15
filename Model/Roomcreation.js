@@ -9,14 +9,20 @@ const RoomSchema = new mongoose.Schema({
   roomid: String,
   course_index: Number,
   Course_cat: String,
-  time: String,
-  date: String,
+  time: {
+    type: String,
+    default: "",
+  },
+  date: {
+    type: String,
+    default: "",
+  },
   course: String,
   price: String,
   course_index: Number,
   Course_cat: String,
   pendingfeedback: { type: Boolean, default: false },
-  status:String, 
+  status: String,
   createdAt: {
     type: Date,
     default: Date.now(),

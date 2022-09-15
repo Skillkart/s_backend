@@ -1,13 +1,11 @@
 const mongoose = require("mongoose");
 
 const TranscationModel = new mongoose.Schema({
-  U_id: String,
-  price: String,
+  user: String,
+  user_name: String,
   course: String,
-  recuiter_id: String,
-  roomId: String,
-  course_index: Number,
-  Course_cat: String,
+  price: Number,
+  status:String,
   createdAt: {
     type: Date,
     default: Date.now(),

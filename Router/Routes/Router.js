@@ -38,15 +38,15 @@ router.post("/updateuserdetail", auth.updateroomdetail);
 router.post("/pendingfeedbackstts", auth.pfee);
 router.post("/razarpay", auth.payment);
 router.post("/handlewaitinglist", auth.waitinglist);
-router.get("/getmentors", auth.getmentors);
-router.post("/bookaslot", auth.bookaslot);
+router.post("/getmentors", auth.getmentors);
+router.post("/purchase", auth.purchase);
 router.post("/Mailer", roomcrt.mailer);
 router.post("/subscribe", auth.subscribe);
 router.post("/refer", auth.refer);
 router.post("/experiment", auth.demo);
 router.post("/handletranctionfail", auth.transfail);
-
-
+router.post("/bookaslot" , auth.bookaslot)
+router.get("/adduser", auth.enteruser);
 router.get("/adminmentor", mentor);
 
 

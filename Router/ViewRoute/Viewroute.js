@@ -25,7 +25,7 @@ viewrouter.get("/", auth.isLoggedIn , home);
 viewrouter.get("/login",  auth.isLoggedIn ,  login);
 viewrouter.get("/Signup",  auth.isLoggedIn , signup);
 viewrouter.get("/room/:room", auth.isLoggedIn , room);
-viewrouter.get("/Email",  auth.isLoggedIn , sample);
+viewrouter.get("/Email",  auth.isLoggedIn , email);
 viewrouter.get("/dashboard",  auth.isLoggedIn , userprofile);
 viewrouter.get("/PrivacyPolicy",  auth.isLoggedIn , Tou);
 viewrouter.get("/mentor",  auth.isLoggedIn , mentorlogin);
