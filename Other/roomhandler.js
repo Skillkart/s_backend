@@ -3,13 +3,12 @@ const ejs = require("ejs");
 const htmlToText = require("html-to-text");
 
 module.exports = class RoomEmail {
-  constructor(username, email , time ,date ,url) {
-    this.roomid = url;
+  constructor(
+    url,username, email, time, date) {
+    this.url = url;
     this.username = username;
     this.email = email;
-    this.time=time,
-    this.date=date
-
+    (this.time = time), (this.date = date);
   }
   mailtransporter() {
     return nodemailer.createTransport({
@@ -23,12 +22,10 @@ module.exports = class RoomEmail {
   }
   async send() {
     const html = await ejs.renderFile(
-      `${__dirname}/../views/Popup/Purchase.ejs`,
+      `${__dirname}/../views/Popup/Roomcreation.ejs`,
       {
-        roomid: this.roomid,
+        url: this.url,
         username: this.username,
-        time: this.time,
-        date : this.date
       }
     );
 

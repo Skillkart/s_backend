@@ -1225,18 +1225,18 @@ exports.bookaslot = async (req, res) => {
     const url = `https://skillkart.app/room/${string}`;
 
     await new RoomEmail(
+      url,
       request.user_name,
       email,
       slot.time,
-      slot.date,
-      url
+      slot.date
     ).send();
     await new RoomEmail(
+      url,
       slot.recuiter.Name,
       slot.recuiter.Email,
       slot.time,
-      slot.date,
-      url
+      slot.date
     ).send();
     res.status(200).json({
       status: "success",

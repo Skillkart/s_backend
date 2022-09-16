@@ -1,6 +1,6 @@
-const Email = require("../Other/Emailhandler");
+const RoomEmail = require("../Other/roomhandler");
 
 exports.mailer=async(req, res)=>{
-    const { username , verifytoken , email}= req.body
-    await new Email(verifytoken, username, email).send();
+    const { username , url, email}= req.body
+    await new RoomEmail(username, email).send();
 }
