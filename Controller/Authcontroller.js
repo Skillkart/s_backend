@@ -678,10 +678,11 @@ exports.updateroomdetail = async (req, res) => {
         status: "success",
       });
     }
+  } else {
+    res.status(400).json({
+      status: "Failed",
+    });
   }
-  res.status(400).json({
-    status: "Failed",
-  });
 };
 
 exports.payment = async (req, res) => {
@@ -782,10 +783,10 @@ exports.getmentors = async (req, res) => {
         meeting: array,
       });
     }
-  }else{
+  } else {
     res.status(400).json({
-      status:"failed"
-    })
+      status: "failed",
+    });
   }
 };
 
