@@ -17,6 +17,8 @@ const Razorpay = require("razorpay");
 const Waitinglist = require("../Model/Waitinglis");
 const Subscribe = require("../Model/Subscribe");
 const { timingSafeEqual } = require("crypto");
+const Referal = require("../Model/Referal");
+const { readSync } = require("fs");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -252,7 +254,7 @@ exports.mentosignup = async (req, res) => {
       passwordResetToken: verifytoken,
     });
     createtoken(mentor, 201, res, req);
-    await new Email(verifytoken, name, email).send();
+    await new Email(verifytoken, name, email).welcomementor();
     setTimeout(() => {
       mentor.passwordResetToken = "";
       mentor.save();
@@ -616,6 +618,7 @@ exports.mentorfeedback = async (req, res) => {
     SU,
     OHI,
     userid,
+    roomid
   } = req.body;
   const user = await Recuirtment.findById(userid);
   user.pendingfeedback = false;
@@ -639,9 +642,16 @@ exports.mentorfeedback = async (req, res) => {
     SU,
     OHI,
     userid,
+    roomid
   });
   await user.save();
+  const crequest = await RoomModel.findOne({
+    roomid: roomid,
+  });
 
+  if (crequest) {
+    request.compeleted = true;
+  }
   res.status(200).json({
     status: "success",
   });
@@ -652,32 +662,16 @@ function randomString(size = 8) {
 }
 
 exports.updateroomdetail = async (req, res) => {
-  let cat = ["HR", "HR", "Technical", "Technical", "Technical"];
   const { roomid } = req.body;
   const request = await RoomModel.findOne({
     roomid: roomid,
   });
 
   if (request) {
-    if (request.course_index == 5) {
-      request.expired = true;
-      request.roomid = "";
-      request.date = "";
-      await request.save();
-      res.status(200).json({
-        status: "success",
-      });
-    } else {
-      request.course_index = request.course_index + 1;
-      request.Course_cat = cat[request.course_index + 1];
-      request.roomid = "";
-      request.date = "";
-
-      await request.save();
-      res.status(200).json({
-        status: "success",
-      });
-    }
+    request.compeleted = true;
+    res.status(200).json({
+      status: "success",
+    });
   } else {
     res.status(400).json({
       status: "Failed",
@@ -1101,36 +1095,6 @@ exports.transfail = async (req, res) => {
   });
 };
 
-exports.enteruser = async (req, res) => {
-  const data = [
-    {
-      name: "Hs",
-      email: "hs2016886@gmail.com",
-      password: "1moretime",
-      phone: "919580225683",
-    },
-    {
-      name: "Lucknow",
-      email: "2000520510065@ietlucknow.ac.in",
-      password: "1moretime",
-      phone: "919773670198",
-    },
-  ];
-
-  for (let i = 0; i < data.length; i++) {
-    const cr = await bcrypt.hash(data[i].password, 10);
-    const create = await User.create({
-      Name: data[i].name,
-      Email: data[i].email,
-      phone: data[i].phone,
-      password: cr,
-    });
-  }
-  res.status(200).json({
-    status: "done",
-  });
-};
-
 exports.purchase = async (req, res) => {
   const { user_id, course, price, username, email, date, status } = req.body;
   let cat = ["Technical", "Technical", "Technical", "HR", "HR"];
@@ -1210,7 +1174,6 @@ exports.bookaslot = async (req, res) => {
   const slot = await searchingslot(date, time, recuiter, index);
   if (slot) {
     const string = await rstringe();
-
     const request = await RoomModel.findOne({
       user: user_id,
       status: "success",
@@ -1247,4 +1210,160 @@ exports.bookaslot = async (req, res) => {
       message: "something went wrong",
     });
   }
+};
+
+exports.refer = async (req, res) => {
+  const { email, referedby } = req.body;
+
+  const exist = await Referal.findOne({
+    refererEmail: email,
+  });
+  if (!exist) {
+    const request = await Referal.create({
+      refererEmail: email,
+      referedby: referedby,
+    });
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    res.status(400).json({
+      status: "failed",
+      message: "already refered",
+    });
+  }
+};
+
+exports.referals = async (req, res) => {
+  const { email } = req.body;
+  const request = await Referal.find({
+    referedby: email,
+  });
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+};
+
+exports.mentor = async (req, res) => {
+  const mentor = await Recuirtment.find();
+  res.status(200).json({
+    status: "success",
+    data: mentor,
+  });
+};
+
+exports.submitdate = async (req, res) => {
+  const {
+    recuiterid,
+    userid,
+    username,
+    date,
+    time,
+    recuiter_name,
+    round,
+    user_email,
+    recuiter_email,
+  } = req.body;
+  console.log(recuiterid, userid, username, date, time, recuiter_name, round);
+  const re = await Recuirtment.findOne({
+    _id: recuiterid,
+  });
+  if (re) {
+    const filter = re.busydate.filter((state) => state.date == date);
+    if (filter.length) {
+      const i = filter[0].time.includes(time);
+      if (i) {
+        const timef = getindex(re.busydate[filter[0].index].time, time);
+        await re.save();
+        const string = await rstringe();
+        const roomcreation = await RoomModel.create({
+          user: userid,
+          recuiter: recuiterid,
+          user_name: username,
+          recuiter_name: recuiter_name,
+          round: round,
+          time: time,
+          date: date,
+          roomid: string,
+        });
+        const url = `https://skillkart.app/room/${string}`;
+
+        await new RoomEmail(url, username, user_email, time, date).send();
+        await new RoomEmail(
+          url,
+          recuiter_name,
+          recuiter_email,
+          time,
+          date
+        ).send();
+        res.status(200).json({
+          status: "success",
+          data: roomcreation,
+        });
+      } else {
+        console.log("time already taken");
+      }
+    }
+  }
+};
+
+exports.transcation = async (req, res) => {
+  const { user_id, username, course, status, price } = req.body;
+
+  const request = await Transcation.create({
+    user: user_id,
+    user_name: username,
+    course: course,
+    price,
+    status,
+  });
+  res.status(200).json({
+    status: "success",
+    request,
+  });
+};
+
+exports.usertranscation = async (req, res) => {
+  const { user_id } = req.body;
+  console.log(user_id);
+  const request = await Transcation.find({
+    user: user_id,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+};
+
+exports.selectmentor = async (req, res) => {
+  let date = new Date();
+
+  let month = date.getMonth();
+  let day = date.getDate();
+  const { recuit } = req.body;
+  const f = await Recuirtment.findOne({
+    _id: recuit,
+  });
+  const fil = f.busydate.filter(
+    (state) =>
+      state.date.split(" ")[0] >= day &&
+      state.date.split(" ")[1] >= month &&
+      state.time.length > 0
+  );
+
+  res.status(200).json({
+    status: "success",
+    mentor: f,
+    data: fil,
+  });
+};
+
+exports.handlefeedback = async (req, res) => {
+  const { roomid } = req.body;
+  const request = await RoomModel.findOne({
+    roomid,
+  });
+  console.log(request);
 };

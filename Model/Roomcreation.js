@@ -7,8 +7,6 @@ const RoomSchema = new mongoose.Schema({
   recuiter_name: String,
   recuiter_photo: String,
   roomid: String,
-  course_index: Number,
-  Course_cat: String,
   time: {
     type: String,
     default: "",
@@ -17,15 +15,12 @@ const RoomSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  course: String,
-  price: String,
-  course_index: Number,
-  Course_cat: String,
-  pendingfeedback: { type: Boolean, default: false },
-  status: String,
-  expired:{
+  round :{
+    type:String,
+  },
+  compeleted: {
     type: Boolean,
-    default : false
+    default: false,
   },
   createdAt: {
     type: Date,

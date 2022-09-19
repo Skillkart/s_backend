@@ -23,6 +23,7 @@ const FeedbackModel = new mongoose.Schema({
   userid:String,
   studentid:String,
   tread:String,
+  roomid:String,
   createdAt: {
     type: Date,
     default: Date.now(),

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const ReferalModel = new mongoose.Schema({
   refererEmail: String,
-  referfor: Number,
+  referedby: String,
   used: {
     type: Boolean,
     default: false,
@@ -12,6 +12,6 @@ const ReferalModel = new mongoose.Schema({
   },
 });
 
-const Referal = mongoose.Model("refer", ReferalModel);
+const Referal = mongoose.model("refer", ReferalModel);
 
 module.exports = Referal

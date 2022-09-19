@@ -22,7 +22,7 @@ router.route("/userdata").post(userdata);
 router.route("/dateadder").post(auth.busydate);
 router.route("/deleteroom").put(auth.deleteroom);
 router.route("/roomverifiactio").post(auth.verifyroom);
-router.route("/userforgetpassword").post(auth.userforgetpass);
+router.route("/userforgeztpassword").post(auth.userforgetpass);
 router.route("/feedbackdetail").post(auth.getfeedbackdetail);
 router.route("/userdetail").post(auth.userdata);
 router.get("/logout", auth.logout);
@@ -45,9 +45,18 @@ router.post("/subscribe", auth.subscribe);
 router.post("/refer", auth.refer);
 router.post("/experiment", auth.demo);
 router.post("/handletranctionfail", auth.transfail);
-router.post("/bookaslot" , auth.bookaslot)
-router.get("/adduser", auth.enteruser);
+router.post("/bookaslot", auth.bookaslot);
 router.get("/adminmentor", mentor);
+router.post("/refer", auth.refer);
+router.post("/referal", auth.referals);
+router.get("/mentor", auth.mentor);
+router.post("/usertranscation", auth.usertranscation)
+router.post("/submitdate", auth.submitdate);
+router.post("/getrounds" , roomcrt.getrounds)
+router.post("/handletranscation", auth.transcation);
+router.post("/handleselectedmentor", auth.selectmentor);
+router.post("/handlefeedback", auth.handlefeedback);
+
 
 
 module.exports = router;
