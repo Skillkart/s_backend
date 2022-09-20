@@ -22,7 +22,6 @@ const Subscribe = require("../Model/Subscribe");
 const { timingSafeEqual } = require("crypto");
 const Referal = require("../Model/Referal");
 const { readSync } = require("fs");
-const multer = require("multer");
 const Resume = require("../Model/Resume");
 
 function getRandomArbitrary(min, max) {
@@ -1413,33 +1412,36 @@ exports.avargefeedback = async (req, res) => {
       }
     }
   } else {
-   return ;
+    return;
   }
 };
 
 exports.handleresume = async (req, res) => {
-  const {userid} = req.body
+  const { userid } = req.body;
 
   const DIR = "../public/resume/";
   const file = req.files.profileImg;
-  file.mv("public/resume/"+`${userid}`+file.name, async(error) => {
-    const r = await Resume.create({
-      user: userid,
-      resume: `${userid}`+file.name
-    })
-    res.status(200).json({
-      status: "success",
-    });
-  });
+  file.mv(
+    "public/resume/" + `${userid}` + file.name.split(" ").join("-"),
+    async (error) => {
+      const r = await Resume.create({
+        user: userid,
+        resume: `${userid}` + file.name.split(" ").join("-"),
+      });
+      res.status(200).json({
+        status: "success",
+      });
+    }
+  );
 };
 
-exports.getresume =async(req, res)=>{
-  const {userid} = req.body
+exports.getresume = async (req, res) => {
+  const { userid } = req.body;
   const r = await Resume.findOne({
-    user: userid
-  })
+    user: userid,
+  });
   res.status(200).json({
-    status:"success",
-    data: r
-  })
-}
+    status: "success",
+    data: r,
+  });
+};
