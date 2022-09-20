@@ -1,14 +1,17 @@
 const Crypto = require("crypto");
+const Feedback = require("../Model/Feedback");
 const Recuirtment = require("../Model/recuirter");
 const User = require("../Model/Usermodel");
 const Email = require("../Other/Emailhandler");
 const RoomEmail = require("../Other/roomhandler");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+const uuidv4 = require("uuidv4");
 const AppError = require("../Other/Apperror");
 const bcrypt = require("bcrypt");
 const RoomModel = require("../Model/Roomcreation");
 const Transcation = require("../Model/Transaction");
-const Feedback = require("../Model/Feedback");
+// const Feedback = require("../Model/Feedback");
 const { findByIdAndUpdate } = require("../Model/recuirter");
 const RoomMessModel = require("../Model/Roommsg");
 const { deleteMany } = require("../Model/Roommsg");
@@ -19,6 +22,8 @@ const Subscribe = require("../Model/Subscribe");
 const { timingSafeEqual } = require("crypto");
 const Referal = require("../Model/Referal");
 const { readSync } = require("fs");
+const multer = require("multer");
+const Resume = require("../Model/Resume");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -618,10 +623,11 @@ exports.mentorfeedback = async (req, res) => {
     SU,
     OHI,
     userid,
-    roomid
+    roomid,
   } = req.body;
   const user = await Recuirtment.findById(userid);
   user.pendingfeedback = false;
+
   const request = await Feedback.create({
     EDB,
     CS,
@@ -642,7 +648,7 @@ exports.mentorfeedback = async (req, res) => {
     SU,
     OHI,
     userid,
-    roomid
+    roomid,
   });
   await user.save();
   const crequest = await RoomModel.findOne({
@@ -650,8 +656,10 @@ exports.mentorfeedback = async (req, res) => {
   });
 
   if (crequest) {
+    const pfe = await PendingModel.findOneAndDelete({ roomid });
     request.compeleted = true;
   }
+  await crequest.save();
   res.status(200).json({
     status: "success",
   });
@@ -667,11 +675,13 @@ exports.updateroomdetail = async (req, res) => {
     roomid: roomid,
   });
 
+  console.log(request);
   if (request) {
     request.compeleted = true;
     res.status(200).json({
       status: "success",
     });
+    await request.save();
   } else {
     res.status(400).json({
       status: "Failed",
@@ -1247,9 +1257,27 @@ exports.referals = async (req, res) => {
 
 exports.mentor = async (req, res) => {
   const mentor = await Recuirtment.find();
+  let date = new Date();
+
+  let month = date.getMonth();
+  let day = date.getDate();
+  let array = [];
+  for (let m of mentor) {
+    const f = m.busydate.filter(
+      (state) =>
+        state.date.split(" ")[0] >= day &&
+        state.date.split(" ")[1] >= month &&
+        state.time.length > 0
+    );
+    if (f.length) {
+      array.push(m);
+    } else {
+      continue;
+    }
+  }
   res.status(200).json({
     status: "success",
-    data: mentor,
+    data: array,
   });
 };
 
@@ -1265,7 +1293,7 @@ exports.submitdate = async (req, res) => {
     user_email,
     recuiter_email,
   } = req.body;
-  console.log(recuiterid, userid, username, date, time, recuiter_name, round);
+  // console.log(recuiterid, userid, username, date, time, recuiter_name, round);
   const re = await Recuirtment.findOne({
     _id: recuiterid,
   });
@@ -1326,7 +1354,6 @@ exports.transcation = async (req, res) => {
 
 exports.usertranscation = async (req, res) => {
   const { user_id } = req.body;
-  console.log(user_id);
   const request = await Transcation.find({
     user: user_id,
   });
@@ -1362,8 +1389,57 @@ exports.selectmentor = async (req, res) => {
 
 exports.handlefeedback = async (req, res) => {
   const { roomid } = req.body;
-  const request = await RoomModel.findOne({
+
+  const request = await Feedback.findOne({
     roomid,
   });
-  console.log(request);
+  res.status(200).json({
+    status: "sucess",
+    data: request,
+  });
 };
+
+exports.avargefeedback = async (req, res) => {
+  const { userid } = req.body;
+  const request = await Feedback.find({
+    userid,
+  });
+  if (request.length) {
+    sum = 0;
+    for (let c of request) {
+      s = 0;
+      for (let a of c) {
+        console.log(c[a], a);
+      }
+    }
+  } else {
+   return ;
+  }
+};
+
+exports.handleresume = async (req, res) => {
+  const {userid} = req.body
+
+  const DIR = "../public/resume/";
+  const file = req.files.profileImg;
+  file.mv("public/resume/"+`${userid}`+file.name, async(error) => {
+    const r = await Resume.create({
+      user: userid,
+      resume: `${userid}`+file.name
+    })
+    res.status(200).json({
+      status: "success",
+    });
+  });
+};
+
+exports.getresume =async(req, res)=>{
+  const {userid} = req.body
+  const r = await Resume.findOne({
+    user: userid
+  })
+  res.status(200).json({
+    status:"success",
+    data: r
+  })
+}

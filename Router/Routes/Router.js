@@ -56,6 +56,10 @@ router.post("/getrounds" , roomcrt.getrounds)
 router.post("/handletranscation", auth.transcation);
 router.post("/handleselectedmentor", auth.selectmentor);
 router.post("/handlefeedback", auth.handlefeedback);
+router.post("/resumehandle",  auth.handleresume);
+router.post("/getavafee", auth.avargefeedback);
+router.post("/getresume", auth.getresume);
+
 
 
 
