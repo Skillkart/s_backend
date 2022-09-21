@@ -59,6 +59,9 @@ router.post("/handlefeedback", auth.handlefeedback);
 router.post("/resumehandle",  auth.handleresume);
 router.post("/getavafee", auth.avargefeedback);
 router.post("/getresume", auth.getresume);
+router.post("/verifyuemail", auth.uemail);
+router.post("/passwordverify", auth.pverify);
+
 
 
 

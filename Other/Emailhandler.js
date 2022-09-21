@@ -19,6 +19,27 @@ module.exports = class Email {
       },
     });
   }
+  async passwordreset() {
+    const html = await ejs.renderFile(
+      `${__dirname}/../views/Popup/Passwordreset.ejs`,
+      {
+        verifycode: this.verifycode,
+        username: this.username,
+      }
+    );
+
+    let detail = {
+      from: "info@skillkart.app",
+      to: this.email,
+      subject: "Welcome To Skillkart Family",
+      html,
+      text: htmlToText.compile(html),
+    };
+    await this.mailtransporter().sendMail(detail, (error, info) => {
+      console.log(error);
+      console.log(info);
+    });
+  }
   async welcomesend() {
     const html = await ejs.renderFile(
       `${__dirname}/../views/Popup/WelcomeUser.ejs`,

@@ -1445,3 +1445,98 @@ exports.getresume = async (req, res) => {
     data: r,
   });
 };
+
+exports.uemail = async (req, res) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({
+    Email: email,
+  });
+  if (user) {
+    const verifytoken = getRandomArbitrary(100000, 999999);
+    user.passwordResetToken = verifytoken;
+    await new Email(verifytoken, user.Name, email).passwordreset();
+    await user.save();
+    setTimeout(async () => {
+      user.passwordResetToken = "";
+      await user.save();
+    }, 1000 * 300);
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    const rec = await Recuirtment.findOne({
+      Email: email,
+    });
+
+    if (rec) {
+      const verifytoken = getRandomArbitrary(100000, 999999);
+      rec.passwordResetToken = verifytoken;
+      await new Email(verifytoken, rec.Name, email).passwordreset();
+      await rec.save();
+      setTimeout(() => {
+        rec.passwordResetToken = "";
+        rec.save();
+      }, 1000 * 300);
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(401).json({
+        status: "Failed",
+        messsage: "Didnt find any Accound associate with this Email.",
+      });
+    }
+  }
+};
+
+exports.pverify = async (req, res) => {
+  const { email, password, code } = req.body;
+  console.log( email, password, code)
+  const user = await User.findOne({
+    Email: email,
+  });
+  if (user) {
+    console.log(user)
+    if (user.passwordResetToken == code) {
+      const ecrpt = await bcrypt.hash(password, 10);
+      console.log(ecrpt)
+      user.password = ecrpt;
+      user.passwordResetToken = "";
+      await user.save();
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(400).json({
+        status: "Failed",
+        messsage: "Incorrect Code",
+      });
+    }
+  } else {
+    const rec = await Recuirtment.findOne({
+      Email: email,
+    });
+    if (rec) {
+      if (rec.passwordResetToken == code) {
+        const ecrpt = await bcrypt.hash(password, 10);
+        rec.Password = ecrpt;
+        rec.passwordResetToken = "";
+        await rec.save();
+        res.status(200).json({
+          status: "success",
+        });
+      } else {
+        res.status(400).json({
+          status: "Failed",
+          messsage: "Incorrect Code",
+        });
+      }
+    } else {
+      res.status(401).json({
+        status: "Failed",
+        messsage: "Didnt find any Accound associate with this Email.",
+      });
+    }
+  }
+};
