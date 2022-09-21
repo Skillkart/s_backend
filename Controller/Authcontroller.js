@@ -657,8 +657,8 @@ exports.mentorfeedback = async (req, res) => {
   if (crequest) {
     const pfe = await PendingModel.findOneAndDelete({ roomid });
     request.compeleted = true;
+    await crequest.save();
   }
-  await crequest.save();
   res.status(200).json({
     status: "success",
   });
@@ -1492,15 +1492,15 @@ exports.uemail = async (req, res) => {
 
 exports.pverify = async (req, res) => {
   const { email, password, code } = req.body;
-  console.log( email, password, code)
+  console.log(email, password, code);
   const user = await User.findOne({
     Email: email,
   });
   if (user) {
-    console.log(user)
+    console.log(user);
     if (user.passwordResetToken == code) {
       const ecrpt = await bcrypt.hash(password, 10);
-      console.log(ecrpt)
+      console.log(ecrpt);
       user.password = ecrpt;
       user.passwordResetToken = "";
       await user.save();
