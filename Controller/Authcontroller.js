@@ -1255,7 +1255,9 @@ exports.referals = async (req, res) => {
 };
 
 exports.mentor = async (req, res) => {
-  const mentor = await Recuirtment.find();
+  const mentor = await Recuirtment.find({
+    pendingfeedback: false
+  });
   let date = new Date();
 
   let month = date.getMonth();
