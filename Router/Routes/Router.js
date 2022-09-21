@@ -61,7 +61,8 @@ router.post("/getavafee", auth.avargefeedback);
 router.post("/getresume", auth.getresume);
 router.post("/verifyuemail", auth.uemail);
 router.post("/passwordverify", auth.pverify);
-
+router.post("/getfeedbacks", auth.getfeedbacks);
+router.post("/getrevenue" , auth.getrevenue)
 
 
 

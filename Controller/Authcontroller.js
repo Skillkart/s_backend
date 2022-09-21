@@ -1256,7 +1256,7 @@ exports.referals = async (req, res) => {
 
 exports.mentor = async (req, res) => {
   const mentor = await Recuirtment.find({
-    pendingfeedback: false
+    pendingfeedback: false,
   });
   let date = new Date();
 
@@ -1541,4 +1541,39 @@ exports.pverify = async (req, res) => {
       });
     }
   }
+};
+
+exports.getfeedbacks = async (req, res) => {
+  const { user } = req.body;
+  console.log(user);
+  const request = await Feedback.find({
+    userid: user,
+  });
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+};
+
+exports.getrevenue = async (req, res) => {
+  const { user } = req.body;
+  const request = await RoomModel.find({
+    recuiter: user,
+  });
+  const feedback = await Feedback.find({
+    userid: user
+  })
+  let i=0
+  for (let c of request) {
+    const filter = feedback.filter(state=> state.roomid == c.roomid)
+    if(filter.length){
+      i++
+    }else{
+      continue
+    }
+  }
+  res.status(200).json({
+    status: "success",
+    data : i*500
+  })
 };
