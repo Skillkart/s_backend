@@ -1419,15 +1419,18 @@ exports.avargefeedback = async (req, res) => {
 };
 
 exports.handleresume = async (req, res) => {
-  const { userid } = req.body;
+  const { userid , round , username  } = req.body;
 
   const DIR = "../public/resume/";
   const file = req.files.profileImg;
   file.mv(
     "public/resume/" + `${userid}` + file.name.split(" ").join("-"),
     async (error) => {
-      const r = await Resume.create({
+      const r = await RoomModel.create({
         user: userid,
+        compeleted: true,
+        user_name : username,
+        round: round,
         resume: `${userid}` + file.name.split(" ").join("-"),
       });
       res.status(200).json({
@@ -1439,13 +1442,21 @@ exports.handleresume = async (req, res) => {
 
 exports.getresume = async (req, res) => {
   const { userid } = req.body;
-  const r = await Resume.findOne({
+  const r = await RoomModel.findOne({
     user: userid,
+    round:"Introduction"
   });
-  res.status(200).json({
-    status: "success",
-    data: r,
-  });
+  if(r){
+    res.status(200).json({
+      status: "success",
+      data: r,
+    });
+  }else{
+    res.status(400).json({
+      status:"Failed"
+    })
+  }
+
 };
 
 exports.uemail = async (req, res) => {
