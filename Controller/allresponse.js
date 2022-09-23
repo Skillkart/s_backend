@@ -20,25 +20,14 @@ exports.mentor = async (req, res) => {
   const request = await Recuirtment.find();
   const room = await RoomModel.find();
   const user = await User.find();
-  const pendingfee = await PendingModel.find()
-  const transcations = await Transcation.find(
-    {},
-    {
-      sort: {
-        createdAt: -1, //Sort by Date Added DESC
-      },
-    }
-  );
+  const pendingfee = await PendingModel.find();
+  const transcations = await Transcation.find();
   res.status(200).json({
     status: "success",
     data: request,
     user: user,
     transcations: transcations,
     room: room,
-    pendingfee : pendingfee
+    pendingfee: pendingfee,
   });
 };
-
-
-
-
