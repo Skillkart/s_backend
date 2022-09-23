@@ -1293,6 +1293,7 @@ exports.submitdate = async (req, res) => {
     round,
     user_email,
     recuiter_email,
+    transid
   } = req.body;
   // console.log(recuiterid, userid, username, date, time, recuiter_name, round);
   const re = await Recuirtment.findOne({
@@ -1312,6 +1313,7 @@ exports.submitdate = async (req, res) => {
           user_name: username,
           recuiter_name: recuiter_name,
           round: round,
+          transcationid: transid,
           time: time,
           date: date,
           roomid: string,
@@ -1419,8 +1421,7 @@ exports.avargefeedback = async (req, res) => {
 };
 
 exports.handleresume = async (req, res) => {
-  const { userid , round , username  } = req.body;
-
+  const { userid, round, username, transid } = req.body;
   const DIR = "../public/resume/";
   const file = req.files.profileImg;
   file.mv(
@@ -1429,8 +1430,9 @@ exports.handleresume = async (req, res) => {
       const r = await RoomModel.create({
         user: userid,
         compeleted: true,
-        user_name : username,
+        user_name: username,
         round: round,
+        transcationid: transid,
         resume: `${userid}` + file.name.split(" ").join("-"),
       });
       res.status(200).json({
@@ -1441,22 +1443,22 @@ exports.handleresume = async (req, res) => {
 };
 
 exports.getresume = async (req, res) => {
-  const { userid } = req.body;
+  const { userid, transid } = req.body;
   const r = await RoomModel.findOne({
     user: userid,
-    round:"Introduction"
+    transcationid: transid,
+    round: "Introduction",
   });
-  if(r){
+  if (r) {
     res.status(200).json({
       status: "success",
       data: r,
     });
-  }else{
+  } else {
     res.status(400).json({
-      status:"Failed"
-    })
+      status: "Failed",
+    });
   }
-
 };
 
 exports.uemail = async (req, res) => {
@@ -1505,12 +1507,10 @@ exports.uemail = async (req, res) => {
 
 exports.pverify = async (req, res) => {
   const { email, password, code } = req.body;
-  console.log(email, password, code);
   const user = await User.findOne({
     Email: email,
   });
   if (user) {
-    console.log(user);
     if (user.passwordResetToken == code) {
       const ecrpt = await bcrypt.hash(password, 10);
       console.log(ecrpt);
@@ -1556,7 +1556,6 @@ exports.pverify = async (req, res) => {
 
 exports.getfeedbacks = async (req, res) => {
   const { user } = req.body;
-  console.log(user);
   const request = await Feedback.find({
     userid: user,
   });
@@ -1572,19 +1571,19 @@ exports.getrevenue = async (req, res) => {
     recuiter: user,
   });
   const feedback = await Feedback.find({
-    userid: user
-  })
-  let i=0
+    userid: user,
+  });
+  let i = 0;
   for (let c of request) {
-    const filter = feedback.filter(state=> state.roomid == c.roomid)
-    if(filter.length){
-      i++
-    }else{
-      continue
+    const filter = feedback.filter((state) => state.roomid == c.roomid);
+    if (filter.length) {
+      i++;
+    } else {
+      continue;
     }
   }
   res.status(200).json({
     status: "success",
-    data : i*500
-  })
+    data: i * 500,
+  });
 };

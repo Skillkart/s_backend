@@ -25,6 +25,9 @@ const RoomSchema = new mongoose.Schema({
   resume:{
     type:String 
   },
+  transcationid:{
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
