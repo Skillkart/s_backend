@@ -3,11 +3,12 @@ const ejs = require("ejs");
 const htmlToText = require("html-to-text");
 
 module.exports = class Email {
-  constructor(verifycode, username, email, temp) {
+  constructor(verifycode, username, email, temp , productid) {
     this.verifycode = verifycode;
     this.username = username;
     this.email = email;
     this.temp = temp;
+    this.productid =productid
   }
   mailtransporter() {
     return nodemailer.createTransport({
@@ -25,6 +26,27 @@ module.exports = class Email {
       {
         verifycode: this.verifycode,
         username: this.username,
+      }
+    );
+
+    let detail = {
+      from: "info@skillkart.app",
+      to: this.email,
+      subject: "Purchase completed ",
+      html,
+      text: htmlToText.compile(html),
+    };
+    await this.mailtransporter().sendMail(detail, (error, info) => {
+      console.log(error);
+      console.log(info);
+    });
+  }
+  async purchase() {
+    const html = await ejs.renderFile(
+      `${__dirname}/../views/Popup/Coursepurchase.ejs`,
+      {
+        username: this.username,
+        productid: this.productid
       }
     );
 

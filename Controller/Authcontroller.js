@@ -1084,10 +1084,6 @@ exports.subscribe = async (req, res) => {
   }
 };
 
-exports.refer = async (req, res) => {
-  const { email } = req.body;
-};
-
 exports.transfail = async (req, res) => {
   const { user_id, course, price, username, email, date, status } = req.body;
 
@@ -1108,6 +1104,9 @@ exports.purchase = async (req, res) => {
   const { user_id, course, price, username, email, date, status } = req.body;
   let cat = ["Technical", "Technical", "Technical", "HR", "HR"];
 
+  const refer = await Referal.findOne({
+    refererEmail: email,
+  });
   if (status == "Failed") {
     const requesteddata = await RoomModel.create({
       user: user_id,
@@ -1120,7 +1119,8 @@ exports.purchase = async (req, res) => {
       status: "failed",
       message: "Transcation failed",
     });
-  } else {
+  }
+  if (status == "success") {
     const requesteddata = await RoomModel.create({
       user: user_id,
       user_name: username,
@@ -1133,6 +1133,11 @@ exports.purchase = async (req, res) => {
       time: "",
       date: "",
     });
+    if (refer) {
+      refer.user = true;
+    } else {
+      refer.used = false;
+    }
     res.status(200).json({
       status: "Success",
       message: "successful",
@@ -1151,7 +1156,6 @@ const searchingslot = async (date, time, recuiter, index) => {
     const filter = recuiter[index].busydate.filter(
       (state) => state.date == date
     );
-    console.log(filter);
     if (filter.length) {
       const i = filter[0].time.includes(time);
       if (i) {
@@ -1293,7 +1297,7 @@ exports.submitdate = async (req, res) => {
     round,
     user_email,
     recuiter_email,
-    transid
+    transid,
   } = req.body;
   // console.log(recuiterid, userid, username, date, time, recuiter_name, round);
   const re = await Recuirtment.findOne({
@@ -1340,7 +1344,7 @@ exports.submitdate = async (req, res) => {
 };
 
 exports.transcation = async (req, res) => {
-  const { user_id, username, course, status, price } = req.body;
+  const { user_id, username, course, status, email, price } = req.body;
 
   const request = await Transcation.create({
     user: user_id,
@@ -1349,6 +1353,7 @@ exports.transcation = async (req, res) => {
     price,
     status,
   });
+  await new Email("", username, email, "", request._id).purchase();
   res.status(200).json({
     status: "success",
     request,
