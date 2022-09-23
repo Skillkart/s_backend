@@ -63,6 +63,8 @@ router.post("/verifyuemail", auth.uemail);
 router.post("/passwordverify", auth.pverify);
 router.post("/getfeedbacks", auth.getfeedbacks);
 router.post("/getrevenue" , auth.getrevenue)
+router.get("/adminuserrecuirter" , roomcrt.getuandr)
+
 
 
 
