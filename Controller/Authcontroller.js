@@ -1397,10 +1397,10 @@ exports.selectmentor = async (req, res) => {
 
 exports.handlefeedback = async (req, res) => {
   const { roomid } = req.body;
-
   const request = await Feedback.findOne({
     roomid,
   });
+  console.log(request)
   res.status(200).json({
     status: "sucess",
     data: request,
