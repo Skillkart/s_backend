@@ -1592,3 +1592,9 @@ exports.getrevenue = async (req, res) => {
     data: i * 500,
   });
 };
+
+
+
+exports.userfeedback = async(req , res)=>{
+  const {userid , transid , title} = req.body
+}
