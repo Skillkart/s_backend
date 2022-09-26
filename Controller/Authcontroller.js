@@ -33,16 +33,18 @@ const jsontoken = async (id) => {
   });
 };
 
-const createtoken = async (user, statuscode, res, req) => {
+const createtoken = async (user, statuscode, res, req, redirect) => {
   const token = await jsontoken(user._id);
   res.cookie("jwt", token, {
     expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: req.secure || req.headers["x-forwarded-proto"] === "https",
   });
+
   res.status(statuscode).json({
     status: "success",
     token,
+    redirect,
     data: {
       user,
     },
@@ -100,14 +102,29 @@ exports.login = async (req, res, next) => {
     if (!dcrpt) {
       return next(new AppError("Incorrect password.", 401, res));
     } else {
-      createtoken(rec, 201, res, req);
+      createtoken(rec, 201, res, req, true);
     }
   } else {
     const dcrpt = await bcrypt.compare(password, user.password);
-    if (!dcrpt) {
-      return next(new AppError("Incorrect password.", 401, res));
+    const trans = await Transcation.find({
+      user: user._id,
+      status: "success",
+    });
+    const transfilter = trans.filter(
+      (state) =>
+        Math.floor(
+          (new Date().getTime() - new Date(state.createdAt).getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) < 60
+    );
+    if (transfilter.length) {
+      if (!dcrpt) {
+        return next(new AppError("Incorrect password.", 401, res));
+      } else {
+        createtoken(user, 201, res, req, true);
+      }
     } else {
-      createtoken(user, 201, res, req);
+      createtoken(user, 201, res, req, false);
     }
   }
 };
@@ -579,7 +596,14 @@ exports.pfee = async (req, res) => {
   const re = await RoomModel.findOne({
     roomid: roomid,
   });
-
+  const p = await PendingModel.findOne({
+    roomid
+  })
+  if(p){
+    res.status(200).json({
+      status:"success"
+    })
+  }
   const request = await PendingModel.create({
     recuiter: userid,
     userid: re.user,
@@ -1400,7 +1424,7 @@ exports.handlefeedback = async (req, res) => {
   const request = await Feedback.findOne({
     roomid,
   });
-  console.log(request)
+  console.log(request);
   res.status(200).json({
     status: "sucess",
     data: request,
@@ -1593,8 +1617,6 @@ exports.getrevenue = async (req, res) => {
   });
 };
 
-
-
-exports.userfeedback = async(req , res)=>{
-  const {userid , transid , title} = req.body
-}
+exports.userfeedback = async (req, res) => {
+  const { userid, transid, title } = req.body;
+};
