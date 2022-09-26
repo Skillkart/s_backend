@@ -597,32 +597,33 @@ exports.pfee = async (req, res) => {
     roomid: roomid,
   });
   const p = await PendingModel.findOne({
-    roomid
-  })
-  if(p){
-    res.status(200).json({
-      status:"success"
-    })
-  }
-  const request = await PendingModel.create({
-    recuiter: userid,
-    userid: re.user,
-    roomid: roomid,
-    date: date,
-    time: time,
+    roomid,
   });
-
-  const recuit = await Recuirtment.findById(userid);
-  recuit.pendingfeedback = true;
-  await recuit.save();
-  if (request) {
+  if (p) {
     res.status(200).json({
       status: "success",
     });
   } else {
-    res.status(400).json({
-      status: "Failed",
+    const request = await PendingModel.create({
+      recuiter: userid,
+      userid: re.user,
+      roomid: roomid,
+      date: date,
+      time: time,
     });
+
+    const recuit = await Recuirtment.findById(userid);
+    recuit.pendingfeedback = true;
+    await recuit.save();
+    if (request) {
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(400).json({
+        status: "Failed",
+      });
+    }
   }
 };
 exports.mentorfeedback = async (req, res) => {
