@@ -699,7 +699,6 @@ exports.updateroomdetail = async (req, res) => {
     roomid: roomid,
   });
 
-  console.log(request);
   if (request) {
     request.compeleted = true;
     res.status(200).json({
@@ -1084,7 +1083,6 @@ const Creatingroom = async (
 
 exports.demo = async (req, res) => {
   const cr = await bcrypt.hash("itsadminnotuser", 10);
-  console.log(cr);
 };
 
 exports.subscribe = async (req, res) => {
@@ -1425,7 +1423,6 @@ exports.handlefeedback = async (req, res) => {
   const request = await Feedback.findOne({
     roomid,
   });
-  console.log(request);
   res.status(200).json({
     status: "sucess",
     data: request,
@@ -1543,7 +1540,6 @@ exports.pverify = async (req, res) => {
   if (user) {
     if (user.passwordResetToken == code) {
       const ecrpt = await bcrypt.hash(password, 10);
-      console.log(ecrpt);
       user.password = ecrpt;
       user.passwordResetToken = "";
       await user.save();
@@ -1620,4 +1616,23 @@ exports.getrevenue = async (req, res) => {
 
 exports.userfeedback = async (req, res) => {
   const { userid, transid, title } = req.body;
+};
+
+exports.isfeedback = async (req, res) => {
+  const { roomid } = req.body;
+
+  const request = await Feedback.findOne({
+    roomid,
+  });
+  if (request) {
+    res.status(200).json({
+      status: "success",
+      data: true,
+    });
+  } else {
+    res.status(400).json({
+      status: "success",
+      data: false,
+    });
+  }
 };

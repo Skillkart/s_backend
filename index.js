@@ -69,7 +69,6 @@ mongoose
 io.on("connection", (socket) => {
   socket.on("join-room", (roomId, userId, user) => {
     socket.join(roomId);
-    console.log(roomId);
     socket.to(roomId).broadcast.emit("user-connected", userId, user);
     socket.on("create-message", (msg, user) => {
       io.to(roomId).emit("get-msg", msg, user);

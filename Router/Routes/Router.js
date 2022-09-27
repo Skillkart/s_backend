@@ -64,6 +64,7 @@ router.post("/passwordverify", auth.pverify);
 router.post("/getfeedbacks", auth.getfeedbacks);
 router.post("/getrevenue" , auth.getrevenue)
 router.get("/adminuserrecuirter" , roomcrt.getuandr)
+router.post("/isfeedbackdone" , auth.isfeedback)
 
 
 

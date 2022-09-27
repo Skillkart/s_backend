@@ -74,7 +74,6 @@ const searching = async (day, months, month, user_data, index) => {
       if (find[0].time.length) {
         if (find[0].time.length == 1) {
           const shift = user_data[index].busydate[find[0].index].time.shift();
-          console.log(shift);
           user_data[index]?.busydate?.splice(find[0].index, 1);
           await user_data[index].save();
           return {
@@ -137,7 +136,6 @@ exports.roomrequest = async (req, res) => {
 
 exports.meetingdata = async (req, res) => {
   const { recuit } = req.body;
-  console.log(recuit);
   const meeting = await RoomModel.find({
     recuiter: recuit,
   });
@@ -153,7 +151,6 @@ exports.gettranscation = async (req, res) => {
   const transcations = await RoomModel.find({
     user: userid,
   });
-  console.log(transcations);
   res.status(200).json({
     status: "success",
     data: transcations,
