@@ -1159,7 +1159,7 @@ exports.purchase = async (req, res) => {
       date: "",
     });
     if (refer) {
-      refer.user = true;
+      refer.used = true;
     } else {
       refer.used = false;
     }
