@@ -646,6 +646,7 @@ exports.mentorfeedback = async (req, res) => {
     TSI,
     SU,
     OHI,
+    tread,
     userid,
     roomid,
   } = req.body;
@@ -671,6 +672,7 @@ exports.mentorfeedback = async (req, res) => {
     TSI,
     SU,
     OHI,
+    tread,
     userid,
     roomid,
   });
