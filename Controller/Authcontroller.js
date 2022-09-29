@@ -1453,8 +1453,10 @@ exports.handleresume = async (req, res) => {
   const { userid, round, username, transid } = req.body;
   const DIR = "../public/resume/";
   const file = req.files.profileImg;
+  console.log(file)
   file.mv("public/resume/" + `${userid}` + file.name.split(" ").join("-"),
-    async (error) => {
+    async (error , result) => {
+
       const r = await RoomModel.create({
         user: userid,
         compeleted: true,
