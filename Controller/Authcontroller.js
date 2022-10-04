@@ -75,6 +75,7 @@ exports.signup = async (req, res) => {
     console.log(refer)
     if(refer){
       refer.used=true
+      await refer.save()
     }
   
     createtoken(newUser, 201, res, req);
