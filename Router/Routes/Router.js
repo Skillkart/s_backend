@@ -50,24 +50,23 @@ router.get("/adminmentor", mentor);
 router.post("/refer", auth.refer);
 router.post("/referal", auth.referals);
 router.get("/mentor", auth.mentor);
-router.post("/usertranscation", auth.usertranscation)
+router.post("/usertranscation", auth.usertranscation);
 router.post("/submitdate", auth.submitdate);
-router.post("/getrounds" , roomcrt.getrounds)
+router.post("/getrounds", roomcrt.getrounds);
 router.post("/handletranscation", auth.transcation);
 router.post("/handleselectedmentor", auth.selectmentor);
 router.post("/handlefeedback", auth.handlefeedback);
-router.post("/resumehandle",  auth.handleresume);
+router.post("/resumehandle", auth.handleresume);
 router.post("/getavafee", auth.avargefeedback);
 router.post("/getresume", auth.getresume);
 router.post("/verifyuemail", auth.uemail);
 router.post("/passwordverify", auth.pverify);
 router.post("/getfeedbacks", auth.getfeedbacks);
-router.post("/getrevenue" , auth.getrevenue)
-router.get("/adminuserrecuirter" , roomcrt.getuandr)
-router.post("/isfeedbackdone" , auth.isfeedback)
-
-
-
-
+router.post("/getrevenue", auth.getrevenue);
+router.get("/adminuserrecuirter", roomcrt.getuandr);
+router.post("/isfeedbackdone", auth.isfeedback);
+router.post("/changeprofile", auth.changeprofilepic);
+router.post("/removeprofilepic", auth.removeprofilepic);
+router.post("/deactiveaccount" , auth.deactive)
 
 module.exports = router;

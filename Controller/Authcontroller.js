@@ -68,6 +68,14 @@ exports.signup = async (req, res) => {
       passwordResetToken: verifytoken,
     });
 
+    const refer = await Referal.findOne({
+      refererEmail: email,
+      used: false
+    })
+    if(refer){
+      refer.used=true
+    }
+  
     createtoken(newUser, 201, res, req);
 
     await new Email(verifytoken, username, email, "VerifyEmail").send();
@@ -539,15 +547,16 @@ exports.userforgetpass = async (req, res) => {
     const user = await User.findOne({ Email: email });
     const ecrpt = await bcrypt.hash(password, 10);
     user.password = ecrpt;
-    user.save();
+    console.log(user)
+    await user.save();
     res.status(200).json({
       status: "success",
     });
   } else {
     const user = await Recuirtment.findOne({ Email: email });
     const ecrpt = await bcrypt.hash(password, 10);
-    user.password = ecrpt;
-    user.save();
+    user.Password= ecrpt
+    await user.save();
     res.status(200).json({
       status: "success",
     });
@@ -1453,10 +1462,10 @@ exports.handleresume = async (req, res) => {
   const { userid, round, username, transid } = req.body;
   const DIR = "../public/resume/";
   const file = req.files.profileImg;
-  console.log(file)
-  file.mv("public/resume/" + `${userid}` + file.name.split(" ").join("-"),
-    async (error , result) => {
 
+  file.mv(
+    "public/resume/" + `${userid}` + file.name.split(" ").join("-"),
+    async (error, result) => {
       const r = await RoomModel.create({
         user: userid,
         compeleted: true,
@@ -1474,6 +1483,7 @@ exports.handleresume = async (req, res) => {
 
 exports.getresume = async (req, res) => {
   const { userid, transid } = req.body;
+  console.log(userid , transid)
   const r = await RoomModel.findOne({
     user: userid,
     transcationid: transid,
@@ -1639,3 +1649,100 @@ exports.isfeedback = async (req, res) => {
     });
   }
 };
+
+exports.isuserhasresume = async (req, res) => {
+  const { userid } = req.body;
+
+  const resume = await RoomModel.find({
+    user: userid,
+    round: "Introduction",
+  }).sort({
+    createdAt: -1,
+  });
+
+  const userdetail = await User.findOne({
+    _id: userid,
+  });
+  res.status(200).json({
+    status: "success",
+    resume,
+    data: userdetail,
+  });
+};
+
+exports.changeprofilepic = async (req, res) => {
+  const { userid } = req.body;
+  const urequest = await User.findOne({
+    _id: userid,
+  });
+
+  if (urequest) {
+    const file = req.files.profilepic;
+    await file.mv(
+      "public/profilepic/" + `${userid}` + file.name.split(" ").join("-")
+    );
+    urequest.photo = `${userid}` + file.name.split(" ").join("-");
+    await urequest.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    const rrequst = await Recuirtment.findOne({ _id: userid });
+    if (rrequst) {
+      const file = req.files.profilepic;
+      await file.mv(
+        "public/profilepic/" + `${userid}` + file.name.split(" ").join("-")
+      );
+      rrequst.photo = `${userid}` + file.name.split(" ").join("-");
+      await rrequst.save();
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(400).json({
+        status: "success",
+      });
+    }
+  }
+};
+
+exports.removeprofilepic = async (req, res) => {
+  const { userid } = req.body;
+  const urequest = await User.findOne({
+    _id: userid,
+  });
+
+  if (urequest) {
+    urequest.photo = "";
+    await urequest.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    const rrequst = await Recuirtment.findOne({ _id: userid });
+    if (rrequst) {
+      rrequst.photo = "";
+      await rrequst.save();
+      res.status(200).json({
+        status: "success",
+      });
+    } else {
+      res.status(400).json({
+        status: "success",
+      });
+    }
+  }
+};
+
+
+exports.deactive=async(req , res)=>{
+  const {userid} = req.body
+
+  const request = await Recuirtment.findByIdAndDelete({
+    _id: userid
+  })
+  
+  res.status(200).json({
+    status:"sucess"
+  })
+}
