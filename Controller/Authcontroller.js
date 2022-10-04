@@ -69,9 +69,10 @@ exports.signup = async (req, res) => {
     });
 
     const refer = await Referal.findOne({
-      refererEmail: email,
+      refererEmail: email.toLowerCase(),
       used: false
     })
+    console.log(refer)
     if(refer){
       refer.used=true
     }
