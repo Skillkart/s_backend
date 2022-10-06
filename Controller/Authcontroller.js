@@ -1262,16 +1262,20 @@ exports.bookaslot = async (req, res) => {
 };
 
 exports.refer = async (req, res) => {
-  const { email, referedby } = req.body;
+  const { name, email, referedby, referid, referername } = req.body;
 
   const exist = await Referal.findOne({
     refererEmail: email,
   });
   if (!exist) {
     const request = await Referal.create({
+      refererid: referid,
       refererEmail: email,
+      refererusername: referername,
+      referedusername: name,
       referedby: referedby,
     });
+    await new Email("", name, email, "", "", referername).referalprogram();
     res.status(200).json({
       status: "success",
     });
@@ -1311,11 +1315,12 @@ exports.mentor = async (req, res) => {
         state.time.length > 0
     );
     if (f.length) {
-      array.push(m);
+      array.push(f);
     } else {
       continue;
     }
   }
+  console.log(array);
   res.status(200).json({
     status: "success",
     data: array,
@@ -1749,49 +1754,48 @@ exports.deactive = async (req, res) => {
 };
 
 exports.change = async (req, res) => {
-  const { changeable, content , userid } = req.body;
-  console.log(changeable , content , userid)
+  const { changeable, content, userid } = req.body;
+  console.log(changeable, content, userid);
   const user = await User.findOne({
-    _id: userid
-  })
-  if(user){
+    _id: userid,
+  });
+  if (user) {
     res.status(200).json({
-      sttaus:"success"
-    })
-  }else{
+      sttaus: "success",
+    });
+  } else {
     const request = await Recuirtment.findOne({
-      _id: userid
-    })
-    if(request){
-      if(changeable=="Name"){
-        request.Name=content
-        await request.save()
+      _id: userid,
+    });
+    if (request) {
+      if (changeable == "Name") {
+        request.Name = content;
+        await request.save();
         res.status(200).json({
-          status:"success"
-        })
+          status: "success",
+        });
       }
-      if(changeable=="workat"){
-        request.workat=content
-        await request.save()
+      if (changeable == "workat") {
+        request.workat = content;
+        await request.save();
         res.status(200).json({
-          status:"success"
-        })
+          status: "success",
+        });
       }
-      if(changeable=="currentrole"){
-        request.currentrole=content
-        await request.save()
+      if (changeable == "currentrole") {
+        request.currentrole = content;
+        await request.save();
         res.status(200).json({
-          status:"success"
-        })
+          status: "success",
+        });
       }
-      if(changeable=="AOE"){
-        request.AOE=content
-        await request.save()
+      if (changeable == "AOE") {
+        request.AOE = content;
+        await request.save();
         res.status(200).json({
-          status:"success"
-        })
+          status: "success",
+        });
       }
-     
     }
   }
 };

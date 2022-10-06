@@ -3,12 +3,13 @@ const ejs = require("ejs");
 const htmlToText = require("html-to-text");
 
 module.exports = class Email {
-  constructor(verifycode, username, email, temp , productid) {
+  constructor(verifycode, username, email, temp, productid, referername) {
     this.verifycode = verifycode;
     this.username = username;
     this.email = email;
     this.temp = temp;
-    this.productid =productid
+    this.productid = productid;
+    this.referername = referername;
   }
   mailtransporter() {
     return nodemailer.createTransport({
@@ -22,7 +23,7 @@ module.exports = class Email {
   }
   async passwordreset() {
     const html = await ejs.renderFile(
-      `${__dirname}/../views/Popup/Passwordreset.ejs`,
+      `${__dirname}/../views/Popupref/Passwordreset.ejs`,
       {
         verifycode: this.verifycode,
         username: this.username,
@@ -46,14 +47,35 @@ module.exports = class Email {
       `${__dirname}/../views/Popup/Coursepurchase.ejs`,
       {
         username: this.username,
-        productid: this.productid
+        productid: this.productid,
       }
     );
 
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "Welcome To Skillkart Family",
+      subject: "Now Be job ready in 30 days",
+      html,
+      text: htmlToText.compile(html),
+    };
+    await this.mailtransporter().sendMail(detail, (error, info) => {
+      console.log(error);
+      console.log(info);
+    });
+  }
+  async referalprogram() {
+    const html = await ejs.renderFile(
+      `${__dirname}/../views/Popup/Referalprogram.ejs`,
+      {
+        username: this.username,
+        referername: this.referername,
+      }
+    );
+
+    let detail = {
+      from: "info@skillkart.app",
+      to: this.email,
+      subject: "Now Be job ready in 30 days",
       html,
       text: htmlToText.compile(html),
     };
