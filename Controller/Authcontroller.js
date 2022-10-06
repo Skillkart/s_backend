@@ -1315,7 +1315,7 @@ exports.mentor = async (req, res) => {
         state.time.length > 0
     );
     if (f.length) {
-      array.push(f);
+      array.push(m);
     } else {
       continue;
     }
