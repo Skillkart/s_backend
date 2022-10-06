@@ -68,5 +68,5 @@ router.post("/isfeedbackdone", auth.isfeedback);
 router.post("/changeprofile", auth.changeprofilepic);
 router.post("/removeprofilepic", auth.removeprofilepic);
 router.post("/deactiveaccount" , auth.deactive)
-
+router.post("/changefronuserprofile" , auth.change)
 module.exports = router;

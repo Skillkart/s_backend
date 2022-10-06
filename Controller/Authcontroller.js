@@ -70,14 +70,14 @@ exports.signup = async (req, res) => {
 
     const refer = await Referal.findOne({
       refererEmail: email.toLowerCase(),
-      used: false
-    })
-    console.log(refer)
-    if(refer){
-      refer.used=true
-      await refer.save()
+      used: false,
+    });
+    console.log(refer);
+    if (refer) {
+      refer.used = true;
+      await refer.save();
     }
-  
+
     createtoken(newUser, 201, res, req);
 
     await new Email(verifytoken, username, email, "VerifyEmail").send();
@@ -549,7 +549,7 @@ exports.userforgetpass = async (req, res) => {
     const user = await User.findOne({ Email: email });
     const ecrpt = await bcrypt.hash(password, 10);
     user.password = ecrpt;
-    console.log(user)
+    console.log(user);
     await user.save();
     res.status(200).json({
       status: "success",
@@ -557,7 +557,7 @@ exports.userforgetpass = async (req, res) => {
   } else {
     const user = await Recuirtment.findOne({ Email: email });
     const ecrpt = await bcrypt.hash(password, 10);
-    user.Password= ecrpt
+    user.Password = ecrpt;
     await user.save();
     res.status(200).json({
       status: "success",
@@ -1485,7 +1485,7 @@ exports.handleresume = async (req, res) => {
 
 exports.getresume = async (req, res) => {
   const { userid, transid } = req.body;
-  console.log(userid , transid)
+  console.log(userid, transid);
   const r = await RoomModel.findOne({
     user: userid,
     transcationid: transid,
@@ -1736,15 +1736,62 @@ exports.removeprofilepic = async (req, res) => {
   }
 };
 
-
-exports.deactive=async(req , res)=>{
-  const {userid} = req.body
+exports.deactive = async (req, res) => {
+  const { userid } = req.body;
 
   const request = await Recuirtment.findByIdAndDelete({
+    _id: userid,
+  });
+
+  res.status(200).json({
+    status: "sucess",
+  });
+};
+
+exports.change = async (req, res) => {
+  const { changeable, content , userid } = req.body;
+  console.log(changeable , content , userid)
+  const user = await User.findOne({
     _id: userid
   })
-  
-  res.status(200).json({
-    status:"sucess"
-  })
-}
+  if(user){
+    res.status(200).json({
+      sttaus:"success"
+    })
+  }else{
+    const request = await Recuirtment.findOne({
+      _id: userid
+    })
+    if(request){
+      if(changeable=="Name"){
+        request.Name=content
+        await request.save()
+        res.status(200).json({
+          status:"success"
+        })
+      }
+      if(changeable=="workat"){
+        request.workat=content
+        await request.save()
+        res.status(200).json({
+          status:"success"
+        })
+      }
+      if(changeable=="currentrole"){
+        request.currentrole=content
+        await request.save()
+        res.status(200).json({
+          status:"success"
+        })
+      }
+      if(changeable=="AOE"){
+        request.AOE=content
+        await request.save()
+        res.status(200).json({
+          status:"success"
+        })
+      }
+     
+    }
+  }
+};
