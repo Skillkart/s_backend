@@ -20,6 +20,9 @@ const pathrouter = require("./Router/Routes/Router");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const methodOverride = require("method-override");
+const GridFsStorage = require("multer-gridfs-storage");
+const Grid = require("gridfs-stream");
 
 dotenv.config({ path: "./config.env" });
 
@@ -39,12 +42,13 @@ app.options("*", cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(
-  fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 },
-  })
-);
+// app.use(
+//   fileUpload({
+//     limits: { fileSize: 50 * 1024 * 1024 },
+//   })
+// );
 app.use(cookieParser());
+app.use(methodOverride("_method"));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
@@ -52,6 +56,8 @@ app.use((req, res, next) => {
   // console.log(req.cookies.jwt);
   next();
 });
+
+let gfs;
 
 app.use("/", viewrouter);
 app.use("/api/v1", pathrouter);
@@ -61,7 +67,9 @@ mongoose
     useNewUrlParser: true,
   })
   .then((con) => {
-    console.log("db connected");
+    gfs = Grid(con.connections[0].db, mongoose.mongo);
+    // console.log(gfs);
+    gfs.collection("uploads");
   })
   .catch((error) => {
     console.log(error, "its a error");
@@ -86,6 +94,19 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get("/api/v1/:filename", (req, res) => {
+  gfs.files.find().toArray((err, file) => {
+    // console.log(file , err)
+    if (!file || file.length === 0) {
+      return res.status(404).json({
+        err: "No files exist",
+      });
+    }
+
+    // Files exist
+    return res.json(file);
+  });
+});
 // app.all('*', (req, res, next) => {
 //   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 // });
@@ -93,3 +114,5 @@ const port = process.env.PORT;
 server.listen(port, () => {
   console.log(port);
 });
+
+

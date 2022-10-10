@@ -24,8 +24,8 @@ const ReModel = new mongoose.Schema({
     type: String,
   },
   photo: {
-    type: String,
-    default: "default.png",
+    data: Buffer,
+    contentType: String,
   },
   Experience: {
     type: String,

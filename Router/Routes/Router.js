@@ -10,6 +10,7 @@ const router = express.Router();
 const auth = require("../../Controller/Authcontroller");
 const roomcrt = require("../../Controller/Roomcontroller");
 const { userdata, mentor } = require("../../Controller/allresponse");
+const { upload } = require("../../Other/Multer");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
@@ -65,8 +66,13 @@ router.post("/getfeedbacks", auth.getfeedbacks);
 router.post("/getrevenue", auth.getrevenue);
 router.get("/adminuserrecuirter", roomcrt.getuandr);
 router.post("/isfeedbackdone", auth.isfeedback);
-router.post("/changeprofile", auth.changeprofilepic);
+// router.get("/:filename", auth.pp);
+
+router.post(
+  "/changeprofile",
+  auth.changeprofilepic
+);
 router.post("/removeprofilepic", auth.removeprofilepic);
-router.post("/deactiveaccount" , auth.deactive)
-router.post("/changefronuserprofile" , auth.change)
+router.post("/deactiveaccount", auth.deactive);
+router.post("/changefronuserprofile", auth.change);
 module.exports = router;

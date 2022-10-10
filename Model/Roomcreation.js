@@ -15,17 +15,18 @@ const RoomSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  round :{
-    type:String,
+  round: {
+    type: String,
   },
   compeleted: {
     type: Boolean,
     default: false,
   },
-  resume:{
-    type:String 
+  resume: {
+    data: Buffer,
+    contentType: String,
   },
-  transcationid:{
+  transcationid: {
     type: String,
   },
   createdAt: {

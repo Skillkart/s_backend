@@ -23,6 +23,9 @@ const { timingSafeEqual } = require("crypto");
 const Referal = require("../Model/Referal");
 const { readSync } = require("fs");
 const Resume = require("../Model/Resume");
+const { upload } = require("../Other/Multer");
+const gfs = require("..");
+const Image = require("../Model/Image");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -1311,7 +1314,7 @@ exports.mentor = async (req, res) => {
     const f = m.busydate.filter(
       (state) =>
         state.date.split(" ")[0] >= day &&
-        state.date.split(" ")[1] >= month &&
+        state.date.split(" ")[1] >= month + 1 &&
         state.time.length > 0
     );
     if (f.length) {
@@ -1425,15 +1428,25 @@ exports.selectmentor = async (req, res) => {
   const fil = f.busydate.filter(
     (state) =>
       state.date.split(" ")[0] >= day &&
-      state.date.split(" ")[1] >= month &&
+      state.date.split(" ")[1] >= month + 1 &&
       state.time.length > 0
   );
 
-  res.status(200).json({
-    status: "success",
-    mentor: f,
-    data: fil,
-  });
+  if (fil.length) {
+    res.status(200).json({
+      status: "success",
+      mentor: f,
+      data: fil,
+      slotfind: true,
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      mentor: f,
+      data: fil,
+      slotfind: false,
+    });
+  }
 };
 
 exports.handlefeedback = async (req, res) => {
@@ -1468,24 +1481,17 @@ exports.avargefeedback = async (req, res) => {
 exports.handleresume = async (req, res) => {
   const { userid, round, username, transid } = req.body;
   const DIR = "../public/resume/";
-  const file = req.files.profileImg;
-
-  file.mv(
-    "public/resume/" + `${userid}` + file.name.split(" ").join("-"),
-    async (error, result) => {
-      const r = await RoomModel.create({
-        user: userid,
-        compeleted: true,
-        user_name: username,
-        round: round,
-        transcationid: transid,
-        resume: `${userid}` + file.name.split(" ").join("-"),
-      });
-      res.status(200).json({
-        status: "success",
-      });
-    }
-  );
+  const r = await RoomModel.create({
+    user: userid,
+    compeleted: true,
+    user_name: username,
+    round: round,
+    transcationid: transid,
+    resume: `${userid}`,
+  });
+  res.status(200).json({
+    status: "success",
+  });
 };
 
 exports.getresume = async (req, res) => {
@@ -1682,7 +1688,6 @@ exports.changeprofilepic = async (req, res) => {
   const urequest = await User.findOne({
     _id: userid,
   });
-
   if (urequest) {
     const file = req.files.profilepic;
     await file.mv(
@@ -1695,12 +1700,13 @@ exports.changeprofilepic = async (req, res) => {
     });
   } else {
     const rrequst = await Recuirtment.findOne({ _id: userid });
+    console.log(rrequst);
     if (rrequst) {
       const file = req.files.profilepic;
       await file.mv(
         "public/profilepic/" + `${userid}` + file.name.split(" ").join("-")
       );
-      rrequst.photo = `${userid}` + file.name.split(" ").join("-");
+      rrequst.photo = `${userid}` + file.name;
       await rrequst.save();
       res.status(200).json({
         status: "success",
@@ -1799,3 +1805,24 @@ exports.change = async (req, res) => {
     }
   }
 };
+
+// exports.pp = async (req, res) => {
+//   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+//     console.log()
+//     if (!file || file.length === 0) {
+//       return res.status(404).json({
+//         err: "No file exists",
+//       });
+//     }
+
+//     if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
+//       // Read output to browser
+//       const readstream = gfs.createReadStream(file.filename);
+//       readstream.pipe(res);
+//     } else {
+//       res.status(404).json({
+//         err: "Not an image",
+//       });
+//     }
+//   });
+// };
