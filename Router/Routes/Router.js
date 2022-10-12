@@ -68,11 +68,11 @@ router.get("/adminuserrecuirter", roomcrt.getuandr);
 router.post("/isfeedbackdone", auth.isfeedback);
 // router.get("/:filename", auth.pp);
 
-router.post(
-  "/changeprofile",
-  auth.changeprofilepic
-);
+router.post("/changeprofile", auth.changeprofilepic);
 router.post("/removeprofilepic", auth.removeprofilepic);
 router.post("/deactiveaccount", auth.deactive);
 router.post("/changefronuserprofile", auth.change);
+router.route("/refered").get(auth.getreferer).post(auth.addrefer);
+router.route("/loginrefered").post(auth.addloginrefer);
+
 module.exports = router;

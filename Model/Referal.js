@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const ReferalModel = new mongoose.Schema({
-  refererEmail: String,
-  referedby: String,
+  referedEmail: String,
+  referedbyEmail: String,
   refererid: String,
   refererusername: String,
   referedusername: String,

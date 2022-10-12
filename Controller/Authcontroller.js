@@ -26,6 +26,7 @@ const Resume = require("../Model/Resume");
 const { upload } = require("../Other/Multer");
 const gfs = require("..");
 const Image = require("../Model/Image");
+const { findOne } = require("../Model/Roomcreation");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -71,11 +72,6 @@ exports.signup = async (req, res) => {
       passwordResetToken: verifytoken,
     });
 
-    const refer = await Referal.findOne({
-      refererEmail: email.toLowerCase(),
-      used: false,
-    });
-    console.log(refer);
     if (refer) {
       refer.used = true;
       await refer.save();
@@ -1144,7 +1140,7 @@ exports.purchase = async (req, res) => {
   let cat = ["Technical", "Technical", "Technical", "HR", "HR"];
 
   const refer = await Referal.findOne({
-    refererEmail: email,
+    referedEmail: email,
   });
   if (status == "Failed") {
     const requesteddata = await RoomModel.create({
@@ -1172,11 +1168,13 @@ exports.purchase = async (req, res) => {
       time: "",
       date: "",
     });
+    // console.log(refer);
     if (refer) {
       refer.used = true;
     } else {
       refer.used = false;
     }
+    await refer.save();
     res.status(200).json({
       status: "Success",
       message: "successful",
@@ -1293,8 +1291,9 @@ exports.refer = async (req, res) => {
 exports.referals = async (req, res) => {
   const { email } = req.body;
   const request = await Referal.find({
-    referedby: email,
+    referedbyEmail: email,
   });
+  // console.log(email);
   res.status(200).json({
     status: "success",
     data: request,
@@ -1323,7 +1322,7 @@ exports.mentor = async (req, res) => {
       continue;
     }
   }
-  console.log(array);
+  // console.log(array);
   res.status(200).json({
     status: "success",
     data: array,
@@ -1397,11 +1396,24 @@ exports.transcation = async (req, res) => {
     price,
     status,
   });
-  await new Email("", username, email, "", request._id).purchase();
-  res.status(200).json({
-    status: "success",
-    request,
+  const refer = await Referal.findOne({
+    referedEmail: email,
+    used: false,
   });
+  if (refer) {
+    refer.used = true;
+    await refer.save();
+    await new Email("", username, email, "", request._id).purchase();
+    res.status(200).json({
+      status: "success",
+      request,
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      request,
+    });
+  }
 };
 
 exports.usertranscation = async (req, res) => {
@@ -1462,9 +1474,11 @@ exports.handlefeedback = async (req, res) => {
 
 exports.avargefeedback = async (req, res) => {
   const { userid } = req.body;
+  // console.log(userid);
   const request = await Feedback.find({
     userid,
   });
+  // console.log(request);
   if (request.length) {
     sum = 0;
     for (let c of request) {
@@ -1640,10 +1654,6 @@ exports.getrevenue = async (req, res) => {
   });
 };
 
-exports.userfeedback = async (req, res) => {
-  const { userid, transid, title } = req.body;
-};
-
 exports.isfeedback = async (req, res) => {
   const { roomid } = req.body;
 
@@ -1700,7 +1710,7 @@ exports.changeprofilepic = async (req, res) => {
     });
   } else {
     const rrequst = await Recuirtment.findOne({ _id: userid });
-    console.log(rrequst);
+    // console.log(rrequst);
     if (rrequst) {
       const file = req.files.profilepic;
       await file.mv(
@@ -1761,7 +1771,7 @@ exports.deactive = async (req, res) => {
 
 exports.change = async (req, res) => {
   const { changeable, content, userid } = req.body;
-  console.log(changeable, content, userid);
+
   const user = await User.findOne({
     _id: userid,
   });
@@ -1806,23 +1816,167 @@ exports.change = async (req, res) => {
   }
 };
 
-// exports.pp = async (req, res) => {
-//   gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
-//     console.log()
-//     if (!file || file.length === 0) {
-//       return res.status(404).json({
-//         err: "No file exists",
-//       });
-//     }
+exports.getreferer = async (req, res) => {
+  const { id } = req.query;
+  // console.log(id);
+  const user = await User.findOne({
+    _id: id,
+  });
+  if (user) {
+    res.status(200).json({
+      status: "success",
+      data: {
+        _id: user._id,
+        Name: user.Name,
+        Email: user.Email,
+      },
+    });
+  } else {
+    res.status(400).json({
+      status: "Failed",
+    });
+  }
+};
 
-//     if (file.contentType === "image/jpeg" || file.contentType === "image/png") {
-//       // Read output to browser
-//       const readstream = gfs.createReadStream(file.filename);
-//       readstream.pipe(res);
-//     } else {
-//       res.status(404).json({
-//         err: "Not an image",
-//       });
-//     }
-//   });
-// };
+exports.addrefer = async (req, res) => {
+  const { name, email, phone, password, refererid, referername, refereremail } =
+    req.body;
+
+  const refer = await Referal.create({
+    referedbyEmail: refereremail,
+    refererid: refererid,
+    referedusername: referername,
+    referedEmail: email,
+    referedusername: name,
+  });
+  const user = await User.findOne({
+    Email: email,
+  });
+
+  if (!user) {
+    const ecrpt = await bcrypt.hash(password, 10);
+    const verifytoken = getRandomArbitrary(100000, 999999);
+    const newUser = await User.create({
+      Name: name,
+      Email: email,
+      password: ecrpt,
+      phone: phone,
+      passwordResetToken: verifytoken,
+    });
+
+    createtoken(newUser, 201, res, req);
+
+    // await new Email(verifytoken, username, email, "VerifyEmail").send();
+    await new Email(verifytoken, username, email, "VerifyEmail").welcomesend();
+
+    setTimeout(() => {
+      newUser.passwordResetToken = "";
+      newUser.save();
+    }, 1000 * 300);
+  } else {
+    res.status(400).json({
+      status: "Failed",
+      message: "Already Have an account.",
+    });
+  }
+};
+
+exports.addloginrefer = async (req, res, next) => {
+  const { name, email, phone, password, refererid, referername, refereremail } =
+    req.body;
+  // console.log(
+  //   name,
+  //   email,
+  //   phone,
+  //   password,
+  //   refererid,
+  //   referername,
+  //   refereremail
+  // );
+  const user = await User.findOne({
+    Email: email,
+  });
+  const rec = await Recuirtment.findOne({
+    Email: email,
+  });
+  if (!user && !rec) {
+    return next(
+      new AppError("Didn't find associate with this EmailId.", 401, res)
+    );
+  }
+  if (rec) {
+    const dcrpt = await bcrypt.compare(password, rec.Password);
+    if (!dcrpt) {
+      return next(new AppError("Incorrect Email or password.", 401, res));
+    } else {
+      createtoken(rec, 201, res, req, true);
+    }
+  } else {
+    const dcrpt = await bcrypt.compare(password, user.password);
+    if (!dcrpt) {
+      return next(new AppError("Incorrect Email or password.", 401, res));
+    } else {
+      const refer = await Referal.findOne({
+        refererEmail: email.toLowerCase(),
+        used: true,
+      });
+      if (refer) {
+        new AppError("Already refered.", 401, res);
+      } else {
+        const r = await Referal.findOne({
+          refererEmail: email.toLowerCase(),
+        });
+        if (r) {
+          const trans = await Transcation.find({
+            user: user._id,
+            status: "success",
+          });
+          const transfilter = trans.filter(
+            (state) =>
+              Math.floor(
+                (new Date().getTime() - new Date(state.createdAt).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              ) < 60
+          );
+          if (transfilter.length) {
+            if (!dcrpt) {
+              return next(new AppError("Incorrect password.", 401, res));
+            } else {
+              createtoken(user, 201, res, req, true);
+            }
+          } else {
+            createtoken(user, 201, res, req, false);
+          }
+        } else {
+          await Referal.create({
+            referedbyEmail: refereremail,
+            refererid: refererid,
+            refererusername: referername,
+            referedEmail: user.Email,
+            referedusername : user.Name
+          });
+          const trans = await Transcation.find({
+            user: user._id,
+            status: "success",
+          });
+          const transfilter = trans.filter(
+            (state) =>
+              Math.floor(
+                (new Date().getTime() - new Date(state.createdAt).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              ) < 60
+          );
+          if (transfilter.length) {
+            if (!dcrpt) {
+              return next(new AppError("Incorrect password.", 401, res));
+            } else {
+              createtoken(user, 201, res, req, true);
+            }
+          } else {
+            createtoken(user, 201, res, req, false);
+          }
+        }
+      }
+    }
+  }
+};
