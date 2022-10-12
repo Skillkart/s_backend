@@ -21,8 +21,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const methodOverride = require("method-override");
-const GridFsStorage = require("multer-gridfs-storage");
-const Grid = require("gridfs-stream");
+// const GridFsStorage = require("multer-gridfs-storage");
+// const Grid = require("gridfs-stream");
 
 dotenv.config({ path: "./config.env" });
 
@@ -67,9 +67,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then((con) => {
-    gfs = Grid(con.connections[0].db, mongoose.mongo);
-    // console.log(gfs);
-    gfs.collection("uploads");
+   console.log("db connected")
   })
   .catch((error) => {
     console.log(error, "its a error");
