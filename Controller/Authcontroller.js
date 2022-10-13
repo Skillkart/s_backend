@@ -1867,8 +1867,8 @@ exports.addrefer = async (req, res) => {
     createtoken(newUser, 201, res, req);
     await new Email(
       "",
-      user.Name,
-      user.Email,
+      name,
+      email,
       "",
       "",
       referername
