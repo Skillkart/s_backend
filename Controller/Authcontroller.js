@@ -1853,15 +1853,6 @@ exports.addrefer = async (req, res) => {
     Email: email,
   });
 
-  await new Email(
-    "",
-    user.Name,
-    user.Email,
-    "",
-    "",
-    referername
-  ).referalprogram();
-
   if (!user) {
     const ecrpt = await bcrypt.hash(password, 10);
     const verifytoken = getRandomArbitrary(100000, 999999);
@@ -1874,7 +1865,14 @@ exports.addrefer = async (req, res) => {
     });
 
     createtoken(newUser, 201, res, req);
-
+    await new Email(
+      "",
+      user.Name,
+      user.Email,
+      "",
+      "",
+      referername
+    ).referalprogram();
     // await new Email(verifytoken, username, email, "VerifyEmail").send();
     await new Email(verifytoken, name, email, "VerifyEmail").welcomesend();
 
