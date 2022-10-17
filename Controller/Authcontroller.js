@@ -19,14 +19,7 @@ const PendingModel = require("../Model/Pendingfeedback");
 const Razorpay = require("razorpay");
 const Waitinglist = require("../Model/Waitinglis");
 const Subscribe = require("../Model/Subscribe");
-const { timingSafeEqual } = require("crypto");
 const Referal = require("../Model/Referal");
-const { readSync } = require("fs");
-const Resume = require("../Model/Resume");
-const { upload } = require("../Other/Multer");
-const gfs = require("..");
-const Image = require("../Model/Image");
-const { findOne } = require("../Model/Roomcreation");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -206,7 +199,7 @@ exports.loggedin = async (req, res, next) => {
   } else {
     res.status(400).json({
       status: "Logout",
-      mentor: mentor,
+      // mentor: mentor,
     });
   }
 };
@@ -1694,29 +1687,21 @@ exports.isuserhasresume = async (req, res) => {
 };
 
 exports.changeprofilepic = async (req, res) => {
-  const { userid } = req.body;
+  const { userid, image } = req.body;
+  console.log(userid, image);
   const urequest = await User.findOne({
     _id: userid,
   });
   if (urequest) {
-    const file = req.files.profilepic;
-    await file.mv(
-      "public/profilepic/" + `${userid}` + file.name.split(" ").join("-")
-    );
-    urequest.photo = `${userid}` + file.name.split(" ").join("-");
+    urequest.photo = `${image}`;
     await urequest.save();
     res.status(200).json({
       status: "success",
     });
   } else {
     const rrequst = await Recuirtment.findOne({ _id: userid });
-    // console.log(rrequst);
     if (rrequst) {
-      const file = req.files.profilepic;
-      await file.mv(
-        "public/profilepic/" + `${userid}` + file.name.split(" ").join("-")
-      );
-      rrequst.photo = `${userid}` + file.name;
+      rrequst.photo = `${image}`;
       await rrequst.save();
       res.status(200).json({
         status: "success",
@@ -1865,14 +1850,7 @@ exports.addrefer = async (req, res) => {
     });
 
     createtoken(newUser, 201, res, req);
-    await new Email(
-      "",
-      name,
-      email,
-      "",
-      "",
-      referername
-    ).referalprogram();
+    await new Email("", name, email, "", "", referername).referalprogram();
     // await new Email(verifytoken, username, email, "VerifyEmail").send();
     await new Email(verifytoken, name, email, "VerifyEmail").welcomesend();
 
@@ -1992,6 +1970,92 @@ exports.addloginrefer = async (req, res, next) => {
           }
         }
       }
+    }
+  }
+};
+
+exports.emailtest = async (req, res) => {
+  const { date } = req.body;
+  let tago = 1832454;
+  const d = new Date(date).getTime();
+  const a = new Date().getTime();
+  let ans = d - a;
+  if (ans - tago > 0) {
+    setTimeout(async () => {
+      console.log("yeah");
+      await new Email(
+        "",
+        "jagdeep",
+        "jagdeepsnh57@gmail.com",
+        "",
+        "",
+        "me"
+      ).referalprogram();
+    }, ans - tago);
+  } else {
+    setTimeout(async () => {
+      console.log("yeah");
+      await new Email(
+        "",
+        "jagdeep",
+        "jagdeepsnh57@gmail.com",
+        "",
+        "",
+        "me"
+      ).referalprogram();
+    }, ans - tago);
+  }
+  // new Date().getTime()-tago
+};
+
+exports.mentoraccountcr = async (req, res) => {
+  const { step } = req.query;
+  const { name, email, phone, password } = req.body;
+
+  const user = await Recuirtment.findOne({ Email: email });
+
+  if (user) {
+    res.status(400).json({
+      status: "Fail",
+    });
+  } else {
+    if (step == 1) {
+      const ecrpt = await bcrypt.hash(password, 10);
+      const request = await Recuirtment.create({
+        Name: name,
+        Email: email,
+        phone: phone,
+        Password: ecrpt,
+        step,
+      });
+      createtoken(request, 201, res, req);
+    }
+  }
+};
+
+exports.getmformdetail = async (req, res) => {
+  const { token } = req.query;
+  if (token) {
+    try {
+      const decoded = await jwt.verify(token, process.env.tokn_crypt);
+      const currentUser = await Recuirtment.findById(decoded.data);
+      if(currentUser){
+        res.status(200).json({
+          status:"success",
+          data: currentUser
+        })
+      }else{
+        res.status(400).json(
+          {
+            status:"Failed"
+          }
+        )
+      }
+    } catch {
+      res.status(400).json({
+        status: "Fail",
+        message: "Token expire",
+      });
     }
   }
 };

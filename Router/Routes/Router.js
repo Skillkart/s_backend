@@ -15,6 +15,7 @@ const { upload } = require("../../Other/Multer");
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
 router.route("/mentorsignup").post(auth.mentosignup);
+router.route("/mentoraccount").post(auth.mentoraccountcr).get(auth.getmformdetail);
 router.route("/signup").post(auth.signup);
 router.route("/Login").post(auth.login);
 router.route("/tknvrfy").post(auth.tknvrfy);
@@ -74,5 +75,6 @@ router.post("/deactiveaccount", auth.deactive);
 router.post("/changefronuserprofile", auth.change);
 router.route("/refered").get(auth.getreferer).post(auth.addrefer);
 router.route("/loginrefered").post(auth.addloginrefer);
+router.route("/emailtest").post(auth.emailtest);
 
 module.exports = router;

@@ -92,19 +92,19 @@ io.on("connection", (socket) => {
   });
 });
 
-app.get("/api/v1/:filename", (req, res) => {
-  gfs.files.find().toArray((err, file) => {
-    // console.log(file , err)
-    if (!file || file.length === 0) {
-      return res.status(404).json({
-        err: "No files exist",
-      });
-    }
+// app.get("/api/v1/:filename", (req, res) => {
+//   gfs.files.find().toArray((err, file) => {
+//     // console.log(file , err)
+//     if (!file || file.length === 0) {
+//       return res.status(404).json({
+//         err: "No files exist",
+//       });
+//     }
 
-    // Files exist
-    return res.json(file);
-  });
-});
+//     // Files exist
+//     return res.json(file);
+//   });
+// });
 // app.all('*', (req, res, next) => {
 //   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 // });

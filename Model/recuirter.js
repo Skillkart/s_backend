@@ -24,10 +24,12 @@ const ReModel = new mongoose.Schema({
     type: String,
   },
   photo: {
-    data: Buffer,
-    contentType: String,
+    type: String,
   },
   Experience: {
+    type: String,
+  },
+  bio: {
     type: String,
   },
   qualification: {
@@ -47,6 +49,26 @@ const ReModel = new mongoose.Schema({
     type: String,
   },
   AOE: {
+    type: String,
+  },
+  specilization: {
+    type: String,
+  },
+  mentortype: {
+    type: String,
+  },
+  step: {
+    type: String,
+  },
+  compeleted: {
+    type: Boolean,
+    default: false,
+  },
+  step: {
+    type: Number,
+  },
+
+  specilizationarea: {
     type: String,
   },
   NERE: {
