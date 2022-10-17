@@ -2010,26 +2010,95 @@ exports.emailtest = async (req, res) => {
 
 exports.mentoraccountcr = async (req, res) => {
   const { step } = req.query;
-  const { name, email, phone, password } = req.body;
+  const {
+    name,
+    email,
+    phone,
+    password,
+    bio,
+    linkedin,
+    sAREA,
+    specialization,
+    qualification,
+    gender,
+    workat,
+    currentrole,
+    experience,
+    mentorshiptype,
+    joboffer,
+    avatime,
+  } = req.body;
 
-  const user = await Recuirtment.findOne({ Email: email });
+  const student = await User.findOne({ Email: email });
+  if (!student) {
+    const user = await Recuirtment.findOne({ Email: email });
 
-  if (user) {
-    res.status(400).json({
-      status: "Fail",
-    });
-  } else {
     if (step == 1) {
-      const ecrpt = await bcrypt.hash(password, 10);
-      const request = await Recuirtment.create({
-        Name: name,
-        Email: email,
-        phone: phone,
-        Password: ecrpt,
-        step,
-      });
-      createtoken(request, 201, res, req);
+      if (user) {
+        res.status(400).json({
+          status: "Fail",
+          message: "User already exist.",
+        });
+      } else {
+        const ecrpt = await bcrypt.hash(password, 10);
+        const request = await Recuirtment.create({
+          Name: name,
+          Email: email,
+          phone: phone,
+          Password: ecrpt,
+          step,
+        });
+        await new Email("", name, email).welcomementor();
+        createtoken(request, 201, res, req);
+      }
     }
+    if (user) {
+      if (step == 2) {
+        user.Gender = gender;
+        user.bio = bio;
+        user.Linkendin = linkedin;
+        user.step = step;
+        await user.save();
+        res.status(200).json({
+          status: "success",
+        });
+      }
+      if (step == 3) {
+        (user.AOE = sAREA),
+          (user.qualification = qualification),
+          (user.specilization = specialization);
+        user.step = step;
+        await user.save();
+        res.status(200).json({
+          status: "success",
+        });
+      }
+      if (step == 4) {
+        (user.Experience = experience),
+          (user.workat = workat),
+          (user.currentrole = currentrole);
+        user.step = step;
+        await user.save();
+        res.status(200).json({
+          status: "success",
+        });
+      }
+      if (step == 5) {
+        user.mentortype = mentorshiptype;
+        user.NERE = joboffer;
+        (user.Rsparetime = avatime),
+          (user.compeleted = true),
+          await user.save();
+        res.status(200).json({
+          status: "success",
+        });
+      }
+    }
+  } else {
+    res.status(400).json({
+      status: "Failed",
+      message: "Already have an account as Student.",
+    });
   }
 };
 
@@ -2039,17 +2108,19 @@ exports.getmformdetail = async (req, res) => {
     try {
       const decoded = await jwt.verify(token, process.env.tokn_crypt);
       const currentUser = await Recuirtment.findById(decoded.data);
-      if(currentUser){
+      if (currentUser) {
+        const meeting = await RoomModel.find({
+          recuiter: currentUser._id,
+        });
         res.status(200).json({
-          status:"success",
-          data: currentUser
-        })
-      }else{
-        res.status(400).json(
-          {
-            status:"Failed"
-          }
-        )
+          status: "success",
+          data: currentUser,
+          meeting: meeting,
+        });
+      } else {
+        res.status(400).json({
+          status: "Failed",
+        });
       }
     } catch {
       res.status(400).json({
