@@ -23,7 +23,7 @@ module.exports = class Email {
   }
   async passwordreset() {
     const html = await ejs.renderFile(
-      `${__dirname}/../views/Popupref/Passwordreset.ejs`,
+      `${__dirname}/../views/Popup/Passwordreset.ejs`,
       {
         verifycode: this.verifycode,
         username: this.username,

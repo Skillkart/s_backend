@@ -76,5 +76,8 @@ router.post("/changefronuserprofile", auth.change);
 router.route("/refered").get(auth.getreferer).post(auth.addrefer);
 router.route("/loginrefered").post(auth.addloginrefer);
 router.route("/emailtest").post(auth.emailtest);
+router.route("/changeuserprofiledetail").post(auth.changeuserprofile);
+router.route("/changeuserpassword").post(auth.changeuserpassword);
+
 
 module.exports = router;

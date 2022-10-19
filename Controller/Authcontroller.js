@@ -2032,7 +2032,6 @@ exports.mentoraccountcr = async (req, res) => {
   const student = await User.findOne({ Email: email });
   if (!student) {
     const user = await Recuirtment.findOne({ Email: email });
-
     if (step == 1) {
       if (user) {
         res.status(400).json({
@@ -2061,6 +2060,7 @@ exports.mentoraccountcr = async (req, res) => {
         await user.save();
         res.status(200).json({
           status: "success",
+          message: "Updated",
         });
       }
       if (step == 3) {
@@ -2128,5 +2128,65 @@ exports.getmformdetail = async (req, res) => {
         message: "Token expire",
       });
     }
+  }
+};
+
+exports.changeuserprofile = async (req, res) => {
+  const { name, phone, usermail } = req.body;
+
+  const rec = await Recuirtment.findOne({ Email: usermail });
+
+  if (rec) {
+    res.status(400).json({
+      status: "Fail",
+      message: "Email already registered.",
+    });
+  } else {
+    const user = await User.findOne({
+      Email: usermail,
+    });
+    if (user) {
+      (user.Name = name), (user.phone = phone);
+      await user.save();
+      res.status(200).json({
+        status: "success",
+        data: user,
+      });
+    } else {
+      res.status(400).json({
+        status: "Failed",
+        message: "User not Found",
+      });
+    }
+  }
+};
+
+exports.changeuserpassword = async (req, res) => {
+  const { email, currentpass, newpass } = req.body;
+
+  const user = await User.findOne({
+    Email: email,
+  });
+  if (user) {
+    const dcrpt = await bcrypt.compare(currentpass, user.password);
+    if (dcrpt) {
+      const ecrpt = await bcrypt.hash(currentpass, 10);
+      user.password = ecrpt;
+      await user.save()
+      res.status(200).json({
+        status:"success",
+        message:"Password changes successfully"
+      })
+    }else{
+      res.status(400).json({
+        status:"Fail",
+        message :"Wrong password"
+      })
+    }
+  }else{
+    res.status(401).json({
+      status:"Fail",
+      message:"Wrong user"
+    })
   }
 };
