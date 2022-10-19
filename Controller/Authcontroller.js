@@ -1338,6 +1338,21 @@ exports.submitdate = async (req, res) => {
     recuiter_email,
     transid,
   } = req.body;
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  let tago = 1832454;
   // console.log(recuiterid, userid, username, date, time, recuiter_name, round);
   const re = await Recuirtment.findOne({
     _id: recuiterid,
@@ -1371,6 +1386,54 @@ exports.submitdate = async (req, res) => {
           time,
           date
         ).send();
+
+        if (time.split(" ")[1] == "AM") {
+          let dates = `${months[parseInt(date.split(" ")[1]) - 1]} ${
+            date.split(" ")[0]
+          } , ${date.split(" ")[2]} ${time.split(" ")[0].split(":")[0]}:${
+            time.split(" ")[0].split(":")[1]
+          }:00`;
+          const a = new Date().getTime();
+          const d = new Date(dates);
+          let ans = d - a;
+
+          if (ans - tago > 0) {
+            setTimeout(async () => {
+              await new RoomEmail(url, username, user_email, time, date).send();
+              await new RoomEmail(
+                url,
+                recuiter_name,
+                recuiter_email,
+                time,
+                date
+              ).send();
+            }, ans - tago);
+          }
+        }
+        if (time.split(" ")[1] == "PM") {
+          let dates = `${months[parseInt(date.split(" ")[1]) - 1]} ${
+            date.split(" ")[0]
+          } , ${date.split(" ")[2]} ${
+            parseInt(time.split(" ")[0].split(":")[0]) + 12
+          }:${time.split(" ")[0].split(":")[1]}:00`;
+          const d = new Date(dates);
+          const a = new Date().getTime();
+          let ans = d - a;
+          if (ans - tago > 0) {
+            setTimeout(async () => {
+              await new RoomEmail(url, username, user_email, time, date).send();
+              await new RoomEmail(
+                url,
+                recuiter_name,
+                recuiter_email,
+                time,
+                date
+              ).send();
+            }, ans - tago);
+          }
+          // console.log(new Date().getTime() - tago);
+        }
+
         res.status(200).json({
           status: "success",
           data: roomcreation,
@@ -1978,37 +2041,94 @@ exports.addloginrefer = async (req, res, next) => {
 };
 
 exports.emailtest = async (req, res) => {
-  const { date } = req.body;
+  let months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const { date, time } = req.body;
   let tago = 1832454;
-  const d = new Date(date).getTime();
-  const a = new Date().getTime();
-  let ans = d - a;
-  if (ans - tago > 0) {
-    setTimeout(async () => {
-      console.log("yeah");
-      await new Email(
-        "",
-        "jagdeep",
-        "jagdeepsnh57@gmail.com",
-        "",
-        "",
-        "me"
-      ).referalprogram();
-    }, ans - tago);
-  } else {
-    setTimeout(async () => {
-      console.log("yeah");
-      await new Email(
-        "",
-        "jagdeep",
-        "jagdeepsnh57@gmail.com",
-        "",
-        "",
-        "me"
-      ).referalprogram();
-    }, ans - tago);
+  if (time.split(" ")[1] == "AM") {
+    let dates = `${months[parseInt(date.split(" ")[1]) - 1]} ${
+      date.split(" ")[0]
+    } , ${date.split(" ")[2]} ${time.split(" ")[0].split(":")[0]}:${
+      time.split(" ")[0].split(":")[1]
+    }:00`;
+    const a = new Date().getTime();
+    const d = new Date(dates);
+    let ans = d - a;
+
+    if (ans - tago > 0) {
+      setTimeout(async () => {
+        console.log("yeah");
+        await new Email(
+          "",
+          "jagdeep",
+          "jagdeepsnh57@gmail.com",
+          "",
+          "",
+          "me"
+        ).referalprogram();
+      }, ans - tago);
+    } else {
+      setTimeout(async () => {
+        await new Email(
+          "",
+          "jagdeep",
+          "jagdeepsnh57@gmail.com",
+          "",
+          "",
+          "me"
+        ).referalprogram();
+      }, ans - tago);
+    }
   }
-  // new Date().getTime()-tago
+  if (time.split(" ")[1] == "PM") {
+    let dates = `${months[parseInt(date.split(" ")[1]) - 1]} ${
+      date.split(" ")[0]
+    } , ${date.split(" ")[2]} ${
+      parseInt(time.split(" ")[0].split(":")[0]) + 12
+    }:${time.split(" ")[0].split(":")[1]}:00`;
+    const d = new Date(dates);
+    const a = new Date().getTime();
+    let ans = d - a;
+    console.log(ans - tago, tago, ans);
+    console.log(d);
+    if (ans - tago > 0) {
+      setTimeout(async () => {
+        console.log("yeah");
+        await new Email(
+          "",
+          "jagdeep",
+          "jagdeepsnh57@gmail.com",
+          "",
+          "",
+          "me"
+        ).referalprogram();
+      }, ans - tago);
+    } else {
+      setTimeout(async () => {
+        await new Email(
+          "",
+          "jagdeep",
+          "jagdeepsnh57@gmail.com",
+          "",
+          "",
+          "me"
+        ).referalprogram();
+      }, ans - tago);
+    }
+    // console.log(new Date().getTime() - tago);
+  }
 };
 
 exports.mentoraccountcr = async (req, res) => {
@@ -2099,77 +2219,6 @@ exports.mentoraccountcr = async (req, res) => {
       createtoken(request, 201, res, req);
     }
   }
-  // const student = await User.findOne({ Email: email });
-  // if (!student) {
-  //   const user = await Recuirtment.findOne({ Email: email });
-  //   if (step == 1) {
-  //     if (user) {
-  //       res.status(400).json({
-  //         status: "Fail",
-  //         message: "User already exist.",
-  //       });
-  //     } else {
-  //       const ecrpt = await bcrypt.hash(password, 10);
-  //       const request = await Recuirtment.create({
-  //         Name: name,
-  //         Email: email,
-  //         phone: phone,
-  //         Password: ecrpt,
-  //         step,
-  //       });
-  //       new Email("", name, email).welcomementor();
-  //       createtoken(request, 201, res, req);
-  //     }
-  //   }
-  //   if (user) {
-  //     if (step == 2) {
-  //       user.Gender = gender;
-  //       user.bio = bio;
-  //       user.Linkendin = linkedin;
-  //       user.step = step;
-  //       await user.save();
-  //       res.status(200).json({
-  //         status: "success",
-  //         message: "Updated",
-  //       });
-  //     }
-  //     if (step == 3) {
-  //       (user.AOE = sAREA),
-  //         (user.qualification = qualification),
-  //         (user.specilization = specialization);
-  //       user.step = step;
-  //       await user.save();
-  //       res.status(200).json({
-  //         status: "success",
-  //       });
-  //     }
-  //     if (step == 4) {
-  //       (user.Experience = experience),
-  //         (user.workat = workat),
-  //         (user.currentrole = currentrole);
-  //       user.step = step;
-  //       await user.save();
-  //       res.status(200).json({
-  //         status: "success",
-  //       });
-  //     }
-  //     if (step == 5) {
-  //       user.mentortype = mentorshiptype;
-  //       user.NERE = joboffer;
-  //       (user.Rsparetime = avatime),
-  //         (user.compeleted = true),
-  //         await user.save();
-  //       res.status(200).json({
-  //         status: "success",
-  //       });
-  //     }
-  //   }
-  // } else {
-  //   res.status(400).json({
-  //     status: "Failed",
-  //     message: "Already have an account as Student.",
-  //   });
-  // }
 };
 
 exports.getmformdetail = async (req, res) => {
@@ -2217,7 +2266,8 @@ exports.changeuserprofile = async (req, res) => {
       Email: usermail,
     });
     if (user) {
-      (user.Name = name), (user.phone = phone);
+      user.Name = name;
+      user.phone = phone;
       await user.save();
       res.status(200).json({
         status: "success",
