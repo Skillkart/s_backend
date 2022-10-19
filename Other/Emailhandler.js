@@ -33,7 +33,7 @@ module.exports = class Email {
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "Purchase completed ",
+      subject: "Verification Code",
       html,
       text: htmlToText.compile(html),
     };
@@ -54,7 +54,7 @@ module.exports = class Email {
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "Now Be job ready in 30 days",
+      subject: "Purchase Done",
       html,
       text: htmlToText.compile(html),
     };
@@ -136,7 +136,7 @@ module.exports = class Email {
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "Login verification",
+      subject: "Verification Code",
       html,
       text: htmlToText.compile(html),
     };
