@@ -64,6 +64,9 @@ exports.signup = async (req, res) => {
       phone: phone,
       passwordResetToken: verifytoken,
     });
+    const refer = await Referal.findOne({
+      referedEmail: email,
+    });
 
     if (refer) {
       refer.used = true;
@@ -2029,30 +2032,18 @@ exports.mentoraccountcr = async (req, res) => {
     avatime,
   } = req.body;
 
-  const student = await User.findOne({ Email: email });
-  if (!student) {
+  const student = await User.findOne({
+    Email: email,
+  });
+  if (student) {
+    res.status(400).json({
+      status: "Failed",
+      message: "Already have an account as Student.",
+    });
+  } else {
     const user = await Recuirtment.findOne({ Email: email });
-    if (step == 1) {
-      if (user) {
-        res.status(400).json({
-          status: "Fail",
-          message: "User already exist.",
-        });
-      } else {
-        const ecrpt = await bcrypt.hash(password, 10);
-        const request = await Recuirtment.create({
-          Name: name,
-          Email: email,
-          phone: phone,
-          Password: ecrpt,
-          step,
-        });
-        await new Email("", name, email).welcomementor();
-        createtoken(request, 201, res, req);
-      }
-    }
     if (user) {
-      if (step == 2) {
+      if (parseInt(step) === 2) {
         user.Gender = gender;
         user.bio = bio;
         user.Linkendin = linkedin;
@@ -2063,43 +2054,122 @@ exports.mentoraccountcr = async (req, res) => {
           message: "Updated",
         });
       }
-      if (step == 3) {
-        (user.AOE = sAREA),
-          (user.qualification = qualification),
-          (user.specilization = specialization);
+      if (parseInt(step) === 3) {
+        user.AOE = sAREA;
+        user.qualification = qualification;
+        user.specilization = specialization;
         user.step = step;
         await user.save();
         res.status(200).json({
           status: "success",
         });
       }
-      if (step == 4) {
-        (user.Experience = experience),
-          (user.workat = workat),
-          (user.currentrole = currentrole);
+      if (parseInt(step) === 4) {
+        user.Experience = experience;
+        user.workat = workat;
+        user.currentrole = currentrole;
         user.step = step;
         await user.save();
         res.status(200).json({
           status: "success",
         });
       }
-      if (step == 5) {
+      if (parseInt(step) === 5) {
         user.mentortype = mentorshiptype;
         user.NERE = joboffer;
-        (user.Rsparetime = avatime),
-          (user.compeleted = true),
-          await user.save();
+        user.Rsparetime = avatime;
+        user.compeleted = true;
+        user.step = step;
+
+        await user.save();
         res.status(200).json({
           status: "success",
         });
       }
+    } else {
+      const ecrpt = await bcrypt.hash(password, 10);
+      const request = await Recuirtment.create({
+        Name: name,
+        Email: email,
+        phone: phone,
+        Password: ecrpt,
+        step,
+      });
+      await new Email("", name, email).welcomementor();
+      createtoken(request, 201, res, req);
     }
-  } else {
-    res.status(400).json({
-      status: "Failed",
-      message: "Already have an account as Student.",
-    });
   }
+  // const student = await User.findOne({ Email: email });
+  // if (!student) {
+  //   const user = await Recuirtment.findOne({ Email: email });
+  //   if (step == 1) {
+  //     if (user) {
+  //       res.status(400).json({
+  //         status: "Fail",
+  //         message: "User already exist.",
+  //       });
+  //     } else {
+  //       const ecrpt = await bcrypt.hash(password, 10);
+  //       const request = await Recuirtment.create({
+  //         Name: name,
+  //         Email: email,
+  //         phone: phone,
+  //         Password: ecrpt,
+  //         step,
+  //       });
+  //       new Email("", name, email).welcomementor();
+  //       createtoken(request, 201, res, req);
+  //     }
+  //   }
+  //   if (user) {
+  //     if (step == 2) {
+  //       user.Gender = gender;
+  //       user.bio = bio;
+  //       user.Linkendin = linkedin;
+  //       user.step = step;
+  //       await user.save();
+  //       res.status(200).json({
+  //         status: "success",
+  //         message: "Updated",
+  //       });
+  //     }
+  //     if (step == 3) {
+  //       (user.AOE = sAREA),
+  //         (user.qualification = qualification),
+  //         (user.specilization = specialization);
+  //       user.step = step;
+  //       await user.save();
+  //       res.status(200).json({
+  //         status: "success",
+  //       });
+  //     }
+  //     if (step == 4) {
+  //       (user.Experience = experience),
+  //         (user.workat = workat),
+  //         (user.currentrole = currentrole);
+  //       user.step = step;
+  //       await user.save();
+  //       res.status(200).json({
+  //         status: "success",
+  //       });
+  //     }
+  //     if (step == 5) {
+  //       user.mentortype = mentorshiptype;
+  //       user.NERE = joboffer;
+  //       (user.Rsparetime = avatime),
+  //         (user.compeleted = true),
+  //         await user.save();
+  //       res.status(200).json({
+  //         status: "success",
+  //       });
+  //     }
+  //   }
+  // } else {
+  //   res.status(400).json({
+  //     status: "Failed",
+  //     message: "Already have an account as Student.",
+  //   });
+  // }
 };
 
 exports.getmformdetail = async (req, res) => {
@@ -2120,6 +2190,7 @@ exports.getmformdetail = async (req, res) => {
       } else {
         res.status(400).json({
           status: "Failed",
+          message: "user not found",
         });
       }
     } catch {
@@ -2172,21 +2243,21 @@ exports.changeuserpassword = async (req, res) => {
     if (dcrpt) {
       const ecrpt = await bcrypt.hash(currentpass, 10);
       user.password = ecrpt;
-      await user.save()
+      await user.save();
       res.status(200).json({
-        status:"success",
-        message:"Password changes successfully"
-      })
-    }else{
+        status: "success",
+        message: "Password changes successfully",
+      });
+    } else {
       res.status(400).json({
-        status:"Fail",
-        message :"Wrong password"
-      })
+        status: "Fail",
+        message: "Wrong password",
+      });
     }
-  }else{
+  } else {
     res.status(401).json({
-      status:"Fail",
-      message:"Wrong user"
-    })
+      status: "Fail",
+      message: "Wrong user",
+    });
   }
 };
