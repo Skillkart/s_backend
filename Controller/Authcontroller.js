@@ -1951,15 +1951,6 @@ exports.addrefer = async (req, res) => {
 exports.addloginrefer = async (req, res, next) => {
   const { name, email, phone, password, refererid, referername, refereremail } =
     req.body;
-  // console.log(
-  //   name,
-  //   email,
-  //   phone,
-  //   password,
-  //   refererid,
-  //   referername,
-  //   refereremail
-  // );
   const user = await User.findOne({
     Email: email,
   });
@@ -1984,14 +1975,14 @@ exports.addloginrefer = async (req, res, next) => {
       return next(new AppError("Incorrect Email or password.", 401, res));
     } else {
       const refer = await Referal.findOne({
-        refererEmail: email.toLowerCase(),
+        referedEmail: email.toLowerCase(),
         used: true,
       });
       if (refer) {
         new AppError("Already refered.", 401, res);
       } else {
         const r = await Referal.findOne({
-          refererEmail: email.toLowerCase(),
+          referedEmail: email.toLowerCase(),
         });
         if (r) {
           const trans = await Transcation.find({
@@ -2015,21 +2006,7 @@ exports.addloginrefer = async (req, res, next) => {
             createtoken(user, 201, res, req, false);
           }
         } else {
-          await Referal.create({
-            referedbyEmail: refereremail,
-            refererid: refererid,
-            refererusername: referername,
-            referedEmail: user.Email,
-            referedusername: user.Name,
-          });
-          await new Email(
-            "",
-            user.Name,
-            user.Email,
-            "",
-            "",
-            referername
-          ).referalprogram();
+          
           const trans = await Transcation.find({
             user: user._id,
             status: "success",
