@@ -1258,21 +1258,41 @@ exports.bookaslot = async (req, res) => {
   }
 };
 
+const refercode = async () => {
+  const sng = await rstring();
+  if (sng) {
+    const s = await Referal.findOne({
+      refercode: sng,
+    });
+    if (s) {
+      return rstring();
+    } else {
+      return sng;
+    }
+  } else {
+    return rstring();
+  }
+};
 exports.refer = async (req, res) => {
-  const { name, email, referedby, referid, referername } = req.body;
+  const { name, email, referedby, referid, phone, referername } = req.body;
 
+  console.log(name, email, referedby, referid, phone, referername);
   const exist = await Referal.findOne({
     refererEmail: email,
   });
   if (!exist) {
+    const rcode = await refercode();
     const request = await Referal.create({
       refererid: referid,
-      refererEmail: email,
+      referedEmail: email,
       refererusername: referername,
       referedusername: name,
-      referedby: referedby,
+      referedbyEmail: referedby,
+      refererphonenumber: phone,
+      refercode: rcode,
     });
-    await new Email("", name, email, "", "", referername).referalprogram();
+    const url = `https://skillkart.app/refer?id=${rcode}`;
+    await new Email("", name, email, "", "", referername, url).referalprogram();
     res.status(200).json({
       status: "success",
     });
@@ -1870,17 +1890,13 @@ exports.change = async (req, res) => {
 exports.getreferer = async (req, res) => {
   const { id } = req.query;
   // console.log(id);
-  const user = await User.findOne({
-    _id: id,
+  const user = await Referal.findOne({
+    refercode : id
   });
   if (user) {
     res.status(200).json({
       status: "success",
-      data: {
-        _id: user._id,
-        Name: user.Name,
-        Email: user.Email,
-      },
+      data: user,
     });
   } else {
     res.status(400).json({

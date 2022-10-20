@@ -3,11 +3,12 @@ const ejs = require("ejs");
 const htmlToText = require("html-to-text");
 
 module.exports = class Email {
-  constructor(verifycode, username, email, temp, productid, referername) {
+  constructor(verifycode, username, email, temp, productid, referername , url) {
     this.verifycode = verifycode;
     this.username = username;
     this.email = email;
     this.temp = temp;
+    this.url =url;
     this.productid = productid;
     this.referername = referername;
   }
@@ -69,6 +70,7 @@ module.exports = class Email {
       {
         username: this.username,
         referername: this.referername,
+        url : this.url
       }
     );
 
