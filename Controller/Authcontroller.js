@@ -1891,7 +1891,7 @@ exports.getreferer = async (req, res) => {
   const { id } = req.query;
   // console.log(id);
   const user = await Referal.findOne({
-    refercode : id
+    refercode: id,
   });
   if (user) {
     res.status(200).json({
@@ -1909,37 +1909,56 @@ exports.addrefer = async (req, res) => {
   const { name, email, phone, password, refererid, referername, refereremail } =
     req.body;
 
-  const refer = await Referal.create({
-    referedbyEmail: refereremail,
-    refererid: refererid,
-    referedusername: referername,
+  const r = await Referal.findOne({
     referedEmail: email,
-    referedusername: name,
   });
   const user = await User.findOne({
     Email: email,
   });
 
   if (!user) {
-    const ecrpt = await bcrypt.hash(password, 10);
-    const verifytoken = getRandomArbitrary(100000, 999999);
-    const newUser = await User.create({
-      Name: name,
-      Email: email,
-      password: ecrpt,
-      phone: phone,
-      passwordResetToken: verifytoken,
-    });
+    if (r) {
+      r.used = true;
+      const ecrpt = await bcrypt.hash(password, 10);
+      const verifytoken = getRandomArbitrary(100000, 999999);
+      const newUser = await User.create({
+        Name: name,
+        Email: email,
+        password: ecrpt,
+        phone: phone,
+        passwordResetToken: verifytoken,
+      });
 
-    createtoken(newUser, 201, res, req);
-    await new Email("", name, email, "", "", referername).referalprogram();
-    // await new Email(verifytoken, username, email, "VerifyEmail").send();
-    await new Email(verifytoken, name, email, "VerifyEmail").welcomesend();
+      createtoken(newUser, 201, res, req);
+      await new Email("", name, email, "", "", referername).referalprogram();
+      // await new Email(verifytoken, username, email, "VerifyEmail").send();
+      await new Email(verifytoken, name, email, "VerifyEmail").welcomesend();
+      await r.save();
+      setTimeout(() => {
+        newUser.passwordResetToken = "";
+        newUser.save();
+      }, 1000 * 300);
+    } else {
+      const ecrpt = await bcrypt.hash(password, 10);
+      const verifytoken = getRandomArbitrary(100000, 999999);
+      const newUser = await User.create({
+        Name: name,
+        Email: email,
+        password: ecrpt,
+        phone: phone,
+        passwordResetToken: verifytoken,
+      });
 
-    setTimeout(() => {
-      newUser.passwordResetToken = "";
-      newUser.save();
-    }, 1000 * 300);
+      createtoken(newUser, 201, res, req);
+      await new Email("", name, email, "", "", referername).referalprogram();
+      // await new Email(verifytoken, username, email, "VerifyEmail").send();
+      await new Email(verifytoken, name, email, "VerifyEmail").welcomesend();
+      await r.save();
+      setTimeout(() => {
+        newUser.passwordResetToken = "";
+        newUser.save();
+      }, 1000 * 300);
+    }
   } else {
     res.status(400).json({
       status: "Failed",
@@ -2006,7 +2025,6 @@ exports.addloginrefer = async (req, res, next) => {
             createtoken(user, 201, res, req, false);
           }
         } else {
-          
           const trans = await Transcation.find({
             user: user._id,
             status: "success",
