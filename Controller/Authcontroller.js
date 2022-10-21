@@ -509,6 +509,7 @@ exports.busydate = async (req, res) => {
           },
         }
       );
+      
       res.status(200).json({
         status: "success",
         data: updator,
@@ -2320,5 +2321,24 @@ exports.changeuserpassword = async (req, res) => {
       status: "Fail",
       message: "Wrong user",
     });
+  }
+};
+
+exports.deleteslots = async (req, res) => {
+  const { userid, date, time } = req.body;
+  console.log(userid, date, time);
+  const re = await Recuirtment.findById(userid);
+  const filter = re.busydate.filter((state) => state.date == date);
+  if (filter.length) {
+    const i = filter[0].time.includes(time);
+    if (i) {
+      const timef = getindex(re.busydate[filter[0].index].time, time);
+      console.log(timef)
+      await re.save()
+      res.status(200).json({
+        status:"success",
+        data:re
+      })
+    }
   }
 };
