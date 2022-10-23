@@ -509,7 +509,7 @@ exports.busydate = async (req, res) => {
           },
         }
       );
-      
+
       res.status(200).json({
         status: "success",
         data: updator,
@@ -1514,30 +1514,37 @@ exports.selectmentor = async (req, res) => {
   let month = date.getMonth();
   let day = date.getDate();
   const { recuit } = req.body;
+  console.log(recuit);
   const f = await Recuirtment.findOne({
     _id: recuit,
   });
-  const fil = f.busydate.filter(
-    (state) =>
-      state.date.split(" ")[0] >= day &&
-      state.date.split(" ")[1] >= month + 1 &&
-      state.time.length > 0
-  );
+  if (f.length) {
+    const fil = f.busydate.filter(
+      (state) =>
+        state.date.split(" ")[0] >= day &&
+        state.date.split(" ")[1] >= month + 1 &&
+        state.time.length > 0
+    );
 
-  if (fil.length) {
-    res.status(200).json({
-      status: "success",
-      mentor: f,
-      data: fil,
-      slotfind: true,
-    });
-  } else {
-    res.status(200).json({
-      status: "success",
-      mentor: f,
-      data: fil,
-      slotfind: false,
-    });
+    if (fil.length) {
+      res.status(200).json({
+        status: "success",
+        mentor: f,
+        data: fil,
+        slotfind: true,
+      });
+    } else {
+      res.status(200).json({
+        status: "success",
+        mentor: f,
+        data: fil,
+        slotfind: false,
+      });
+    }
+  }else{
+    res.status(400).json({
+      status:"Fail"
+    })
   }
 };
 
@@ -2333,12 +2340,12 @@ exports.deleteslots = async (req, res) => {
     const i = filter[0].time.includes(time);
     if (i) {
       const timef = getindex(re.busydate[filter[0].index].time, time);
-      console.log(timef)
-      await re.save()
+      console.log(timef);
+      await re.save();
       res.status(200).json({
-        status:"success",
-        data:re
-      })
+        status: "success",
+        data: re,
+      });
     }
   }
 };
