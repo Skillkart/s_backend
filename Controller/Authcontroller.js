@@ -1518,7 +1518,7 @@ exports.selectmentor = async (req, res) => {
   const f = await Recuirtment.findOne({
     _id: recuit,
   });
-  if (f.length) {
+  if (f) {
     const fil = f.busydate.filter(
       (state) =>
         state.date.split(" ")[0] >= day &&
@@ -1541,10 +1541,10 @@ exports.selectmentor = async (req, res) => {
         slotfind: false,
       });
     }
-  }else{
+  } else {
     res.status(400).json({
-      status:"Fail"
-    })
+      status: "Fail",
+    });
   }
 };
 
@@ -1862,6 +1862,12 @@ exports.change = async (req, res) => {
     const request = await Recuirtment.findOne({
       _id: userid,
     });
+    // request.Name=name,
+    // request.Email =email,
+    // request.bio=bio,
+    // request.phone=phone,
+    // request.Linkendin =linkedin,
+    // request.workat = workat
     if (request) {
       if (changeable == "Name") {
         request.Name = content;
@@ -2347,5 +2353,39 @@ exports.deleteslots = async (req, res) => {
         data: re,
       });
     }
+  }
+};
+
+exports.getpendingfeedback = async (req, res) => {
+  const { userid } = req.body;
+  console.log(userid);
+  const room = await PendingModel.find({
+    recuiter: userid,
+  });
+
+  let arr = [];
+  if (room) {
+    for (let user of room) {
+      const request = await User.findOne({
+        _id: user.userid,
+      });
+      arr.push({
+        room: user,
+        user: {
+          name: request.Name,
+          photo: request.photo,
+          email: request.Email,
+        },
+      });
+    }
+    res.status(200).json({
+      status:"success",
+      data: arr
+    })
+  }else{
+    res.status(400).json({
+      status:"Fail",
+      message:"Feedbacks not found"
+    })
   }
 };

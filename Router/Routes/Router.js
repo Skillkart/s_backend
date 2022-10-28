@@ -79,5 +79,6 @@ router.route("/emailtest").post(auth.emailtest);
 router.route("/changeuserprofiledetail").post(auth.changeuserprofile);
 router.route("/changeuserpassword").post(auth.changeuserpassword);
 router.route("/deletslots").post(auth.deleteslots)
+router.route("/getpendingfeedback").post(auth.getpendingfeedback)
 
 module.exports = router;
