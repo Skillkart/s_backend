@@ -475,9 +475,70 @@ exports.Editprofile = async (req, res) => {
 };
 
 exports.busydate = async (req, res) => {
-  const { date, time, user_id } = req.body;
+  const { date, time, user_id, schdule, day } = req.body;
   const data = await Recuirtment.findById({ _id: user_id });
-  if (data.busydate.length) {
+
+  const total_day_in_month = new Date(
+    new Date().getFullYear(),
+    parseInt(date.split(" ")[1]),
+    0
+  ).getDate();
+  let current_date = parseInt(date.split(" ")[0]);
+  let left_days = total_day_in_month - parseInt(date.split(" ")[0]);
+  if (schdule) {
+    if (left_days < 7) {
+      data.busydate.push({
+        date: `${current_date} ${date.split(" ")[1]} ${date.split(" ")[2]}`,
+        time: [time],
+        index: data.busydate.length,
+      });
+      await data.save();
+      res.status(200).json({
+        status: "success",
+        data: data,
+      });
+    } else {
+      let timeleft =
+        (total_day_in_month -
+          parseInt(current_date) -
+          ((total_day_in_month - parseInt(current_date)) % 7)) /
+        7;
+      console.log((31 - 2 - ((31 - 2) % 7)) / 7);
+      console.log(timeleft);
+      for (let d = 0; d < timeleft+1; d++) {
+        const filter = data.busydate.filter(
+          (state) =>
+            state.date ==
+            `${parseInt(date.split(" ")[0]) + (d) * 7} ${
+              date.split(" ")[1]
+            } ${date.split(" ")[2]}`
+        );
+        if (filter.length) {
+          const clude = filter[0]?.time?.includes(time);
+          if (!clude) {
+            data.busydate[filter[0]?.index]?.time?.push(time);
+            await data.save();
+          } else {
+            continue;
+          }
+        } else {
+          data.busydate.push({
+            date: `${parseInt(date.split(" ")[0]) + (d) * 7} ${
+              date.split(" ")[1]
+            } ${date.split(" ")[2]}`,
+            time: [time],
+            index: data.busydate.length,
+          });
+        }
+      }
+
+      await data.save();
+      res.status(200).json({
+        status: "success",
+        data,
+      });
+    }
+  } else {
     const filter = data.busydate.filter((state) => state.date == date);
     if (filter.length) {
       const clude = filter[0]?.time?.includes(time);
@@ -495,48 +556,131 @@ exports.busydate = async (req, res) => {
         });
       }
     } else {
-      const updator = await Recuirtment.findByIdAndUpdate(
-        { _id: user_id },
-        {
-          $push: {
-            busydate: [
-              {
-                date: date,
-                time: [time],
-                index: data.busydate.length,
-              },
-            ],
-          },
-        }
-      );
-
+      data.busydate.push({
+        date: date,
+        time: [time],
+        index: data.busydate.length,
+      });
+      await data.save();
+      // const updator = await Recuirtment.findByIdAndUpdate(
+      //   { _id: user_id },
+      //   {
+      //     $push: {
+      //       busydate: [
+      //         {
+      //           date: date,
+      //           time: [time],
+      //           index: data.busydate.length,
+      //         },
+      //       ],
+      //     },
+      //   }
+      // );
       res.status(200).json({
         status: "success",
-        data: updator,
+        data: data,
+        // updator,
       });
-      return updator;
     }
-  } else {
-    const updator = await Recuirtment.findByIdAndUpdate(
-      { _id: user_id },
-      {
-        $push: {
-          busydate: [
-            {
-              date: date,
-              time: [time],
-              index: data.busydate.length,
-            },
-          ],
-        },
-      }
-    );
-    res.status(200).json({
-      status: "success",
-      data: updator,
-    });
-    return updator;
   }
+  // if (data.busydate.length) {
+  //   const filter = data.busydate.filter((state) => state.date == date);
+  //   if (filter.length) {
+  //     const clude = filter[0]?.time?.includes(time);
+  //     if (!clude) {
+  //       data.busydate[filter[0]?.index]?.time?.push(time);
+  //       await data.save();
+  //       res.status(200).json({
+  //         status: "success",
+  //         data: data,
+  //       });
+  //     } else {
+  //       res.status(400).json({
+  //         status: "FAILED",
+  //         message: "Change time slot",
+  //       });
+  //     }
+  //   } else {
+  //     if (schdule) {
+  //       let monthdate = new Date(
+  //         new Date().getFullYear(),
+  //         new Date().getMonth() + 1,
+  //         0
+  //       ).getDate();
+  //       let s = 0;
+  //       let ds = parseInt(date.split(" ")[0]);
+  //       for (let d = 0; d < 7 - day; d++) {
+  //         if (monthdate - ds >= 0) {
+  //           const updator = await Recuirtment.findByIdAndUpdate(
+  //             { _id: user_id },
+  //             {
+  //               $push: {
+  //                 busydate: [
+  //                   {
+  //                     date: `${parseInt(date.split(" ")[0]) + d} ${
+  //                       date.split(" ")[1]
+  //                     } ${date.split(" ")[2]}`,
+  //                     time: [time],
+  //                     index: data.busydate.length,
+  //                   },
+  //                 ],
+  //               },
+  //             }
+  //           );
+  //           await updator.save();
+  //           ds++;
+  //         } else {
+  //           break;
+  //         }
+  //       }
+
+  //       res.status(200).json({
+  //         status: "success",
+  //         data: data,
+  //       });
+  //     } else {
+  //       const updator = await Recuirtment.findByIdAndUpdate(
+  //         { _id: user_id },
+  //         {
+  //           $push: {
+  //             busydate: [
+  //               {
+  //                 date: date,
+  //                 time: [time],
+  //                 index: data.busydate.length,
+  //               },
+  //             ],
+  //           },
+  //         }
+  //       );
+  //       res.status(200).json({
+  //         status: "success",
+  //         data: updator,
+  //         f: "yeap",
+  //       });
+  //     }
+  //   }
+  // } else {
+  //   const updator = await Recuirtment.findByIdAndUpdate(
+  //     { _id: user_id },
+  //     {
+  //       $push: {
+  //         busydate: [
+  //           {
+  //             date: date,
+  //             time: [time],
+  //             index: data.busydate.length,
+  //           },
+  //         ],
+  //       },
+  //     }
+  //   );
+  //   res.status(200).json({
+  //     status: "success",
+  //     data: updator,
+  //     f: "yeap",
+  //   });
+  // }
 };
 
 exports.userforgetpass = async (req, res) => {
@@ -2379,13 +2523,13 @@ exports.getpendingfeedback = async (req, res) => {
       });
     }
     res.status(200).json({
-      status:"success",
-      data: arr
-    })
-  }else{
+      status: "success",
+      data: arr,
+    });
+  } else {
     res.status(400).json({
-      status:"Fail",
-      message:"Feedbacks not found"
-    })
+      status: "Fail",
+      message: "Feedbacks not found",
+    });
   }
 };
