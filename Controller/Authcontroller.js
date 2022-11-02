@@ -1995,6 +1995,7 @@ exports.deactive = async (req, res) => {
 exports.change = async (req, res) => {
   const { changeable, content, userid } = req.body;
 
+  console.log(changeable)
   const user = await User.findOne({
     _id: userid,
   });
@@ -2040,6 +2041,13 @@ exports.change = async (req, res) => {
         res.status(200).json({
           status: "success",
         });
+      }
+      if(changeable=="bio"){
+        request.bio=content;
+        await request.save()
+        res.status(200).json({
+          status:"success"
+        })
       }
     }
   }
