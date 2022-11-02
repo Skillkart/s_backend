@@ -505,13 +505,13 @@ exports.busydate = async (req, res) => {
         7;
       console.log((31 - 2 - ((31 - 2) % 7)) / 7);
       console.log(timeleft);
-      for (let d = 0; d < timeleft+1; d++) {
+      for (let d = 0; d < timeleft + 1; d++) {
         const filter = data.busydate.filter(
           (state) =>
             state.date ==
-            `${parseInt(date.split(" ")[0]) + (d) * 7} ${
-              date.split(" ")[1]
-            } ${date.split(" ")[2]}`
+            `${parseInt(date.split(" ")[0]) + d * 7} ${date.split(" ")[1]} ${
+              date.split(" ")[2]
+            }`
         );
         if (filter.length) {
           const clude = filter[0]?.time?.includes(time);
@@ -523,7 +523,7 @@ exports.busydate = async (req, res) => {
           }
         } else {
           data.busydate.push({
-            date: `${parseInt(date.split(" ")[0]) + (d) * 7} ${
+            date: `${parseInt(date.split(" ")[0]) + d * 7} ${
               date.split(" ")[1]
             } ${date.split(" ")[2]}`,
             time: [time],
@@ -1995,7 +1995,7 @@ exports.deactive = async (req, res) => {
 exports.change = async (req, res) => {
   const { changeable, content, userid } = req.body;
 
-  console.log(changeable)
+  console.log(changeable);
   const user = await User.findOne({
     _id: userid,
   });
@@ -2042,12 +2042,26 @@ exports.change = async (req, res) => {
           status: "success",
         });
       }
-      if(changeable=="bio"){
-        request.bio=content;
+      if (changeable == "AOE") {
+        request.AOE = content;
+        await request.save();
+        res.status(200).json({
+          status: "success",
+        });
+      }
+      if(changeable=="Linkendin"){
+        request.Linkendin=content;
         await request.save()
         res.status(200).json({
           status:"success"
         })
+      }
+      if (changeable == "bio") {
+        request.bio = content;
+        await request.save();
+        res.status(200).json({
+          status: "success",
+        });
       }
     }
   }
