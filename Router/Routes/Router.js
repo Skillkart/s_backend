@@ -11,11 +11,15 @@ const auth = require("../../Controller/Authcontroller");
 const roomcrt = require("../../Controller/Roomcontroller");
 const { userdata, mentor } = require("../../Controller/allresponse");
 const { upload } = require("../../Other/Multer");
+const { secreatuser } = require("../../Controller/Secretaapp");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
 router.route("/mentorsignup").post(auth.mentosignup);
-router.route("/mentoraccount").post(auth.mentoraccountcr).get(auth.getmformdetail);
+router
+  .route("/mentoraccount")
+  .post(auth.mentoraccountcr)
+  .get(auth.getmformdetail);
 router.route("/signup").post(auth.signup);
 router.route("/Login").post(auth.login);
 router.route("/tknvrfy").post(auth.tknvrfy);
@@ -67,7 +71,6 @@ router.post("/getfeedbacks", auth.getfeedbacks);
 router.post("/getrevenue", auth.getrevenue);
 router.get("/adminuserrecuirter", roomcrt.getuandr);
 router.post("/isfeedbackdone", auth.isfeedback);
-// router.get("/:filename", auth.pp);
 
 router.post("/changeprofile", auth.changeprofilepic);
 router.post("/removeprofilepic", auth.removeprofilepic);
@@ -78,7 +81,10 @@ router.route("/loginrefered").post(auth.addloginrefer);
 router.route("/emailtest").post(auth.emailtest);
 router.route("/changeuserprofiledetail").post(auth.changeuserprofile);
 router.route("/changeuserpassword").post(auth.changeuserpassword);
-router.route("/deletslots").post(auth.deleteslots)
-router.route("/getpendingfeedback").post(auth.getpendingfeedback)
+router.route("/deletslots").post(auth.deleteslots);
+router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 
+////secreta links
+
+router.route("/secretacreataccount").post(secreatuser);
 module.exports = router;
