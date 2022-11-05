@@ -3,6 +3,10 @@ const mongoose = require("mongoose");
 const Secretaschema = new mongoose.Schema({
   userid: String,
   message: String,
+  seen: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-module.exports = Secretauser = mongoose.model("SecretaUser", Secretaschema);
+module.exports = SecretaMessage = mongoose.model("SecretaMessage", Secretaschema);

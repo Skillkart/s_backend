@@ -1,4 +1,5 @@
 const Secretaac = require("../Model/secreta/Secretaac");
+const Secretamess = require("../Model/secreta/Secretamess");
 
 const randomstring = (username, size) => {
   let resize = 0;
@@ -32,9 +33,8 @@ const checkusername = async (username, findlength) => {
 };
 exports.secreatuser = async (req, res) => {
   const { username, email, phone } = req.body;
-  console.log(username , email , phone)
   const findlength = await Secretaac.find();
-  const rstring = await checkusername(username, findlength);
+  const rstring = await checkusername(username.toLowerCase(), findlength);
   const usercheck = await Secretaac.findOne({ Email: email });
   if (usercheck) {
     res.status(200).json({
@@ -52,4 +52,57 @@ exports.secreatuser = async (req, res) => {
       data: r,
     });
   }
+};
+
+exports.getaccountdetail = async (req, res) => {
+  const { id } = req.query;
+  console.log(id);
+  const user = await Secretaac.findOne({
+    username: id.toLowerCase(),
+  });
+
+  if (user) {
+    res.status(200).json({
+      status: "success",
+      data: user,
+    });
+  } else {
+    res.status(401).json({
+      status: "Fail",
+      message: "user not found",
+    });
+  }
+};
+
+exports.getmessages = async (req, res) => {
+  const { username, message } = req.body;
+  const user = await Secretaac.findOne({
+    username,
+  });
+
+  if (user) {
+    await Secretamess.create({
+      userid: username,
+      message: message,
+    });
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    res.status(400).json({
+      status: "Failed",
+    });
+  }
+};
+
+exports.secretamessage = async (req, res) => {
+  const { username } = req.query;
+  console.log(username)
+  const mess = await Secretamess.find({
+    userid: username,
+  });
+  res.status(200).json({
+    status: "success",
+    data: mess,
+  });
 };

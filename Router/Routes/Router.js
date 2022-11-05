@@ -11,7 +11,12 @@ const auth = require("../../Controller/Authcontroller");
 const roomcrt = require("../../Controller/Roomcontroller");
 const { userdata, mentor } = require("../../Controller/allresponse");
 const { upload } = require("../../Other/Multer");
-const { secreatuser } = require("../../Controller/Secretaapp");
+const {
+  secreatuser,
+  getaccountdetail,
+  getmessages,
+  secretamessage,
+} = require("../../Controller/Secretaapp");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
@@ -87,4 +92,7 @@ router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 ////secreta links
 
 router.route("/secretacreataccount").post(secreatuser);
+router.route("/secretagetacdetail").get(getaccountdetail);
+router.route("/sendmessages").post(getmessages).get(secretamessage);
+
 module.exports = router;
