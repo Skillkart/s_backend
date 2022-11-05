@@ -101,6 +101,7 @@ exports.secretamessage = async (req, res) => {
   const mess = await Secretamess.find({
     userid: username,
   });
+  console.log(mess)
   res.status(200).json({
     status: "success",
     data: mess,
