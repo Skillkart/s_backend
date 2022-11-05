@@ -94,5 +94,6 @@ router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 router.route("/secretacreataccount").post(secreatuser);
 router.route("/secretagetacdetail").get(getaccountdetail);
 router.route("/sendmessages").post(getmessages).get(secretamessage);
+router.route("/seenrqt").get(seenrqt);
 
 module.exports = router;

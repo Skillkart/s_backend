@@ -97,13 +97,32 @@ exports.getmessages = async (req, res) => {
 
 exports.secretamessage = async (req, res) => {
   const { username } = req.query;
-  console.log(username)
+  console.log(username);
   const mess = await Secretamess.find({
     userid: username.toLowerCase(),
   });
-  console.log(mess)
+  console.log(mess);
   res.status(200).json({
     status: "success",
     data: mess,
   });
+};
+
+exports.seenrqt = async (req, res) => {
+  const { id } = req.query;
+  const seen = await Secretamess.findOne({
+    _id: id,
+    seen: false,
+  });
+  if (seen) {
+    seen.seen = true;
+    await seen.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+    });
+  }
 };
