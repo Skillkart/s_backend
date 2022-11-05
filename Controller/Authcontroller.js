@@ -1633,6 +1633,7 @@ exports.transcation = async (req, res) => {
       request,
     });
   } else {
+    await new Email("", username, email, "", request._id).purchase();
     res.status(200).json({
       status: "success",
       request,
