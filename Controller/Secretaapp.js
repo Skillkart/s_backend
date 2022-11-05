@@ -99,7 +99,7 @@ exports.secretamessage = async (req, res) => {
   const { username } = req.query;
   console.log(username)
   const mess = await Secretamess.find({
-    userid: username,
+    userid: username.toLowerCase(),
   });
   console.log(mess)
   res.status(200).json({
