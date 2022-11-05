@@ -16,6 +16,7 @@ const {
   getaccountdetail,
   getmessages,
   secretamessage,
+  seenrqt,
 } = require("../../Controller/Secretaapp");
 
 router.route("/roomcreation").post(roomrequest);
