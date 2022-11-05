@@ -100,7 +100,7 @@ exports.secretamessage = async (req, res) => {
   console.log(username);
   const mess = await Secretamess.find({
     userid: username.toLowerCase(),
-  });
+  }).sort({ seen: "asc" });
   console.log(mess);
   res.status(200).json({
     status: "success",

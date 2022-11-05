@@ -7,6 +7,13 @@ const Secretaschema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-module.exports = SecretaMessage = mongoose.model("SecretaMessage", Secretaschema);
+module.exports = SecretaMessage = mongoose.model(
+  "SecretaMessage",
+  Secretaschema
+);
