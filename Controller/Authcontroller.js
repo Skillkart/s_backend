@@ -163,7 +163,6 @@ exports.isLoggedIn = async (req, res, next) => {
 exports.loggedin = async (req, res, next) => {
   const { token } = req.body;
   const mentor = await Recuirtment.find();
-  // console.log(mentor)
   if (token) {
     try {
       const decoded = await jwt.verify(token, process.env.tokn_crypt);
@@ -873,11 +872,23 @@ exports.payment = async (req, res) => {
     key_secret: process.env.r_key_secrat,
   });
 
-  let options = {
-    amount: amount * 100, // amount in the smallest currency unit
-    currency: "INR",
-    receipt: "order_rcptid_11",
-  };
+  const transcation = await Transcation.find({
+    status: "success",
+  });
+  let options;
+  if (transcation.length < 26) {
+    options = {
+      amount: 4999 * 100, // amount in the smallest currency unit
+      currency: "INR",
+      receipt: "order_rcptid_11",
+    };
+  } else {
+    options = {
+      amount: amount * 100, // amount in the smallest currency unit
+      currency: "INR",
+      receipt: "order_rcptid_11",
+    };
+  }
 
   instance.orders.create(options, function (err, order) {
     if (order) {
@@ -2050,12 +2061,12 @@ exports.change = async (req, res) => {
           status: "success",
         });
       }
-      if(changeable=="Linkendin"){
-        request.Linkendin=content;
-        await request.save()
+      if (changeable == "Linkendin") {
+        request.Linkendin = content;
+        await request.save();
         res.status(200).json({
-          status:"success"
-        })
+          status: "success",
+        });
       }
       if (changeable == "bio") {
         request.bio = content;
