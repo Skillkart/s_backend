@@ -868,8 +868,8 @@ exports.payment = async (req, res) => {
   const { amount } = req.body;
 
   const instance = new Razorpay({
-    key_id: process.env.r_key_id,
-    key_secret: process.env.r_key_secrat,
+    key_id: process.env.live_r_key_id,
+    key_secret: process.env.live_r_keysecret,
   });
 
   const transcation = await Transcation.find({
@@ -1272,14 +1272,16 @@ exports.subscribe = async (req, res) => {
 };
 
 exports.transfail = async (req, res) => {
-  const { user_id, course, price, username, email, date, status } = req.body;
+  const { user_id, course, price, username, r_id, email, date, status } =
+    req.body;
 
-  const requesteddata = await RoomModel.create({
+  const requesteddata = await Transcation.create({
     user: user_id,
     user_name: username,
     course: course,
     price: price,
     status: status,
+    razarpay_order_id: r_id,
   });
   res.status(400).json({
     status: "failed",
@@ -1622,7 +1624,8 @@ exports.submitdate = async (req, res) => {
 };
 
 exports.transcation = async (req, res) => {
-  const { user_id, username, course, status, email, price } = req.body;
+  const { user_id, username, r_p_id, course, status, email, price, r_id } =
+    req.body;
 
   const request = await Transcation.create({
     user: user_id,
@@ -1630,6 +1633,8 @@ exports.transcation = async (req, res) => {
     course: course,
     price,
     status,
+    razarpay_order_id: r_id,
+    razarpay_payment_id: r_p_id,
   });
   const refer = await Referal.findOne({
     referedEmail: email,

@@ -5,7 +5,9 @@ const TranscationModel = new mongoose.Schema({
   user_name: String,
   course: String,
   price: Number,
-  status:String,
+  status: String,
+  razarpay_order_id: String,
+  razarpay_payment_id:String,
   createdAt: {
     type: Date,
     default: Date.now(),
