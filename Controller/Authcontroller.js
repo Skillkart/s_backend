@@ -120,7 +120,7 @@ exports.login = async (req, res, next) => {
         Math.floor(
           (new Date().getTime() - new Date(state.createdAt).getTime()) /
             (1000 * 60 * 60 * 24)
-        ) < 60
+        ) < 60 && state.status == "success"
     );
     if (transfilter.length) {
       if (!dcrpt) {
@@ -868,8 +868,8 @@ exports.payment = async (req, res) => {
   const { amount } = req.body;
 
   const instance = new Razorpay({
-    key_id: process.env.live_r_key_id,
-    key_secret: process.env.live_r_keysecret,
+    key_id: process.env.r_key_id,
+    key_secret: process.env.r_key_secret,
   });
 
   const transcation = await Transcation.find({

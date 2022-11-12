@@ -1,4 +1,5 @@
 const Recuirtment = require("../Model/recuirter");
+const Raproblem = require("../Model/Reportaproblem");
 const RoomModel = require("../Model/Roomcreation");
 const User = require("../Model/Usermodel");
 const RoomEmail = require("../Other/roomhandler");
@@ -44,12 +45,27 @@ exports.getuandr = async (req, res) => {
     rm += 1;
     recuirterarray.push(fi.length);
   }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      userarray,
+      recuirterarray,
+    },
+  });
+};
+
+exports.reportproblem = async (req, res) => {
+  const { userid, recuiterid, message, roomid } = req.body;
+
+  await Raproblem.create({
+    userid,
+    roomid,
+    report: message,
+    bordedRecuiter: recuiterid,
+  });
   
   res.status(200).json({
-    status:"success",
-    data :{
-      userarray,
-      recuirterarray
-    }
-  })
+    status: "success",
+  });
 };

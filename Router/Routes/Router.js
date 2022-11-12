@@ -77,7 +77,7 @@ router.post("/getfeedbacks", auth.getfeedbacks);
 router.post("/getrevenue", auth.getrevenue);
 router.get("/adminuserrecuirter", roomcrt.getuandr);
 router.post("/isfeedbackdone", auth.isfeedback);
-
+router.post("/reportaproblem", roomcrt.reportproblem);
 router.post("/changeprofile", auth.changeprofilepic);
 router.post("/removeprofilepic", auth.removeprofilepic);
 router.post("/deactiveaccount", auth.deactive);
