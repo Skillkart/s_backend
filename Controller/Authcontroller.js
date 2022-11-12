@@ -878,7 +878,7 @@ exports.payment = async (req, res) => {
   let options;
   if (transcation.length < 26) {
     options = {
-      amount: 4999 * 100, // amount in the smallest currency unit
+      amount: 1* 10, // amount in the smallest currency unit
       currency: "INR",
       receipt: "order_rcptid_11",
     };
