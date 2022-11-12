@@ -868,8 +868,8 @@ exports.payment = async (req, res) => {
   const { amount } = req.body;
 
   const instance = new Razorpay({
-    key_id: process.env.r_key_id,
-    key_secret: process.env.r_key_secret,
+    key_id: process.env.live_r_key_id,
+    key_secret: process.env.live_r_key_secret,
   });
 
   const transcation = await Transcation.find({
