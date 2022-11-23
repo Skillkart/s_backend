@@ -868,8 +868,8 @@ exports.payment = async (req, res) => {
   const { amount } = req.body;
 
   const instance = new Razorpay({
-    key_id: process.env.live_r_key_id,
-    key_secret: process.env.live_r_key_secret,
+    key_id: process.env.r_key_id,
+    key_secret: process.env.r_key_secret,
   });
 
   const transcation = await Transcation.find({
@@ -878,7 +878,7 @@ exports.payment = async (req, res) => {
   let options;
   if (transcation.length < 26) {
     options = {
-      amount: 1* 100, // amount in the smallest currency unit
+      amount: 4999*100, // amount in the smallest currency unit
       currency: "INR",
       receipt: "order_rcptid_11",
     };
@@ -1624,8 +1624,17 @@ exports.submitdate = async (req, res) => {
 };
 
 exports.transcation = async (req, res) => {
-  const { user_id, username, r_p_id, course, status, email, price, r_id } =
-    req.body;
+  const {
+    user_id,
+    username,
+    r_p_id,
+    course,
+    status,
+    email,
+    price,
+    r_id,
+    Purchasedate,
+  } = req.body;
 
   const request = await Transcation.create({
     user: user_id,
@@ -1635,6 +1644,7 @@ exports.transcation = async (req, res) => {
     status,
     razarpay_order_id: r_id,
     razarpay_payment_id: r_p_id,
+    Purchasedate,
   });
   const refer = await Referal.findOne({
     referedEmail: email,

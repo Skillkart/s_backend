@@ -31,7 +31,7 @@ const UserModel = new mongoose.Schema({
   B_tech_stage :Number,
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now()
   },
 });
 

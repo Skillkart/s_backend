@@ -90,6 +90,8 @@ router.route("/changeuserpassword").post(auth.changeuserpassword);
 router.route("/deletslots").post(auth.deleteslots);
 router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 
+router.route("/resmetest").post(roomcrt.resumetest);
+
 ////secreta links
 
 router.route("/secretacreataccount").post(secreatuser);
