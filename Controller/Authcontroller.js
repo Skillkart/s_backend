@@ -20,6 +20,7 @@ const Razorpay = require("razorpay");
 const Waitinglist = require("../Model/Waitinglis");
 const Subscribe = require("../Model/Subscribe");
 const Referal = require("../Model/Referal");
+const RoomVideos = require("../Model/Roomvide");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -105,31 +106,35 @@ exports.login = async (req, res, next) => {
   if (rec) {
     const dcrpt = await bcrypt.compare(password, rec.Password);
     if (!dcrpt) {
-      return next(new AppError("Incorrect password.", 401, res));
+      return next(new AppError("Incorrect email or password.", 401, res));
     } else {
       createtoken(rec, 201, res, req, true);
     }
   } else {
     const dcrpt = await bcrypt.compare(password, user.password);
-    const trans = await Transcation.find({
-      user: user._id,
-      status: "success",
-    });
-    const transfilter = trans.filter(
-      (state) =>
-        Math.floor(
-          (new Date().getTime() - new Date(state.createdAt).getTime()) /
-            (1000 * 60 * 60 * 24)
-        ) < 60 && state.status == "success"
-    );
-    if (transfilter.length) {
-      if (!dcrpt) {
-        return next(new AppError("Incorrect password.", 401, res));
+    if (dcrpt) {
+      const trans = await Transcation.find({
+        user: user._id,
+        status: "success",
+      });
+      const transfilter = trans.filter(
+        (state) =>
+          Math.floor(
+            (new Date().getTime() - new Date(state.createdAt).getTime()) /
+              (1000 * 60 * 60 * 24)
+          ) < 60 && state.status == "success"
+      );
+      if (transfilter.length) {
+        if (!dcrpt) {
+          return next(new AppError("Incorrect email or password.", 401, res));
+        } else {
+          createtoken(user, 201, res, req, true);
+        }
       } else {
-        createtoken(user, 201, res, req, true);
+        createtoken(user, 201, res, req, false);
       }
     } else {
-      createtoken(user, 201, res, req, false);
+      return next(new AppError("Incorrect email or password.", 401, res));
     }
   }
 };
@@ -878,7 +883,7 @@ exports.payment = async (req, res) => {
   let options;
   if (transcation.length < 26) {
     options = {
-      amount: 4999*100, // amount in the smallest currency unit
+      amount: 4999 * 100, // amount in the smallest currency unit
       currency: "INR",
       receipt: "order_rcptid_11",
     };
@@ -2581,4 +2586,30 @@ exports.getpendingfeedback = async (req, res) => {
       message: "Feedbacks not found",
     });
   }
+};
+
+exports.roomvideo = async (req, res) => {
+  const { userid, recuiter, roomid, video } = req.body;
+
+  // console.log(userid, recuiter, roomid, video);
+  await RoomVideos.create({
+    user: userid,
+    recuiter: recuiter,
+    roomid,
+    video,
+  }).then(() => {
+    res.status(200).json({
+      status: "sucess",
+    });
+  });
+};
+
+exports.getroomvideo = async (req, res) => {
+  // const { userid, recuiter, roomid, video } = req.body;
+
+  const video = await RoomVideos.find();
+  res.status(200).json({
+    status: "success",
+    data: video,
+  });
 };

@@ -40,7 +40,7 @@ app.use(
 );
 app.options("*", cors());
 
-app.use(express.json());
+app.use(express.json({ limit: "3gb" }));
 app.use(express.urlencoded({ extended: false }));
 // app.use(
 //   fileUpload({
@@ -67,7 +67,7 @@ mongoose
     useNewUrlParser: true,
   })
   .then((con) => {
-   console.log("db connected")
+    console.log("db connected");
   })
   .catch((error) => {
     console.log(error, "its a error");
@@ -112,5 +112,3 @@ const port = process.env.PORT;
 server.listen(port, () => {
   console.log(port);
 });
-
-

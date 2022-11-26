@@ -91,6 +91,7 @@ router.route("/deletslots").post(auth.deleteslots);
 router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 
 router.route("/resmetest").post(roomcrt.resumetest);
+router.route("/roomvideo").post(auth.roomvideo).get(auth.getroomvideo);
 
 ////secreta links
 

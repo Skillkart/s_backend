@@ -1,5 +1,12 @@
 const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
+const admin = require("firebase-admin");
+
+var serviceAccount = require("../Other/hizzz-439a5-firebase-adminsdk-ojnby-7294fcccb7.json");
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 const randomstring = (username, size) => {
   let resize = 0;
@@ -32,10 +39,10 @@ const checkusername = async (username, findlength) => {
   }
 };
 exports.secreatuser = async (req, res) => {
-  const { username, email, phone } = req.body;
+  const { username, email, phone, ftoken } = req.body;
   const findlength = await Secretaac.find();
   const rstring = await checkusername(username.toLowerCase(), findlength);
-  const usercheck = await Secretaac.findOne({ Email: email });
+  const usercheck = await Secretaac.findOne({ Email: email.toLowerCase() });
   if (usercheck) {
     res.status(200).json({
       status: "success",
@@ -44,8 +51,9 @@ exports.secreatuser = async (req, res) => {
   } else {
     const r = await Secretaac.create({
       username: rstring,
-      Email: email,
+      Email: email.toLowerCase(),
       phone: phone,
+      ftoken,
     });
     res.status(200).json({
       status: "success",
@@ -75,7 +83,9 @@ exports.getaccountdetail = async (req, res) => {
 };
 
 exports.getmessages = async (req, res) => {
-  const { username, message } = req.body;
+  const { username, message, token } = req.body;
+  console.log(username, message, token);
+
   const user = await Secretaac.findOne({
     username,
   });
@@ -85,6 +95,21 @@ exports.getmessages = async (req, res) => {
       userid: username,
       message: message,
     });
+    const notify = {
+      notification: {
+        body: "New Message",
+      },
+      tokens: [token],
+    };
+    await admin
+      .messaging()
+      .sendMulticast(notify)
+      .then((res) => {
+        console.log("send success", res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     res.status(200).json({
       status: "success",
     });
