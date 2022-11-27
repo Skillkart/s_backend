@@ -89,6 +89,7 @@ router.route("/changeuserprofiledetail").post(auth.changeuserprofile);
 router.route("/changeuserpassword").post(auth.changeuserpassword);
 router.route("/deletslots").post(auth.deleteslots);
 router.route("/getpendingfeedback").post(auth.getpendingfeedback);
+router.route("/airesult").post(roomcrt.Aicalculation);
 
 router.route("/resmetest").post(roomcrt.resumetest);
 router.route("/roomvideo").post(auth.roomvideo).get(auth.getroomvideo);

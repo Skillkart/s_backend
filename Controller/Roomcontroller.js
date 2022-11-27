@@ -1,5 +1,6 @@
 const Recuirtment = require("../Model/recuirter");
 const Raproblem = require("../Model/Reportaproblem");
+const Roomai = require("../Model/Roomai");
 const RoomModel = require("../Model/Roomcreation");
 const User = require("../Model/Usermodel");
 const RoomEmail = require("../Other/roomhandler");
@@ -64,14 +65,61 @@ exports.reportproblem = async (req, res) => {
     report: message,
     bordedRecuiter: recuiterid,
   });
-  
+
   res.status(200).json({
     status: "success",
   });
 };
 
+exports.resumetest = async (req, res) => {
+  console.log(req.files);
+};
 
+exports.Aicalculation = async (req, res) => {
+  const {
+    userid,
+    rid,
+    angry,
+    disguted,
+    fearful,
+    happy,
+    netural,
+    sad,
+    surprised,
+  } = req.body;
 
-exports.resumetest=async(req,res)=>{
-    console.log(req.files)
-}
+  const finduser = await Roomai.findOne({
+    userid: userid,
+  });
+
+  if (finduser) {
+    let newarr = {
+      angry: angry,
+      disguted: disguted,
+      fearful: fearful,
+      happy: happy,
+      neutral: netural,
+      sad: sad,
+    };
+
+    finduser.expression.push(newarr);
+    await finduser.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    await Roomai.create({
+      userid: userid,
+      recuiterid: rid,
+      angry: angry,
+      disgusted: disguted,
+      fearful: fearful,
+      happy: happy,
+      neutral: netural,
+      sad,
+    });
+    res.status(200).json({
+      status: "success",
+    });
+  }
+};
