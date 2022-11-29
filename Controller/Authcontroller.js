@@ -167,6 +167,8 @@ exports.isLoggedIn = async (req, res, next) => {
 
 exports.loggedin = async (req, res, next) => {
   const { token } = req.body;
+  console.log(req.cookies, "hi");
+  console.log("hi");
   const mentor = await Recuirtment.find();
   if (token) {
     try {
@@ -688,25 +690,60 @@ exports.busydate = async (req, res) => {
 };
 
 exports.userforgetpass = async (req, res) => {
-  const { email, password, role } = req.body;
-  if (role == "user") {
-    const user = await User.findOne({ Email: email });
-    const ecrpt = await bcrypt.hash(password, 10);
-    user.password = ecrpt;
-    console.log(user);
-    await user.save();
-    res.status(200).json({
-      status: "success",
-    });
+  const { token, password } = req.body;
+  console.log(token, password);
+  const rec = await Recuirtment.findOne({
+    passwordResetToken: token,
+  });
+  const user = await User.findOne({
+    passwordResetToken: token,
+  });
+
+  console.log(user, rec);
+  if (user || rec) {
+    if (user) {
+      const ecrpt = await bcrypt.hash(password, 10);
+      user.password = ecrpt;
+      user.passwordResetToken = "";
+      console.log(user);
+      await user.save();
+      res.status(200).json({
+        status: "success",
+      });
+    }
+    if (rec) {
+      const ecrpt = await bcrypt.hash(password, 10);
+      rec.Password = ecrpt;
+      rec.passwordResetToken = "";
+      await rec.save();
+      res.status(200).json({
+        status: "success",
+      });
+    }
   } else {
-    const user = await Recuirtment.findOne({ Email: email });
-    const ecrpt = await bcrypt.hash(password, 10);
-    user.Password = ecrpt;
-    await user.save();
-    res.status(200).json({
-      status: "success",
+    res.status(401).json({
+      status: "Fail",
+      message: "Token expired.",
     });
   }
+  // if (role == "user") {
+  //   const user = await User.findOne({ Email: email });
+  //   const ecrpt = await bcrypt.hash(password, 10);
+  //   user.password = ecrpt;
+  //   console.log(user);
+  //   await user.save();
+  //   res.status(200).json({
+  //     status: "success",
+  //   });
+  // } else {
+  //   const user = await Recuirtment.findOne({ Email: email });
+  //   const ecrpt = await bcrypt.hash(password, 10);
+  //   user.Password = ecrpt;
+  //   await user.save();
+  //   res.status(200).json({
+  //     status: "success",
+  //   });
+  // }
 };
 
 exports.createmsg = async (req, res) => {
@@ -1791,14 +1828,47 @@ exports.getresume = async (req, res) => {
   }
 };
 
+const paswordrstring = (size) => {
+  let characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  let result = "";
+  const charactersLength = characters.length;
+  for (let i = 0; i < size; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+};
+
+const passwordresettoken = async () => {
+  const string = await paswordrstring(14);
+
+  let usersearch = await User.find({
+    passwordResetToken: string,
+  });
+  let recsearch = await Recuirtment.find({
+    passwordResetToken: string,
+  });
+  console.log(string);
+  console.log(usersearch, recsearch);
+  if (!usersearch.length && !recsearch.length) {
+    return string;
+  } else {
+    return passwordresettoken();
+  }
+};
 exports.uemail = async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({
     Email: email,
   });
+
   if (user) {
-    const verifytoken = getRandomArbitrary(100000, 999999);
+    const verifytoken = await passwordresettoken();
+    // const verifytoken = getRandomArbitrary(100000, 999999);
+    console.log(verifytoken);
     user.passwordResetToken = verifytoken;
     await new Email(verifytoken, user.Name, email).passwordreset();
     await user.save();
@@ -1815,7 +1885,8 @@ exports.uemail = async (req, res) => {
     });
 
     if (rec) {
-      const verifytoken = getRandomArbitrary(100000, 999999);
+      const verifytoken = await passwordresettoken();
+      console.log(verifytoken);
       rec.passwordResetToken = verifytoken;
       await new Email(verifytoken, rec.Name, email).passwordreset();
       await rec.save();
