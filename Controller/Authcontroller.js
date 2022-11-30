@@ -11,7 +11,6 @@ const AppError = require("../Other/Apperror");
 const bcrypt = require("bcrypt");
 const RoomModel = require("../Model/Roomcreation");
 const Transcation = require("../Model/Transaction");
-// const Feedback = require("../Model/Feedback");
 const { findByIdAndUpdate } = require("../Model/recuirter");
 const RoomMessModel = require("../Model/Roommsg");
 const { deleteMany } = require("../Model/Roommsg");
@@ -699,7 +698,6 @@ exports.userforgetpass = async (req, res) => {
     passwordResetToken: token,
   });
 
-  console.log(user, rec);
   if (user || rec) {
     if (user) {
       const ecrpt = await bcrypt.hash(password, 10);
@@ -1842,7 +1840,7 @@ const paswordrstring = (size) => {
 };
 
 const passwordresettoken = async () => {
-  const string = await paswordrstring(14);
+  const string = await paswordrstring(20);
 
   let usersearch = await User.find({
     passwordResetToken: string,
@@ -1858,6 +1856,66 @@ const passwordresettoken = async () => {
     return passwordresettoken();
   }
 };
+
+exports.emailverification = async (req, res) => {
+  const { email } = req.body;
+  const rec = await Recuirtment.findOne({
+    Email: email,
+  });
+
+  if (rec) {
+    const verifytoken = await passwordresettoken();
+    console.log(verifytoken);
+    rec.passwordResetToken = verifytoken;
+    await new Email(verifytoken, rec.Name, email).send();
+    await rec.save();
+    setTimeout(async () => {
+      rec.passwordResetToken = "";
+      await rec.save();
+    }, 1000 * 600);
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    res.status(401).json({
+      status: "Failed",
+      messsage: "Didnt find any Accound associate with this Email.",
+    });
+  }
+};
+
+exports.emailverified = async (req, res) => {
+  const { id } = req.query;
+  console.log(id);
+  const user = await User.findOne({
+    passwordResetToken: id,
+  });
+  const rec = await Recuirtment.findOne({
+    passwordResetToken: id,
+  });
+  if (user || rec) {
+    if (user) {
+      user.Emailverified = true;
+      user.passwordResetToken = "";
+      await user.save();
+      res.status(200).json({
+        status: "success",
+      });
+    }
+    if (res) {
+      rec.Emailverified = true;
+      rec.passwordResetToken = "";
+      await rec.save();
+      res.status(200).json({
+        status: "success",
+      });
+    }
+  }else{
+    res.status(400).json({
+      status:"Fail"
+    })
+  }
+};
 exports.uemail = async (req, res) => {
   const { email } = req.body;
 
@@ -1867,7 +1925,6 @@ exports.uemail = async (req, res) => {
 
   if (user) {
     const verifytoken = await passwordresettoken();
-    // const verifytoken = getRandomArbitrary(100000, 999999);
     console.log(verifytoken);
     user.passwordResetToken = verifytoken;
     await new Email(verifytoken, user.Name, email).passwordreset();
@@ -1875,7 +1932,7 @@ exports.uemail = async (req, res) => {
     setTimeout(async () => {
       user.passwordResetToken = "";
       await user.save();
-    }, 1000 * 300);
+    }, 1000 * 600);
     res.status(200).json({
       status: "success",
     });
@@ -1890,10 +1947,10 @@ exports.uemail = async (req, res) => {
       rec.passwordResetToken = verifytoken;
       await new Email(verifytoken, rec.Name, email).passwordreset();
       await rec.save();
-      setTimeout(() => {
+      setTimeout(async () => {
         rec.passwordResetToken = "";
-        rec.save();
-      }, 1000 * 300);
+        await rec.save();
+      }, 1000 * 600);
       res.status(200).json({
         status: "success",
       });
