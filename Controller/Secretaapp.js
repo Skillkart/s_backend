@@ -2,7 +2,7 @@ const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
 const admin = require("firebase-admin");
 
-var serviceAccount = require("../Other/hizzz-439a5-firebase-adminsdk-ojnby-7294fcccb7.json");
+var serviceAccount = require("../Other/hizzz-439a5-firebase-adminsdk-ojnby-b282ffcf40.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -41,7 +41,6 @@ const checkusername = async (username, findlength) => {
 exports.secreatuser = async (req, res) => {
   const { username, email, phone, ftoken } = req.body;
   const findlength = await Secretaac.find();
-  const rstring = await checkusername(username.toLowerCase(), findlength);
   const usercheck = await Secretaac.findOne({ Email: email.toLowerCase() });
   if (usercheck) {
     res.status(200).json({
@@ -49,6 +48,11 @@ exports.secreatuser = async (req, res) => {
       data: usercheck,
     });
   } else {
+    const rstring = await checkusername(
+      username.toLowerCase().split(" ").join(""),
+      findlength
+    );
+
     const r = await Secretaac.create({
       username: rstring,
       Email: email.toLowerCase(),
@@ -89,11 +93,17 @@ exports.getmessages = async (req, res) => {
   const user = await Secretaac.findOne({
     username,
   });
+  const usermess = await Secretamess.find({
+    userid: username,
+  });
+  console.log(user);
 
+  console.log(usermess);
   if (user) {
     await Secretamess.create({
       userid: username,
       message: message,
+      messageindex: usermess.length + 1,
     });
     const notify = {
       notification: {
