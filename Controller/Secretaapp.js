@@ -2,7 +2,7 @@ const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
 const admin = require("firebase-admin");
 
-var serviceAccount = require("../Other/hizzz-439a5-firebase-adminsdk-ojnby-b282ffcf40.json");
+const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-cee3adc5a4.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -43,6 +43,8 @@ exports.secreatuser = async (req, res) => {
   const findlength = await Secretaac.find();
   const usercheck = await Secretaac.findOne({ Email: email.toLowerCase() });
   if (usercheck) {
+    usercheck.ftoken = ftoken;
+    await usercheck.save();
     res.status(200).json({
       status: "success",
       data: usercheck,
@@ -68,7 +70,7 @@ exports.secreatuser = async (req, res) => {
 
 exports.getaccountdetail = async (req, res) => {
   const { id } = req.query;
-  console.log(id);
+
   const user = await Secretaac.findOne({
     username: id.toLowerCase(),
   });
@@ -87,8 +89,8 @@ exports.getaccountdetail = async (req, res) => {
 };
 
 exports.getmessages = async (req, res) => {
-  const { username, message, token } = req.body;
-  console.log(username, message, token);
+  const { username, usermessage, token } = req.body;
+  console.log(username, usermessage, token);
 
   const user = await Secretaac.findOne({
     username,
@@ -102,15 +104,19 @@ exports.getmessages = async (req, res) => {
   if (user) {
     await Secretamess.create({
       userid: username,
-      message: message,
+      message: usermessage,
       messageindex: usermess.length + 1,
     });
     const notify = {
+      tokens: [
+        "feOvuchERRqBpGUD9mKJFu:APA91bEWhxQrrh9up0IT9fFdlL8RclTZiEq4anUkZ9KDc2cyzh7cFIcPMAmdXYy0MgHe3c2EtaTrfnvhvIsTjT04RiSG30N62n28lINFTt3NISiONgczmnd0pxy5TR_KHu3Rgwd2HN1z",
+      ],
       notification: {
-        body: "New Message",
+        title: "Basic Notification",
+        body: "This is a basic notification sent from the server!",
       },
-      tokens: [token],
     };
+
     await admin
       .messaging()
       .sendMulticast(notify)
