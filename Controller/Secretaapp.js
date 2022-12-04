@@ -2,7 +2,7 @@ const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
 const admin = require("firebase-admin");
 
-const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-cee3adc5a4.json");
+const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-53d8edca51.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -98,9 +98,9 @@ exports.getmessages = async (req, res) => {
   const usermess = await Secretamess.find({
     userid: username,
   });
-  console.log(user);
+  // console.log(user);
 
-  console.log(usermess);
+  // console.log(usermess);
   if (user) {
     await Secretamess.create({
       userid: username,
@@ -108,12 +108,10 @@ exports.getmessages = async (req, res) => {
       messageindex: usermess.length + 1,
     });
     const notify = {
-      tokens: [
-        "feOvuchERRqBpGUD9mKJFu:APA91bEWhxQrrh9up0IT9fFdlL8RclTZiEq4anUkZ9KDc2cyzh7cFIcPMAmdXYy0MgHe3c2EtaTrfnvhvIsTjT04RiSG30N62n28lINFTt3NISiONgczmnd0pxy5TR_KHu3Rgwd2HN1z",
-      ],
+      tokens: [user.ftoken],
       notification: {
-        title: "Basic Notification",
-        body: "This is a basic notification sent from the server!",
+        title: "New message arrive",
+        body: "Someone send you a message",
       },
     };
 
