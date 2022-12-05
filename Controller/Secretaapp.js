@@ -98,12 +98,13 @@ exports.getmessages = async (req, res) => {
   const usermess = await Secretamess.find({
     userid: username,
   });
+  console.log(user);
   // console.log(user);
 
   // console.log(usermess);
   if (user) {
     await Secretamess.create({
-      userid: username,
+      userid: user._id,
       message: usermessage,
       messageindex: usermess.length + 1,
     });
@@ -138,7 +139,7 @@ exports.secretamessage = async (req, res) => {
   const { username } = req.query;
   console.log(username);
   const mess = await Secretamess.find({
-    userid: username.toLowerCase(),
+    userid: username,
   }).sort({ seen: "asc" });
   console.log(mess);
   res.status(200).json({
