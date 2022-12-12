@@ -49,44 +49,124 @@ const createtoken = async (user, statuscode, res, req, redirect) => {
 };
 
 exports.signup = async (req, res) => {
-  const { username, email, phone, password } = req.body;
-  const user = await User.findOne({
-    Email: email,
+  const {
+    username,
+    email,
+    phone,
+    password,
+    college,
+    stream,
+    degree,
+    graduateyear,
+    photo,
+    step,
+  } = req.body;
+  console.log(
+    username,
+    email,
+    phone,
+    password,
+    college,
+    stream,
+    degree,
+    graduateyear
+  );
+
+  const rec = await Recuirtment.findOne({
+    Email: email.toLowerCase(),
   });
 
-  if (!user) {
-    const ecrpt = await bcrypt.hash(password, 10);
-    const verifytoken = getRandomArbitrary(100000, 999999);
-    const newUser = await User.create({
-      Name: username,
-      Email: email,
-      password: ecrpt,
-      phone: phone,
-      passwordResetToken: verifytoken,
+  if (rec) {
+    res.status(401).json({
+      status: "success",
+      message: "already had an account as Recuiter.",
     });
-    const refer = await Referal.findOne({
-      referedEmail: email,
-    });
-
-    if (refer) {
-      refer.used = true;
-      await refer.save();
-    }
-
-    createtoken(newUser, 201, res, req);
-
-    await new Email(verifytoken, username, email, "VerifyEmail").send();
-    await new Email(verifytoken, username, email, "VerifyEmail").welcomesend();
-
-    setTimeout(() => {
-      newUser.passwordResetToken = "";
-      newUser.save();
-    }, 1000 * 300);
   } else {
-    res.status(400).json({
-      status: "Failed",
+    const user = await User.findOne({
+      Email: email,
     });
+
+    if (!user) {
+      const ecrpyt = await bcrypt.hash(password, 15);
+      const newuser = await User.create({
+        Name: username,
+        Email: email,
+        password: ecrpyt,
+        phone: phone,
+        step: step,
+      });
+      const refer = await Referal.findOne({
+        referedEmail: email,
+      });
+
+      if (refer) {
+        refer.used = true;
+        await refer.save();
+      }
+
+      await new Email("", username, email, "VerifyEmail").welcomesend();
+
+      res.status(200).json({
+        status: "success",
+        data: newuser,
+      });
+    } else {
+      if (user.completed) {
+        res.status(401).json({
+          status: "Fail",
+        });
+      } else {
+        if (stream && degree && college && graduateyear && photo) {
+          user.stream = stream;
+          user.degree = degree;
+          user.college = college;
+          user.photo = photo;
+          user.graduateyear = graduateyear;
+          user.completed = true;
+          await user.save();
+          createtoken(user, 201, res, req);
+        } else {
+          res.status(200).json({
+            status: "success",
+            data: user,
+          });
+        }
+      }
+    }
   }
+  // if (!user) {
+  //   const ecrpt = await bcrypt.hash(password, 10);
+  //   const verifytoken = getRandomArbitrary(100000, 999999);
+  //   const newUser = await User.create({
+  //     Name: username,
+  //     Email: email,
+  //     password: ecrpt,
+  //     phone: phone,
+  //     passwordResetToken: verifytoken,
+  //   });
+  //   const refer = await Referal.findOne({
+  //     referedEmail: email,
+  //   });
+
+  //   if (refer) {
+  //     refer.used = true;
+  //     await refer.save();
+  //   }
+
+  //   createtoken(newUser, 201, res, req);
+
+  //   await new Email(verifytoken, username, email, "VerifyEmail").send();
+  //   await new Email(verifytoken, username, email, "VerifyEmail").welcomesend();
+
+  //   setTimeout(() => {
+  //     newUser.passwordResetToken = "";
+  //     newUser.save();
+  //   }, 1000 * 300);
+  // } else {
+  //   res.status(400).json({
+  //     status: "Failed",
+  //   });
+  // }
 };
 
 exports.login = async (req, res, next) => {
@@ -1910,10 +1990,10 @@ exports.emailverified = async (req, res) => {
         status: "success",
       });
     }
-  }else{
+  } else {
     res.status(400).json({
-      status:"Fail"
-    })
+      status: "Fail",
+    });
   }
 };
 exports.uemail = async (req, res) => {
@@ -2501,6 +2581,7 @@ exports.mentoraccountcr = async (req, res) => {
     mentorshiptype,
     joboffer,
     avatime,
+    photo,
   } = req.body;
 
   const student = await User.findOne({
@@ -2564,6 +2645,7 @@ exports.mentoraccountcr = async (req, res) => {
         Email: email,
         phone: phone,
         Password: ecrpt,
+        photo: photo,
         step,
       });
       await new Email("", name, email).welcomementor();

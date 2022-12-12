@@ -28,13 +28,20 @@ const UserModel = new mongoose.Schema({
   passwordResetToken: {
     type: String,
   },
-  B_tech_stage :Number,
+  stream: String,
+  degree: String,
+  graduateyear: String,
+  step: Number,
+  college: String,
+  completed: {
+    type: Boolean,
+    defautl: false,
+  },
   createdAt: {
     type: Date,
-    default: Date.now()
+    default: Date.now(),
   },
 });
-
 
 const User = mongoose.model("User", UserModel);
 module.exports = User;
