@@ -13,16 +13,17 @@ const ReferalModel = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  refercode:{
-    type:String
+  refercode: {
+    type: String,
   },
   createdAt: {
     type: Date,
     default: Date.now(),
   },
+  referedon: String,
   refererphonenumber: {
-    type: String
-  }
+    type: String,
+  },
 });
 
 const Referal = mongoose.model("refer", ReferalModel);

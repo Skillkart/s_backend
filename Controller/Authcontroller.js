@@ -998,8 +998,8 @@ exports.payment = async (req, res) => {
   const { amount } = req.body;
 
   const instance = new Razorpay({
-    key_id: process.env.r_key_id,
-    key_secret: process.env.r_key_secret,
+    key_id: process.env.live_r_key_id,
+    key_secret: process.env.live_r_key_secret,
   });
 
   const transcation = await Transcation.find({
@@ -1563,13 +1563,15 @@ const refercode = async () => {
 };
 exports.refer = async (req, res) => {
   const { name, email, referedby, referid, phone, referername } = req.body;
-
-  console.log(name, email, referedby, referid, phone, referername);
   const exist = await Referal.findOne({
     referedEmail: email,
   });
   if (!exist) {
     const rcode = await refercode();
+    let d = new Date();
+    let date = d.getDate();
+    let month = d.getMonth() + 1;
+    let year = d.getFullYear();
     const request = await Referal.create({
       refererid: referid,
       referedEmail: email,
@@ -1578,6 +1580,7 @@ exports.refer = async (req, res) => {
       referedbyEmail: referedby,
       refererphonenumber: phone,
       refercode: rcode,
+      referedon: `${date} ${month} ${year}`,
     });
     const url = `https://skillkart.app/refer?id=${rcode}`;
     await new Email("", name, email, "", "", referername, url).referalprogram();
