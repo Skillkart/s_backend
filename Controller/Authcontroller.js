@@ -172,7 +172,7 @@ exports.signup = async (req, res) => {
 };
 
 exports.login = async (req, res, next) => {
-  const { email, password, ipaddress } = req.body;
+  const { email, password, ipaddress, lastlogin } = req.body;
   const user = await User.findOne({
     Email: email,
   });
@@ -190,6 +190,7 @@ exports.login = async (req, res, next) => {
       return next(new AppError("Incorrect email or password.", 401, res));
     } else {
       rec.ipaddress = ipaddress;
+      rec.lastlogin = lastlogin;
       await rec.save();
       createtoken(rec, 201, res, req, true);
     }
@@ -198,6 +199,8 @@ exports.login = async (req, res, next) => {
 
     if (dcrpt) {
       user.ipaddress = ipaddress;
+      user.lastlogin = lastlogin;
+
       await user.save();
       const trans = await Transcation.find({
         user: user._id,
@@ -1563,7 +1566,7 @@ exports.refer = async (req, res) => {
 
   console.log(name, email, referedby, referid, phone, referername);
   const exist = await Referal.findOne({
-    refererEmail: email,
+    referedEmail: email,
   });
   if (!exist) {
     const rcode = await refercode();

@@ -15,6 +15,7 @@ const ReModel = new mongoose.Schema({
     default: "recuirter",
   },
   ipaddress: String,
+  lastlogin: String,
   Password: {
     type: String,
   },

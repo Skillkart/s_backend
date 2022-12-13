@@ -39,6 +39,7 @@ const UserModel = new mongoose.Schema({
     defautl: false,
   },
   ipaddress: String,
+  lastlogin: String,
   createdAt: {
     type: Date,
     default: Date.now(),
