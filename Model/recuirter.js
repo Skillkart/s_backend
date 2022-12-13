@@ -14,6 +14,7 @@ const ReModel = new mongoose.Schema({
     enum: ["user", "recuirter", "admin"],
     default: "recuirter",
   },
+  ipaddress: String,
   Password: {
     type: String,
   },

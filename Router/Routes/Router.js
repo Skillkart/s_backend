@@ -18,6 +18,7 @@ const {
   secretamessage,
   seenrqt,
 } = require("../../Controller/Secretaapp");
+const { postjobs, getjobs } = require("../../Controller/Jobcontroller");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
@@ -97,6 +98,10 @@ router
 
 router.route("/resmetest").post(roomcrt.resumetest);
 router.route("/roomvideo").post(auth.roomvideo).get(auth.getroomvideo);
+
+// Jobs
+
+router.route("/jobs").post(postjobs).get(getjobs);
 
 ////secreta links
 

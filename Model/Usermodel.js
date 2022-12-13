@@ -25,6 +25,7 @@ const UserModel = new mongoose.Schema({
   password: {
     type: String,
   },
+  Linkedinprofile: String,
   passwordResetToken: {
     type: String,
   },
@@ -37,6 +38,7 @@ const UserModel = new mongoose.Schema({
     type: Boolean,
     defautl: false,
   },
+  ipaddress: String,
   createdAt: {
     type: Date,
     default: Date.now(),
