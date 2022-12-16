@@ -18,7 +18,11 @@ const {
   secretamessage,
   seenrqt,
 } = require("../../Controller/Secretaapp");
-const { postjobs, getjobs } = require("../../Controller/Jobcontroller");
+const {
+  postjobs,
+  getjobs,
+  Jobapply,
+} = require("../../Controller/Jobcontroller");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
@@ -88,6 +92,7 @@ router.route("/loginrefered").post(auth.addloginrefer);
 router.route("/emailtest").post(auth.emailtest);
 router.route("/changeuserprofiledetail").post(auth.changeuserprofile);
 router.route("/changeuserpassword").post(auth.changeuserpassword);
+router.route("/profilechangepassword").post(auth.profilechangepassword);
 router.route("/deletslots").post(auth.deleteslots);
 router.route("/getpendingfeedback").post(auth.getpendingfeedback);
 router.route("/airesult").post(roomcrt.Aicalculation);
@@ -99,9 +104,11 @@ router
 router.route("/resmetest").post(roomcrt.resumetest);
 router.route("/roomvideo").post(auth.roomvideo).get(auth.getroomvideo);
 
+router.route("/callrequest").post(auth.callrequest);
 // Jobs
 
 router.route("/jobs").post(postjobs).get(getjobs);
+router.route("/applyjobs").post(Jobapply);
 
 ////secreta links
 

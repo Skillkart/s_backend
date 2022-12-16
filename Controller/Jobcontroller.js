@@ -1,3 +1,4 @@
+const { Jobsapply } = require("../Model/Jobapply");
 const Jobs = require("../Model/Jobs");
 
 exports.postjobs = async (req, res) => {
@@ -31,5 +32,18 @@ exports.getjobs = async (req, res) => {
   res.status(200).json({
     status: "success",
     data: request,
+  });
+};
+
+exports.Jobapply = async (req, res) => {
+  const { jobid, userid, appliedon } = req.body;
+
+  await Jobsapply.create({
+    jobid: jobid,
+    userid: userid,
+    applyedon: appliedon,
+  });
+  res.status(200).json({
+    status: "success",
   });
 };

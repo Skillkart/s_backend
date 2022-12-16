@@ -20,6 +20,7 @@ const Waitinglist = require("../Model/Waitinglis");
 const Subscribe = require("../Model/Subscribe");
 const Referal = require("../Model/Referal");
 const RoomVideos = require("../Model/Roomvide");
+const { Callrequest } = require("../Model/Callrequest");
 
 function getRandomArbitrary(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
@@ -100,12 +101,12 @@ exports.signup = async (req, res) => {
         referedEmail: email,
       });
 
+      await new Email("", username, email, "VerifyEmail").welcomesend();
+
       if (refer) {
         refer.used = true;
         await refer.save();
       }
-
-      await new Email("", username, email, "VerifyEmail").welcomesend();
 
       res.status(200).json({
         status: "success",
@@ -186,6 +187,8 @@ exports.login = async (req, res, next) => {
   }
   if (rec) {
     const dcrpt = await bcrypt.compare(password, rec.Password);
+    console.log(dcrpt);
+    console.log(password, rec.Password);
     if (!dcrpt) {
       return next(new AppError("Incorrect email or password.", 401, res));
     } else {
@@ -355,7 +358,7 @@ exports.mentosignup = async (req, res) => {
     Email: email,
   });
   if (!user && !rec) {
-    const ecrpt = await bcrypt.hash(password, 10);
+    const ecrpt = await bcrypt.hash(password, 15);
     const verifytoken = getRandomArbitrary(100000, 999999);
     const mentor = await Recuirtment.create({
       Name: name,
@@ -790,7 +793,7 @@ exports.userforgetpass = async (req, res) => {
 
   if (user || rec) {
     if (user) {
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       user.password = ecrpt;
       user.passwordResetToken = "";
       console.log(user);
@@ -800,7 +803,7 @@ exports.userforgetpass = async (req, res) => {
       });
     }
     if (rec) {
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       rec.Password = ecrpt;
       rec.passwordResetToken = "";
       await rec.save();
@@ -2063,7 +2066,7 @@ exports.pverify = async (req, res) => {
   });
   if (user) {
     if (user.passwordResetToken == code) {
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       user.password = ecrpt;
       user.passwordResetToken = "";
       await user.save();
@@ -2082,7 +2085,7 @@ exports.pverify = async (req, res) => {
     });
     if (rec) {
       if (rec.passwordResetToken == code) {
-        const ecrpt = await bcrypt.hash(password, 10);
+        const ecrpt = await bcrypt.hash(password, 15);
         rec.Password = ecrpt;
         rec.passwordResetToken = "";
         await rec.save();
@@ -2352,7 +2355,7 @@ exports.addrefer = async (req, res) => {
   if (!user) {
     if (r) {
       r.used = true;
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       const verifytoken = getRandomArbitrary(100000, 999999);
       const newUser = await User.create({
         Name: name,
@@ -2372,7 +2375,7 @@ exports.addrefer = async (req, res) => {
         newUser.save();
       }, 1000 * 300);
     } else {
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       const verifytoken = getRandomArbitrary(100000, 999999);
       const newUser = await User.create({
         Name: name,
@@ -2610,6 +2613,7 @@ exports.mentoraccountcr = async (req, res) => {
     if (user) {
       if (parseInt(step) === 2) {
         user.Gender = gender;
+        user.photo = photo;
         user.bio = bio;
         user.Linkendin = linkedin;
         user.step = step;
@@ -2652,7 +2656,7 @@ exports.mentoraccountcr = async (req, res) => {
         });
       }
     } else {
-      const ecrpt = await bcrypt.hash(password, 10);
+      const ecrpt = await bcrypt.hash(password, 15);
       const request = await Recuirtment.create({
         Name: name,
         Email: email,
@@ -2835,4 +2839,44 @@ exports.getroomvideo = async (req, res) => {
     status: "success",
     data: video,
   });
+};
+
+exports.callrequest = async (req, res) => {
+  const { phonenumber } = req.body;
+  await Callrequest.create({
+    phonenumber: phonenumber,
+  });
+  res.status(200).json({
+    status: "success",
+  });
+};
+
+exports.profilechangepassword = async (req, res) => {
+  const { role, email, password } = req.body;
+  console.log(role, email, password);
+
+  const user = await User.findOne({
+    Email: email
+  })
+  console.log(user);
+  if (user) {
+    const ecrpyt = await bcrypt.hash(password, 15);
+    user.password = ecrpyt;
+    await user.save();
+    res.status(200).json({
+      status: "success",
+    });
+  } else {
+    const rec = await Recuirtment.findOne({
+      Email: email,
+    });
+    console.log(rec);
+    const ecrpyt = await bcrypt.hash(password, 15);
+    console.log(ecrpyt);
+    rec.Password = ecrpyt;
+    await rec.save();
+    res.status(200).json({
+      status: "success",
+    });
+  }
 };
