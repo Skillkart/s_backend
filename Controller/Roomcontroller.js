@@ -94,12 +94,12 @@ exports.Aicalculation = async (req, res) => {
 
   if (finduser) {
     let newarr = {
-      angry: angry,
+      Ranacorus: angry,
       disguted: disguted,
-      fearful: fearful,
-      happy: happy,
-      neutral: netural,
-      sad: sad,
+      Nervousness: fearful,
+      Enthusiasm: happy,
+      Confidence: netural,
+      Depress: sad,
     };
 
     finduser.expression.push(newarr);
@@ -111,12 +111,12 @@ exports.Aicalculation = async (req, res) => {
     await Roomai.create({
       userid: userid,
       recuiterid: rid,
-      angry: angry,
+      Ranacorus: angry,
       disgusted: disguted,
-      fearful: fearful,
-      happy: happy,
-      neutral: netural,
-      sad,
+      Nervousness: fearful,
+      Enthusiasm: happy,
+      Confidence: netural,
+      Depress: sad,
     });
     res.status(200).json({
       status: "success",

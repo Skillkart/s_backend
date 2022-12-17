@@ -5,12 +5,12 @@ const AiModel = new mongoose.Schema({
   recuiterid: String,
   expression: [
     {
-      angry: Number,
+      Ranacorus: Number,
       disgusted: Number,
-      fearful: Number,
-      happy: Number,
-      neutral: Number,
-      sad: Number,
+      Nervousness: Number,
+      Enthusiasm: Number,
+      Confidence: Number,
+      Depress: Number,
     },
   ],
 
