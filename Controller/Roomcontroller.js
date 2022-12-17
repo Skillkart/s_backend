@@ -85,11 +85,12 @@ exports.Aicalculation = async (req, res) => {
     happy,
     netural,
     sad,
+    roomid,
     surprised,
   } = req.body;
 
   const finduser = await Roomai.findOne({
-    userid: userid,
+    roomid: roomid,
   });
 
   if (finduser) {
@@ -111,6 +112,7 @@ exports.Aicalculation = async (req, res) => {
     await Roomai.create({
       userid: userid,
       recuiterid: rid,
+      roomid: roomid,
       Ranacorus: angry,
       disgusted: disguted,
       Nervousness: fearful,

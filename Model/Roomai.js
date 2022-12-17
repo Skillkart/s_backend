@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const AiModel = new mongoose.Schema({
   userid: String,
   recuiterid: String,
+  roomid: String,
   expression: [
     {
       Ranacorus: Number,
