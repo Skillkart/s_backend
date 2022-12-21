@@ -1,3 +1,4 @@
+const Blogs = require("../Model/BlogModel");
 const Feedback = require("../Model/Feedback");
 const PendingModel = require("../Model/Pendingfeedback");
 const Recuirtment = require("../Model/recuirter");
@@ -27,7 +28,8 @@ exports.mentor = async (req, res) => {
   const waitinglist = await Waitinglist.find();
   const reportproblem = await Raproblem.find();
   const referal = await Referal.find();
-  const pendingfee = await PendingModel.find();``
+  const pendingfee = await PendingModel.find();
+  ``;
   const transcations = await Transcation.find();
   const feedback = await Feedback.find();
   res.status(200).json({
@@ -40,6 +42,26 @@ exports.mentor = async (req, res) => {
     requestproblem: reportproblem,
     Waitingmember: waitinglist,
     Feedback: feedback,
-    referal: referal
+    referal: referal,
+  });
+};
+
+exports.getblog = async (req, res) => {
+  const { id } = req.body;
+
+  console.log(id);
+  const request = await Blogs.findOne({ _id: id });
+  console.log(request);
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+};
+
+exports.allblogs = async (req, res) => {
+  const blogs = await Blogs.find();
+  res.status(200).json({
+    status: "success",
+    data: blogs,
   });
 };

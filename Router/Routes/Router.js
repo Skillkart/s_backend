@@ -9,7 +9,7 @@ const {
 const router = express.Router();
 const auth = require("../../Controller/Authcontroller");
 const roomcrt = require("../../Controller/Roomcontroller");
-const { userdata, mentor } = require("../../Controller/allresponse");
+const { userdata, mentor, getblog, allblogs } = require("../../Controller/allresponse");
 const { upload } = require("../../Other/Multer");
 const {
   secreatuser,
@@ -17,6 +17,7 @@ const {
   getmessages,
   secretamessage,
   seenrqt,
+  sislogin,
 } = require("../../Controller/Secretaapp");
 const {
   postjobs,
@@ -60,6 +61,8 @@ router.post("/purchase", auth.purchase);
 router.post("/Mailer", roomcrt.mailer);
 router.post("/subscribe", auth.subscribe);
 router.post("/refer", auth.refer);
+router.route("/getblog").get(allblogs).post(getblog);
+
 router.post("/experiment", auth.demo);
 router.post("/handletranctionfail", auth.transfail);
 router.post("/bookaslot", auth.bookaslot);
@@ -95,7 +98,7 @@ router.route("/changeuserpassword").post(auth.changeuserpassword);
 router.route("/profilechangepassword").post(auth.profilechangepassword);
 router.route("/deletslots").post(auth.deleteslots);
 router.route("/getpendingfeedback").post(auth.getpendingfeedback);
-router.route("/airesult").post(roomcrt.Aicalculation);
+router.route("/airesult").post(roomcrt.Aicalculation).get(roomcrt.getairesult);
 router
   .route("/mentoremailverification")
   .post(auth.emailverification)
@@ -116,5 +119,6 @@ router.route("/secretacreataccount").post(secreatuser);
 router.route("/secretagetacdetail").get(getaccountdetail);
 router.route("/sendmessages").post(getmessages).get(secretamessage);
 router.route("/seenrqt").get(seenrqt);
+router.route("/secretislogin").post(sislogin)
 
 module.exports = router;

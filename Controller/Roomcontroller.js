@@ -125,3 +125,14 @@ exports.Aicalculation = async (req, res) => {
     });
   }
 };
+
+exports.getairesult = async (req, res) => {
+  const { id } = req.query;
+  const request = await Roomai.findOne({
+    roomid: id,
+  });
+  res.status(200).json({
+    status: "success",
+    data: request,
+  });
+};

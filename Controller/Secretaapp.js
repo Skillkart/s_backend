@@ -1,5 +1,6 @@
 const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
+const jwt = require("jsonwebtoken");
 const admin = require("firebase-admin");
 
 const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-53d8edca51.json");
@@ -7,6 +8,27 @@ const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-53d8edca51
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+
+const jsontoken = async (id) => {
+  return jwt.sign({ data: id }, process.env.tokn_crypt, {
+    expiresIn: "90d",
+  });
+};
+
+const createtoken = async (user, statuscode, res, req) => {
+  const token = await jsontoken(user._id);
+  res.cookie("jwt", token, {
+    expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+  });
+
+  res.status(statuscode).json({
+    status: "success",
+    token: token,
+    data: user,
+  });
+};
 
 const randomstring = (username, size) => {
   let resize = 0;
@@ -43,28 +65,26 @@ exports.secreatuser = async (req, res) => {
   const findlength = await Secretaac.find();
   const usercheck = await Secretaac.findOne({ Email: email.toLowerCase() });
   if (usercheck) {
+    const rstring = await checkusername(
+      username.toLowerCase().split(" ").join(""),
+      findlength
+    );
+    usercheck.username = rstring;
     usercheck.ftoken = ftoken;
     await usercheck.save();
-    res.status(200).json({
-      status: "success",
-      data: usercheck,
-    });
+    createtoken(usercheck, 200, res, req);
   } else {
     const rstring = await checkusername(
       username.toLowerCase().split(" ").join(""),
       findlength
     );
-
     const r = await Secretaac.create({
       username: rstring,
       Email: email.toLowerCase(),
       phone: phone,
       ftoken,
     });
-    res.status(200).json({
-      status: "success",
-      data: r,
-    });
+    createtoken(usercheck, 200, res, req);
   }
 };
 
@@ -157,12 +177,35 @@ exports.seenrqt = async (req, res) => {
   if (seen) {
     seen.seen = true;
     await seen.save();
+    const message = await Secretamess.find();
     res.status(200).json({
       status: "success",
+      message: message,
     });
   } else {
     res.status(200).json({
       status: "success",
+    });
+  }
+};
+
+exports.sislogin = async (req, res) => {
+  const { token } = req.body;
+
+  if (token) {
+    try {
+      const decoded = await jwt.verify(token, process.env.tokn_crypt);
+      const currentUser = await Secretaac.findById(decoded.data);
+      res.status(200).json({
+        status: "success",
+        data: currentUser,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    res.status(400).json({
+      status: "fail",
     });
   }
 };
