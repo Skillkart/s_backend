@@ -998,7 +998,8 @@ exports.updateroomdetail = async (req, res) => {
 };
 
 exports.payment = async (req, res) => {
-  const { amount } = req.body;
+  const { amount, email } = req.body;
+  console.log(amount, email);
 
   const instance = new Razorpay({
     key_id: process.env.live_r_key_id,
@@ -1008,20 +1009,59 @@ exports.payment = async (req, res) => {
   const transcation = await Transcation.find({
     status: "success",
   });
+
+  const refer = await Referal.findOne({
+    referedEmail: email.toLowerCase(),
+    used: false,
+  });
   let options;
-  if (transcation.length < 26) {
-    options = {
-      amount: 4999 * 100, // amount in the smallest currency unit
-      currency: "INR",
-      receipt: "order_rcptid_11",
-    };
+
+  let refered =
+    Math.floor(
+      (new Date().getTime() -
+        new Date(
+          `${refer.referedon.split(" ")[2]}-${refer.referedon.split(" ")[1]}-${
+            refer.referedon.split(" ")[0]
+          }`
+        ).getTime()) /
+        (1000 * 60 * 60 * 24)
+    ) <= 3;
+
+  if (refer) {
+    if (refered) {
+      options = {
+        amount: 4999 * 100,
+        currency: "INR",
+        receipt: "order_rcptid_11",
+      };
+    } else {
+      options = {
+        amount: amount * 100,
+        currency: "INR",
+        receipt: "order_rcptid_11",
+      };
+    }
   } else {
     options = {
-      amount: amount * 100, // amount in the smallest currency unit
+      amount: amount * 100,
       currency: "INR",
       receipt: "order_rcptid_11",
     };
   }
+
+  // if (transcation.length < 26) {
+  //   options = {
+  //     amount: 4999 * 100, // amount in the smallest currency unit
+  //     currency: "INR",
+  //     receipt: "order_rcptid_11",
+  //   };
+  // } else {
+  //   options = {
+  //     amount: amount * 100, // amount in the smallest currency unit
+  //     currency: "INR",
+  //     receipt: "order_rcptid_11",
+  //   };
+  // }
 
   instance.orders.create(options, function (err, order) {
     if (order) {
@@ -2856,8 +2896,8 @@ exports.profilechangepassword = async (req, res) => {
   console.log(role, email, password);
 
   const user = await User.findOne({
-    Email: email
-  })
+    Email: email,
+  });
   console.log(user);
   if (user) {
     const ecrpyt = await bcrypt.hash(password, 15);
