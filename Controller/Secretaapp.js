@@ -84,7 +84,7 @@ exports.secreatuser = async (req, res) => {
       phone: phone,
       ftoken,
     });
-    createtoken(usercheck, 200, res, req);
+    createtoken(r, 200, res, req);
   }
 };
 
