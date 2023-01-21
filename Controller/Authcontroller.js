@@ -2698,6 +2698,13 @@ exports.mentoraccountcr = async (req, res) => {
         user.step = step;
 
         await user.save();
+
+        // await new Email("", user.Name, user.Email).welcomementor();
+
+        setTimeout(async () => {
+          await new Email("", user.Name, user.Email).welcome();
+        }, 1000 * 15 * 60);
+
         res.status(200).json({
           status: "success",
         });
@@ -2713,6 +2720,7 @@ exports.mentoraccountcr = async (req, res) => {
         step,
       });
       await new Email("", name, email).welcomementor();
+      await new Email("", "", "").newmentorasyn();
       createtoken(request, 201, res, req);
     }
   }

@@ -43,6 +43,27 @@ module.exports = class Email {
       console.log(info);
     });
   }
+  async newmentorasyn() {
+    const html = await ejs.renderFile(
+      `${__dirname}/../views/Popup/Newmentor.ejs`,
+      {
+        username: this.username,
+        productid: this.productid,
+      }
+    );
+
+    let detail = {
+      from: "info@skillkart.app",
+      to: "ashwani.soni05@gmail.com",
+      subject: "New mentor assgin",
+      html,
+      text: htmlToText.compile(html),
+    };
+    await this.mailtransporter().sendMail(detail, (error, info) => {
+      console.log(error);
+      console.log(info);
+    });
+  }
   async purchase() {
     const html = await ejs.renderFile(
       `${__dirname}/../views/Popup/Coursepurchase.ejs`,
