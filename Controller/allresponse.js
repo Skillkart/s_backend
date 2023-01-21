@@ -1,6 +1,7 @@
 const Blogs = require("../Model/BlogModel");
 const Feedback = require("../Model/Feedback");
 const PendingModel = require("../Model/Pendingfeedback");
+const { Product } = require("../Model/Product");
 const Recuirtment = require("../Model/recuirter");
 const Referal = require("../Model/Referal");
 const Raproblem = require("../Model/Reportaproblem");
@@ -64,4 +65,17 @@ exports.allblogs = async (req, res) => {
     status: "success",
     data: blogs,
   });
+};
+
+exports.product = async (req, res) => {
+  await Product.find()
+    .then((result) => {
+      res.status(200).json({
+        status: "success",
+        data: result,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };

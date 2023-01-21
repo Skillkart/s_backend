@@ -2,6 +2,7 @@ const Recuirtment = require("../Model/recuirter");
 const Raproblem = require("../Model/Reportaproblem");
 const Roomai = require("../Model/Roomai");
 const RoomModel = require("../Model/Roomcreation");
+const Transcation = require("../Model/Transaction");
 const User = require("../Model/Usermodel");
 const RoomEmail = require("../Other/roomhandler");
 
@@ -25,21 +26,33 @@ exports.getrounds = async (req, res) => {
 
 exports.getuandr = async (req, res) => {
   const user = await User.find();
+  const trans = await Transcation.find();
   const recuiter = await Recuirtment.find();
 
   let userarray = [];
+  let transarray = [];
+
   let recuirterarray = [];
-  let month = new Date().getMonth();
+  let month = new Date().getMonth()+1;
   let um = month - 5;
   let rm = month - 5;
-  for (let i = 0; i < 6; i++) {
+  let tm= month - 5;
+  for (let i = 0; i < 10; i++) {
     const fi = user.filter(
       (state) => new Date(state.createdAt).getMonth() == um
     );
     um += 1;
     userarray.push(fi.length);
   }
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 10; i++) {
+    const fi = trans.filter(
+      (state) => new Date(state.createdAt).getMonth() == rm
+    );
+    console.log(fi)
+    rm += 1;
+    transarray.push(fi.length);
+  }
+  for (let i = 0; i < 10; i++) {
     const fi = recuiter.filter(
       (state) => new Date(state.createdAt).getMonth() == rm
     );
@@ -52,6 +65,7 @@ exports.getuandr = async (req, res) => {
     data: {
       userarray,
       recuirterarray,
+      transarray,
     },
   });
 };

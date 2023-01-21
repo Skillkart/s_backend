@@ -378,11 +378,17 @@ exports.mentosignup = async (req, res) => {
       passwordResetToken: verifytoken,
     });
     createtoken(mentor, 201, res, req);
+
     await new Email(verifytoken, name, email).welcomementor();
+
     setTimeout(() => {
       mentor.passwordResetToken = "";
       mentor.save();
     }, 90000);
+
+    setTimeout(async () => {
+      await new Email(verifytoken, name, email).welcome();
+    }, 1000 * 15 * 60);
     return mentor;
   }
   if (user) {
@@ -1002,8 +1008,8 @@ exports.payment = async (req, res) => {
   console.log(amount, email);
 
   const instance = new Razorpay({
-    key_id: process.env.live_r_key_id,
-    key_secret: process.env.live_r_key_secret,
+    key_id: process.env.r_key_id,
+    key_secret: process.env.r_key_secret,
   });
 
   const transcation = await Transcation.find({
@@ -1016,18 +1022,17 @@ exports.payment = async (req, res) => {
   });
   let options;
 
-  let refered =
-    Math.floor(
-      (new Date().getTime() -
-        new Date(
-          `${refer.referedon.split(" ")[2]}-${refer.referedon.split(" ")[1]}-${
-            refer.referedon.split(" ")[0]
-          }`
-        ).getTime()) /
-        (1000 * 60 * 60 * 24)
-    ) <= 3;
-
   if (refer) {
+    let refered =
+      Math.floor(
+        (new Date().getTime() -
+          new Date(
+            `${refer.referedon.split(" ")[2]}-${
+              refer.referedon.split(" ")[1]
+            }-${refer.referedon.split(" ")[0]}`
+          ).getTime()) /
+          (1000 * 60 * 60 * 24)
+      ) <= 3;
     if (refered) {
       options = {
         amount: 4999 * 100,
@@ -1804,6 +1809,7 @@ exports.transcation = async (req, res) => {
     user_id,
     username,
     r_p_id,
+    course_id,
     course,
     status,
     email,
@@ -1817,6 +1823,7 @@ exports.transcation = async (req, res) => {
     user_name: username,
     course: course,
     price,
+    course_id: course_id,
     status,
     razarpay_order_id: r_id,
     razarpay_payment_id: r_p_id,

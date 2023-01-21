@@ -9,7 +9,13 @@ const {
 const router = express.Router();
 const auth = require("../../Controller/Authcontroller");
 const roomcrt = require("../../Controller/Roomcontroller");
-const { userdata, mentor, getblog, allblogs } = require("../../Controller/allresponse");
+const {
+  userdata,
+  mentor,
+  getblog,
+  allblogs,
+  product,
+} = require("../../Controller/allresponse");
 const { upload } = require("../../Other/Multer");
 const {
   secreatuser,
@@ -18,12 +24,15 @@ const {
   secretamessage,
   seenrqt,
   sislogin,
+  userlogin,
+  secretaphone,
 } = require("../../Controller/Secretaapp");
 const {
   postjobs,
   getjobs,
   Jobapply,
 } = require("../../Controller/Jobcontroller");
+const { adminjobpanel } = require("../../Controller/admincontroller");
 
 router.route("/roomcreation").post(roomrequest);
 router.route("/isLoggedIn").post(auth.loggedin);
@@ -106,19 +115,21 @@ router
 
 router.route("/resmetest").post(roomcrt.resumetest);
 router.route("/roomvideo").post(auth.roomvideo).get(auth.getroomvideo);
-
+router.route("/getprducts").get(product);
 router.route("/callrequest").post(auth.callrequest);
 // Jobs
-
+router.route("/adminjobpanel").get(adminjobpanel);
 router.route("/jobs").post(postjobs).get(getjobs);
 router.route("/applyjobs").post(Jobapply);
 
 ////secreta links
 
 router.route("/secretacreataccount").post(secreatuser);
+router.route("/secretalogin").post(userlogin);
+router.route("/secretaphoneupdate").post(secretaphone);
 router.route("/secretagetacdetail").get(getaccountdetail);
 router.route("/sendmessages").post(getmessages).get(secretamessage);
 router.route("/seenrqt").get(seenrqt);
-router.route("/secretislogin").post(sislogin)
+router.route("/secretislogin").post(sislogin);
 
 module.exports = router;

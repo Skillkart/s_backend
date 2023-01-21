@@ -2,6 +2,7 @@ const Secretaac = require("../Model/secreta/Secretaac");
 const Secretamess = require("../Model/secreta/Secretamess");
 const jwt = require("jsonwebtoken");
 const admin = require("firebase-admin");
+const bcrypt = require("bcrypt");
 
 const serviceAccount = require("./hizzz-439a5-firebase-adminsdk-ojnby-53d8edca51.json");
 
@@ -61,30 +62,86 @@ const checkusername = async (username, findlength) => {
   }
 };
 exports.secreatuser = async (req, res) => {
-  const { username, email, phone, ftoken } = req.body;
+  const { username, email, phone, ftoken, password } = req.body;
   const findlength = await Secretaac.find();
   const usercheck = await Secretaac.findOne({ Email: email.toLowerCase() });
   if (usercheck) {
-    const rstring = await checkusername(
-      username.toLowerCase().split(" ").join(""),
-      findlength
-    );
-    usercheck.username = rstring;
-    usercheck.ftoken = ftoken;
-    await usercheck.save();
-    createtoken(usercheck, 200, res, req);
+    res.status(400).json({
+      status: "failed",
+    });
   } else {
     const rstring = await checkusername(
       username.toLowerCase().split(" ").join(""),
       findlength
     );
+    const cryptpassword = await bcrypt.hash(password, 15);
     const r = await Secretaac.create({
       username: rstring,
       Email: email.toLowerCase(),
-      phone: phone,
+      password: cryptpassword,
       ftoken,
     });
     createtoken(r, 200, res, req);
+  }
+};
+
+exports.userlogin = async (req, res) => {
+  const { user, password, ftoken } = req.body;
+  const useremail = await Secretaac.findOne({
+    Email: user.toLowerCase(),
+  });
+  const username = await Secretaac.findOne({
+    username: user.toLowerCase(),
+  });
+  const userephone = await Secretaac.findOne({
+    phone: user.toLowerCase(),
+  });
+
+  if (username || useremail || userephone) {
+    if (username) {
+      const dcrpt = await bcrypt.compare(password, username.password);
+      if (dcrpt) {
+        username.ftoken = ftoken;
+        await username.save();
+        createtoken(username, 201, res, req);
+      } else {
+        res.status(400).json({
+          status: "failed",
+          message: "Incorrect password",
+        });
+      }
+    }
+    if (useremail) {
+      const dcrpt = await bcrypt.compare(password, useremail.password);
+      if (dcrpt) {
+        useremail.ftoken = ftoken;
+        await useremail.save();
+        createtoken(useremail, 201, res, req);
+      } else {
+        res.status(400).json({
+          status: "failed",
+          message: "Incorrect password",
+        });
+      }
+    }
+    if (userephone) {
+      const dcrpt = await bcrypt.compare(password, userephone.password);
+      if (dcrpt) {
+        userephone.ftoken = ftoken;
+        await userephone.save();
+        createtoken(userephone, 201, res, req);
+      } else {
+        res.status(400).json({
+          status: "failed",
+          message: "Incorrect password",
+        });
+      }
+    }
+  } else {
+    res.status(401).json({
+      status: "failed",
+      message: "user not found",
+    });
   }
 };
 
@@ -109,7 +166,7 @@ exports.getaccountdetail = async (req, res) => {
 };
 
 exports.getmessages = async (req, res) => {
-  const { username, usermessage, token } = req.body;
+  const { username, usermessage, contenttype, token } = req.body;
   console.log(username, usermessage, token);
 
   const user = await Secretaac.findOne({
@@ -118,14 +175,11 @@ exports.getmessages = async (req, res) => {
   const usermess = await Secretamess.find({
     userid: username,
   });
-  console.log(user);
-  // console.log(user);
-
-  // console.log(usermess);
   if (user) {
     await Secretamess.create({
       userid: user._id,
       message: usermessage,
+      contenttype: contenttype,
       messageindex: usermess.length + 1,
     });
     const notify = {
@@ -206,6 +260,26 @@ exports.sislogin = async (req, res) => {
   } else {
     res.status(400).json({
       status: "fail",
+    });
+  }
+};
+
+exports.secretaphone = async (req, res) => {
+  const { userid, phone } = req.body;
+  const user = await Secretaac.findOne({
+    _id: userid,
+  });
+
+  if (user) {
+    user.phone = phone;
+    await user.save();
+    res.status(200).json({
+      status: "success",
+      data: user
+    });
+  } else {
+    res.status(400).json({
+      status: "Fail",
     });
   }
 };

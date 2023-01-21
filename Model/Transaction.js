@@ -4,6 +4,7 @@ const TranscationModel = new mongoose.Schema({
   user: String,
   user_name: String,
   course: String,
+  course_id: String,
   price: Number,
   status: String,
   razarpay_order_id: String,

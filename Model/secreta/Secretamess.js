@@ -7,6 +7,7 @@ const Secretaschema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  contenttype: String,
   messageindex: { type: Number, default: 0 },
   createdAt: {
     type: Date,

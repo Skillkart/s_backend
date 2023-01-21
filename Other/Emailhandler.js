@@ -3,12 +3,12 @@ const ejs = require("ejs");
 const htmlToText = require("html-to-text");
 
 module.exports = class Email {
-  constructor(verifycode, username, email, temp, productid, referername , url) {
+  constructor(verifycode, username, email, temp, productid, referername, url) {
     this.verifycode = verifycode;
     this.username = username;
     this.email = email;
     this.temp = temp;
-    this.url =url;
+    this.url = url;
     this.productid = productid;
     this.referername = referername;
   }
@@ -70,7 +70,7 @@ module.exports = class Email {
       {
         username: this.username,
         referername: this.referername,
-        url : this.url
+        url: this.url,
       }
     );
 
@@ -106,6 +106,26 @@ module.exports = class Email {
       console.log(info);
     });
   }
+  async welcome() {
+    const html = await ejs.renderFile(
+      `${__dirname}/../views/Popup/Welcome.ejs`,
+      {
+        username: this.username,
+      }
+    );
+
+    let detail = {
+      from: "info@skillkart.app",
+      to: this.email,
+      subject: "Thanks's for Becoming the Skillkart Family Member",
+      html,
+      text: htmlToText.compile(html),
+    };
+    await this.mailtransporter().sendMail(detail, (error, info) => {
+      console.log(error);
+      console.log(info);
+    });
+  }
   async welcomementor() {
     const html = await ejs.renderFile(
       `${__dirname}/../views/Popup/Welcomementor.ejs`,
@@ -117,7 +137,7 @@ module.exports = class Email {
     let detail = {
       from: "info@skillkart.app",
       to: this.email,
-      subject: "Welcome To Skillkart Family",
+      subject: `Welcome "Mentor" to Skillkart an AI enabled -Interview Preperation platform`,
       html,
       text: htmlToText.compile(html),
     };
