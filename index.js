@@ -2,14 +2,6 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const server = require("http").Server(app);
-const io = require("socket.io")(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-io.origins("*:*");
 const { v4: uuidV4 } = require("uuid");
 const fileUpload = require("express-fileupload");
 const cors = require("cors");
@@ -73,24 +65,7 @@ mongoose
     console.log(error, "its a error");
   });
 
-io.on("connection", (socket) => {
-  socket.on("join-room", (roomId, userId, user) => {
-    socket.join(roomId);
-    socket.to(roomId).broadcast.emit("user-connected", userId, user);
-    socket.on("create-message", (msg, user) => {
-      io.to(roomId).emit("get-msg", msg, user);
-    });
-    socket.on("messagesended", (sended) => {
-      socket.to(roomId).broadcast.emit("got-msg", sended);
-    });
-    socket.on("disconnect", () => {
-      socket.to(roomId).broadcast.emit("user-disconnected", userId);
-    });
-    socket.on("mic-off", (micoff) => {
-      socket.to(roomId).broadcast.emit("micoff", micoff);
-    });
-  });
-});
+
 
 // app.get("/api/v1/:filename", (req, res) => {
 //   gfs.files.find().toArray((err, file) => {
