@@ -166,47 +166,43 @@ exports.getaccountdetail = async (req, res) => {
 };
 
 exports.getmessages = async (req, res) => {
-  const { username, usermessage, contenttype, token } = req.body;
-  console.log(username, usermessage, token);
+  const { token } = req.body;
+  // const { username, usermessage, contenttype, token } = req.body;
+  // console.log(username, usermessage, token);
 
-  const user = await Secretaac.findOne({
-    username,
-  });
-  const usermess = await Secretamess.find({
-    userid: username,
-  });
-  if (user) {
-    await Secretamess.create({
-      userid: user._id,
-      message: usermessage,
-      contenttype: contenttype,
-      messageindex: usermess.length + 1,
-    });
-    const notify = {
-      tokens: [user.ftoken],
-      notification: {
-        title: "New message arrive",
-        body: "Someone send you a message",
-      },
-    };
+  // const user = await Secretaac.findOne({
+  //   username,
+  // });
+  // const usermess = await Secretamess.find({
+  //   userid: username,
+  // });
+  // if (user) {
+  //   await Secretamess.create({
+  //     userid: user._id,
+  //     message: usermessage,
+  //     contenttype: contenttype,
+  //     messageindex: usermess.length + 1,
+  //   });
+  const notify = {
+    tokens: [token],
+    notification: {
+      title: "New message arrive",
+      body: "Someone send you a message",
+    },
+  };
 
-    await admin
-      .messaging()
-      .sendMulticast(notify)
-      .then((res) => {
-        console.log("send success", res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    res.status(200).json({
-      status: "success",
+  await admin
+    .messaging()
+    .sendMulticast(notify)
+    .then((res) => {
+      console.log("send success", res);
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  } else {
-    res.status(400).json({
-      status: "Failed",
-    });
-  }
+  res.status(200).json({
+    status: "success",
+  });
 };
 
 exports.secretamessage = async (req, res) => {
@@ -275,7 +271,7 @@ exports.secretaphone = async (req, res) => {
     await user.save();
     res.status(200).json({
       status: "success",
-      data: user
+      data: user,
     });
   } else {
     res.status(400).json({

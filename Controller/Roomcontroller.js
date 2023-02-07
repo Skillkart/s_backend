@@ -29,45 +29,34 @@ exports.getuandr = async (req, res) => {
   const trans = await Transcation.find();
   const recuiter = await Recuirtment.find();
 
-  let userarray = [];
-  let transarray = [];
-
-  let recuirterarray = [];
-  let month = new Date().getMonth()+1;
-  let um = month - 5;
-  let rm = month - 5;
-  let tm= month - 5;
-  for (let i = 0; i < 10; i++) {
-    const fi = user.filter(
-      (state) => new Date(state.createdAt).getMonth() == um
+  user.sort((a, b) => {
+    return (
+      new Date(a.createdAt).getMonth() - new Date(b.createdAt).getMonth() &&
+      new Date(a.createdAt).getFullYear() - new Date(b.createdAt).getFullYear()
     );
-    um += 1;
-    userarray.push(fi.length);
-  }
-  for (let i = 0; i < 10; i++) {
-    const fi = trans.filter(
-      (state) => new Date(state.createdAt).getMonth() == rm
-    );
-    console.log(fi)
-    rm += 1;
-    transarray.push(fi.length);
-  }
-  for (let i = 0; i < 10; i++) {
-    const fi = recuiter.filter(
-      (state) => new Date(state.createdAt).getMonth() == rm
-    );
-    rm += 1;
-    recuirterarray.push(fi.length);
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: {
-      userarray,
-      recuirterarray,
-      transarray,
-    },
   });
+  trans.sort((a, b) => {
+    return (
+      new Date(a.createdAt).getMonth() - new Date(b.createdAt).getMonth() &&
+      new Date(a.createdAt).getFullYear() - new Date(b.createdAt).getFullYear()
+    );
+  });
+  recuiter.sort((a, b) => {
+    return (
+      new Date(a.createdAt).getMonth() - new Date(b.createdAt).getMonth() &&
+      new Date(a.createdAt).getFullYear() - new Date(b.createdAt).getFullYear()
+    );
+  });
+  console.log(recuiter.length - 5, trans.length - 5, user.length - 5);
+
+  // res.status(200).json({
+  //   status: "success",
+  //   data: {
+  //     userarray,
+  //     recuirterarray,
+  //     transarray,
+  //   },
+  // });
 };
 
 exports.reportproblem = async (req, res) => {
